@@ -1,0 +1,69 @@
+frontend/ (View Layer)
+├── app/ (Pure View Components)
+│   ├── (auth)/
+│   ├── (main)/
+│   └── admin/
+├── components/
+│   ├── ui/ (Reusable UI components)
+│   └── forms/ (Form components with validation)
+├── hooks/ (Custom hooks for business logic)
+│   ├── useAuth.ts
+│   ├── useProducts.ts
+│   └── useCart.ts
+├── services/ (API communication layer)
+│   ├── api.ts (Base API setup)
+│   ├── authService.ts
+│   ├── productService.ts
+│   └── cartService.ts
+└── types/ (TypeScript interfaces)
+    ├── auth.ts
+    ├── product.ts
+    └── cart.ts
+
+backend/ (Model + Controller Layers)
+├── src/
+│   ├── Models/ (Model Layer - Data & Business Logic)
+│   │   ├── Base/
+│   │   │   └── BaseModel.php (Common model functionality)
+│   │   ├── User.php
+│   │   ├── Product.php
+│   │   └── Order.php
+│   ├── Services/ (Business Logic Layer)
+│   │   ├── Auth/
+│   │   │   ├── AuthenticationService.php
+│   │   │   └── AuthorizationService.php
+│   │   ├── Product/
+│   │   │   ├── ProductService.php
+│   │   │   └── ProductValidationService.php
+│   │   └── Order/
+│   │       ├── OrderService.php
+│   │       └── OrderProcessingService.php
+│   ├── Controllers/ (Controller Layer - Request Handling)
+│   │   ├── Base/
+│   │   │   └── BaseController.php
+│   │   ├── Api/
+│   │   │   ├── AuthController.php
+│   │   │   ├── ProductController.php
+│   │   │   └── OrderController.php
+│   │   └── Admin/
+│   │       ├── UserController.php
+│   │       └── ProductController.php
+│   ├── Repositories/ (Data Access Layer)
+│   │   ├── Interfaces/
+│   │   │   ├── UserRepositoryInterface.php
+│   │   │   └── ProductRepositoryInterface.php
+│   │   └── Eloquent/
+│   │       ├── UserRepository.php
+│   │       └── ProductRepository.php
+│   └── Helpers/
+│       ├── ResponseFormatter.php
+│       └── ValidationHelper.php
+├── config/
+│   ├── database.php
+│   └── app.php
+├── routes/
+│   ├── api.php
+│   └── admin.php
+└── tests/
+    ├── Unit/
+    └── Feature/
