@@ -1,0 +1,42 @@
+Function:
+FE (Next.js)
+├── User:
+│   ├── (auth): use cookie to store login state (userId, isLoggedIn)
+│   │   ├── Login
+│   │   ├── Register
+│   │   └── Logout
+│   ├── (product list): Receive Products[] (SELECT * FROM products). const [displayProduct, setDisplayProduct] = useState(). Initial, useEffect(() => {setDisplayProduct(Products)},[])
+│   │   └── filter(): receive filters, filter PRODUCTS (frontend) to "res" , setDisplayProduct(res) -> void
+│   ├── (product action): using localStorage to store products (create an array "products" in localStorage), any action add/remove items in the cart would be updated
+│   │   ├── addCart(productId: string) -> void
+│   │   ├── removeCart(productId: string) -> void
+│   │   └── addReview(content: string): POST to DB, table REVIEW -> void
+│   ├── (product view): fetch api/product/[productId]
+│   ├── (profile): User can update their personal info here, profile page display as a Form (readonly), with button "Edit". Click to change state (editable), click "Save" to get info updated (submit Form)
+│   │   ├── updateProfile(data): PUT to DB, table USER -> void (data get from the Form)
+│   │   └── deleteProfile() -> DELETE to DB, table USER
+│   └── (contact): User/Guest enter their contact info in Form send to admin
+│       └── sendContact(data): POST to DB, table CONTACT -> void
+├── Admin:
+│   ├── (User)
+│   │   ├── updateUser(userId, data): PUT to DB, table USER -> void (data get from Form)
+│   │   └── deleteUser(userId): DELETE to DB, table USER
+│   ├── (Product)
+│   │   ├── updateProduct(productId, data): PUT
+│   │   └── deleteProduct(productId): DELETE
+│   ├── (Reviews)
+│   │   └── deleteReview(reviewId): DELETE to DB, table REVIEW -> void
+│   ├── (Blog)
+│   │   ├── updateBlog(blogId, data): PUT
+│   │   └── deleteBlog(blogId): DELETE
+│   ├── (Image)
+│   │   ├── updateImage(imageId, type, data): PUT to DB, table IMAGE && PRODUCT_IMAGE | BLOG_IMAGE -> void
+│   │   └── deleteImage(imageId, type): DELETE to DB, table && PRODUCT_IMAGE | BLOG_IMAGE -> void
+│   ├── (Contact)
+│   │   ├── updateContact(contactId, data): PUT
+│   │   └── deleteContact(contactId): DELETE
+│   └── (Tag)
+│       ├── updateTag(tagName, data): PUT
+│       └── deleteTag(tagName): DELETE
+└── Utilities:
+    └── formatPrice(price: number): format raw price 170000 to something like 170.000 VND

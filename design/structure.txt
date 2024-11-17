@@ -1,0 +1,93 @@
+project_root/
+├── frontend/ (Next.js - View)
+│   ├── app/
+│   │   ├── (auth)/
+│   │   │   ├── sign-in/
+│   │   │   │   └── page.tsx
+│   │   │   └── sign-up/
+│   │   │       └── page.tsx
+│   │   ├── (main)/ # User view
+│   │   │   ├── home/
+│   │   │   │   └── page.tsx
+│   │   │   ├── shop/
+│   │   │   │   └── page.tsx
+│   │   │   ├── product/
+│   │   │   │   ├── [productId]/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx (for display all products)
+│   │   │   ├── cart/
+│   │   │   │   └── page.tsx
+│   │   │   ├── checkout/
+│   │   │   │   └── page.tsx
+│   │   │   ├── contact/
+│   │   │   │   └── page.tsx
+│   │   │   ├── blog/
+│   │   │   │   ├── [blogId]/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   └── profile/
+│   │   │       └── [userId]/
+│   │   │           └── page.tsx
+│   │   └── admin/ # Admin view
+│   │       ├── (auth)
+│   │       │   └── sign-in/
+│   │       │       └── page.tsx
+│   │       ├── users/
+│   │       │   ├── [userId]/
+│   │       │   │   └── page.tsx
+│   │       │   └── page.tsx
+│   │       ├── products/
+│   │       │   ├── [productId]/
+│   │       │   │   └── page.tsx
+│   │       │   └── page.tsx
+│   │       ├── blogs/
+│   │       │   ├── [blogId]/
+│   │       │   │   └── page.tsx
+│   │       │   └── page.tsx
+│   │       ├── images/
+│   │       └── tags/
+│   ├── api/ (Controller - API Routes)
+│   │   ├── auth/
+│   │   │   ├── login.ts
+│   │   │   └── register.ts
+│   │   ├── admin/ # Admin-specific endpoints
+│   │   │   ├── users.ts
+│   │   │   ├── products.ts
+│   │   │   ├── blogs.ts
+│   │   │   └── images.ts
+│   │   ├── products/
+│   │   │   └── [productId].ts # Handles both product data and its reviews actions
+│   │   ├── blogs/
+│   │   │   └── [blogId].ts
+│   │   ├── contact/
+│   │   │   └── index.ts
+│   │   └── tag/
+│   │       └── [tagName].ts
+│   ├── components/
+│   └── context/
+│       ├── AuthContext.tsx
+│       └── AdminContext.tsx # For admin-specific state
+└── backend/ (PHP - Model)
+    ├── config/
+    │   ├── Database.php # connect to mysql (XAMPP)
+    │   └── Auth.php # Handle admin/user authentication
+    ├── models/
+    │   ├── User.php
+    │   ├── Product.php
+    │   ├── Review.php
+    │   ├── Blog.php
+    │   ├── Contact.php
+    │   ├── Image.php
+    │   └── Tag.php
+    ├── controllers/
+    │   ├── AdminController.php # Admin-specific operations
+    │   ├── UserController.php
+    │   ├── ProductController.php
+    │   ├── BlogController.php
+    │   ├── ContactController.php
+    │   ├── ImageController.php
+    │   └── TagController.php
+    ├── middleware/
+    │   └── AdminAuth.php # Admin authentication middleware
+    ├── .htaccess 
+    └── index.php

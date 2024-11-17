@@ -1,0 +1,54 @@
+DB:
+USER:
+├── userId int/varchar @primary (AUTO INCREMENT/uuid)
+├── password varchar (encrypted)
+├── name? varchar
+├── email? varchar
+├── phone_number? varchar
+└── address?:
+    ├── street: varchar
+    └── city: varchar
+PRODUCT:
+├── productId varchar @primary (slug)
+├── name varchar
+├── price number
+├── short_description varchar
+├── full_description? varchar
+└── tags?: JSON ([tag1, tag2,...]) @references to TAG.tag_name
+REVIEW: (reviews of product)
+├── reviewId: int @primary
+├── productId @references PRODUCT.productId
+├── content: varchar
+├── rating: int
+└── userId: @references USER.userId
+CONTACT:
+├── contactId: int @primary
+├── name: varchar
+├── phone_number: varchar
+└── further_info? varchar
+BLOG:
+├── blogId: varchar @primary (slug)
+├── title: varchar
+├── content: varchar
+├── posted: datetime
+└── tags?: JSON ([tag1, tag2,...]) @references to TAG.tag_name
+TAG:
+└── tag_name: varchar @primary
+IMAGE
+├── imageId: varchar @primary
+└── src: varchar (image source)
+PRODUCT_IMAGE: (for product, one product can have multiple images)
+├── imageId: varchar @primary @references to IMAGE.imageId (slug by alt) 
+└── productId: @references PRODUCT.productId
+BLOG_IMAGE: (for blog cover image)
+├── imageId: varchar @primary @references to IMAGE.imageId (slug by alt)
+└── blogId: @references to BLOG.blogId
+ORDER: (for storing orders by users)
+├── orderId: int @primary (AUTO INCREMENT)
+├── userId: @references USER.userId
+├── products: JSON {productId: @references PRODUCT.productId, quantity: number}[]
+├── orderAt: datetime
+├── phone_number: string
+└── address: varchar
+SITE_INFO:
+└── i have no clue for now
