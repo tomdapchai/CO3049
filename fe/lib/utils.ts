@@ -14,3 +14,5 @@ export const formatPrice = (price: number): string => {
 };
 
 export const addToCart = (productId: string) => {};
+
+export const sortProducts = (products: any[], sortBy: string) => {};

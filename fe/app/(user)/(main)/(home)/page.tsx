@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { categoryImages, productImages } from "@/lib/constants";
 import React from "react";
@@ -5,7 +6,9 @@ import Image from "next/image";
 import ProductCard from "@/components/card/ProductCard";
 import Slideshow from "@/components/Slideshow";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 const page = () => {
+    const router = useRouter();
     return (
         <div className="w-full h-full flex flex-col gap-10 pb-8">
             <section className="bg-[url('/images/banner.jpg')] bg-cover bg-bottom bg-no-repeat h-screen flex justify-end items-center max-md:justify-center">
@@ -14,7 +17,7 @@ const page = () => {
                         <p className="text-black font-bold text-lg">
                             New Arrival
                         </p>
-                        <h1 className="text-7xl text-sub max-md:text-lg font-bold">
+                        <h1 className="text-7xl text-sub max-md:text-3xl font-bold">
                             Discover Our New Collection
                         </h1>
                         <p className="font-bold">
@@ -23,7 +26,9 @@ const page = () => {
                         </p>
                     </div>
 
-                    <Button className="bg-sub rounded-none px-12 py-8 w-fit">
+                    <Button
+                        className="bg-sub rounded-none px-12 py-8 w-fit hover:bg-[#b88e2f]/90"
+                        onClick={() => router.push("/shop")}>
                         Shop Now
                     </Button>
                 </div>
@@ -39,7 +44,9 @@ const page = () => {
 
                 <div className="md:grid md:grid-cols-3 gap-6 max-md:flex max-md:flex-col md:mx-6">
                     {categoryImages.map((category) => (
-                        <div className="flex flex-col justify-center items-center space-y-4">
+                        <div
+                            key={category.alt}
+                            className="flex flex-col justify-center items-center space-y-4">
                             <Image
                                 key={category.title}
                                 src={category.src}

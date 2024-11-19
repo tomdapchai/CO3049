@@ -36,9 +36,7 @@ const ProductCard = ({ name, overview, price, image, slug }: ProductView) => {
                         {overview}
                     </p>
                     <div className="mt-2 flex items-center gap-2">
-                        <span className="font-semibold">
-                            {formatPrice(price)}
-                        </span>
+                        <p className="font-semibold">{formatPrice(price)}</p>
                     </div>
                     {!isLargeScreen && (
                         <div className="flex gap-4 mt-4">

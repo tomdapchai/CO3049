@@ -103,40 +103,41 @@ const Header = () => {
                     </SheetTrigger>
                     <SheetContent className="w-[250px]">
                         <SheetHeader>
-                            <SheetTitle>Menu</SheetTitle>
+                            <SheetTitle className="text-xl">Menu</SheetTitle>
                         </SheetHeader>
                         <div className="flex flex-col space-y-4">
                             <div className="flex flex-col justify-start items-start">
                                 {links.map((link) => (
-                                    <>
-                                        <Link key={link.title} href={link.url}>
+                                    <div className="w-full" key={link.title}>
+                                        <Link href={link.url}>
                                             <Button
                                                 variant="ghost"
-                                                className="font-bold p-0 m-0">
+                                                className="font-bold text-md p-0 m-0">
                                                 {link.title}
                                             </Button>
                                         </Link>
                                         <Separator />
-                                    </>
+                                    </div>
                                 ))}
                             </div>
-                            <div className="flex justify-between items-center gap-4">
+                            <div className="flex justify-between items-center gap-2 h-[20px]">
                                 <Button size="icon" variant="ghost">
                                     <Image
                                         src={"/images/icons/search.svg"}
                                         alt="Search"
-                                        width={20}
-                                        height={20}
+                                        width={24}
+                                        height={24}
                                     />
                                 </Button>
+
                                 {headerIcons.map((icon) => (
                                     <Link key={icon.alt} href={icon.url}>
                                         <Button size="icon" variant="ghost">
                                             <Image
                                                 src={icon.src}
                                                 alt={icon.alt}
-                                                width={20}
-                                                height={20}
+                                                width={24}
+                                                height={24}
                                             />
                                         </Button>
                                     </Link>
