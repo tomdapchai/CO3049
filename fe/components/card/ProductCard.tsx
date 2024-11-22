@@ -43,7 +43,7 @@ const ProductCard = ({ name, overview, price, image, slug }: ProductView) => {
                             <Link href={`/product/${slug}`} className="w-3/4">
                                 <Button
                                     variant="secondary"
-                                    className="w-full bg-main hover:bg-[#fff3e3]/90">
+                                    className="w-3/4 bg-main hover:bg-[#fff3e3]/90">
                                     More details
                                 </Button>
                             </Link>
