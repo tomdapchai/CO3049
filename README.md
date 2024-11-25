@@ -14,8 +14,9 @@ NEXT_PUBLIC_BACKEND_URL="http://localhost:3000"
 ```
 
 # Before commit:
+If you haven't created a branch: ```git checkout -b <your branch name>```
 ```
-git checkout <your branch>
+git checkout <your branch name>
 git add .
 git commit -m "<commit message>"
 git push
