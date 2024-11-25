@@ -1,3 +1,4 @@
+import { productOrder } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -12,7 +13,5 @@ export const formatPrice = (price: number): string => {
         currencyDisplay: "code",
     });
 };
-
-export const addToCart = (productId: string) => {};
 
 export const sortProducts = (products: any[], sortBy: string) => {};
