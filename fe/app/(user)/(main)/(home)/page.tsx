@@ -27,9 +27,9 @@ const page = () => {
                     </div>
 
                     <Button
-                        className="bg-sub rounded-none px-12 py-8 w-fit hover:bg-[#b88e2f]/90"
+                        className="bg-sub rounded-none px-12 py-10 w-fit hover:bg-[#b88e2f]/90"
                         onClick={() => router.push("/shop")}>
-                        Shop Now
+                        <p className="text-xl">Shop Now</p>
                     </Button>
                 </div>
             </section>

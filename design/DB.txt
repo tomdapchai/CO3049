@@ -50,5 +50,3 @@ ORDER: (for storing orders by users)
 ├── orderAt: datetime
 ├── phone_number: string
 └── address: varchar
-SITE_INFO:
-└── i have no clue for now

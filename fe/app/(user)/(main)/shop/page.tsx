@@ -94,9 +94,14 @@ const page = () => {
     return (
         <div className="w-full h-full flex flex-col space-y-6">
             <div className="w-full flex flex-col">
-                <div className="w-full bg-[url('/images/banner.jpg')] bg-cover bg-center bg-no-repeat h-[400px] flex justify-center items-center">
-                    <h1 className="font-bold text-6xl">Shop</h1>
+                <div className="w-full h-[400px] relative flex justify-center items-center overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('/images/banner.jpg')] bg-cover bg-center bg-no-repeat filter blur-sm"></div>
+                    <div className="absolute inset-0 bg-white/10"></div>
+                    <h1 className="relative z-10 font-bold text-6xl text-sub">
+                        Shop
+                    </h1>
                 </div>
+
                 <div className="bg-main flex justify-between h-fit py-4 px-6 items-center">
                     <div className="flex justify-between gap-2 items-center h-fit">
                         <p>

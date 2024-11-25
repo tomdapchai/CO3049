@@ -2,13 +2,15 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { addToCart, formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
+import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { ProductView } from "@/types";
 import { useState, useEffect } from "react";
 
 const ProductCard = ({ name, overview, price, image, slug }: ProductView) => {
     const [isLargeScreen, setIsLargeScreen] = useState(false);
+    const { addToCart } = useCart();
     useEffect(() => {
         const checkScreenSize = () => {
             setIsLargeScreen(window.innerWidth >= 968);
@@ -51,7 +53,14 @@ const ProductCard = ({ name, overview, price, image, slug }: ProductView) => {
                             <Button
                                 variant="secondary"
                                 className="w-3/4 bg-sub hover:bg-[#b88e2f]/90"
-                                onClick={() => addToCart(slug)}>
+                                onClick={() =>
+                                    addToCart({
+                                        productName: name,
+                                        productId: slug,
+                                        productImage: image,
+                                        productPrice: price,
+                                    })
+                                }>
                                 Add to cart
                             </Button>
                         </div>
@@ -72,7 +81,14 @@ const ProductCard = ({ name, overview, price, image, slug }: ProductView) => {
                     <Button
                         variant="secondary"
                         className="w-3/4 bg-sub hover:bg-[#b88e2f]/90"
-                        onClick={() => addToCart(slug)}>
+                        onClick={() =>
+                            addToCart({
+                                productName: name,
+                                productId: slug,
+                                productImage: image,
+                                productPrice: price,
+                            })
+                        }>
                         Add to cart
                     </Button>
                 </div>
