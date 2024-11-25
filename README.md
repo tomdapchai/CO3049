@@ -4,6 +4,8 @@ Company website for CO3049 - Web Development assignment
 # Instruction
 ```npm i -f``` everytime pull this repo.
 
+Run the FE by: ```npm run dev```
+
 Main structure would be ```structure2.txt``` file.
 
 This project FE built on NextJS 15, similar to React. Hard parts will be covered by me (FE only).
