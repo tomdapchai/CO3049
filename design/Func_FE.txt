@@ -22,6 +22,7 @@ FE (Next.js)
 │   │   ├── updateUser(userId, data): PUT to DB, table USER -> void (data get from Form)
 │   │   └── deleteUser(userId): DELETE to DB, table USER
 │   ├── (Product)
+	    getProduct(productId): GET
 │   │   ├── updateProduct(productId, data): PUT
 │   │   └── deleteProduct(productId): DELETE
 │   ├── (Reviews)
