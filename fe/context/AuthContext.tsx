@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         username: string,
         password: string
     ): Promise<{ message: string } | { error: string }> => {
-        // res = await login({ email: username, password }, "user");
+        await login({ email: username, password }, "user");
         // setUserId(res.userId);
         // would be try catch, not if else
         // below is testing phase

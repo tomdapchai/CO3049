@@ -1,7 +1,6 @@
 import React from "react";
 
-const page = ({ params }: { params: { userid: string } }) => {
-    const userId = params.userid;
+const page = () => {
     return <div>page</div>;
 };
 
