@@ -3,15 +3,15 @@
 import React from "react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/utils";
-
+import { PlaceOrder } from "@/lib/placeOrderAction";
 import { useActionState } from "react";
 import Link from "next/link";
+import NavLink from "@/components/profile/nav-link";
 import Image from "next/image";
 import logoImg from "@/public/images/logo.png";
 import AddressesForm from "@/components/form/AddressesForm";
 
 export default function CheckoutPage() {
-    const PlaceOrder = () => {};
     const [state, formAction, isPending] = useActionState(PlaceOrder, null);
     const { cart } = useCart();
 
@@ -25,13 +25,24 @@ export default function CheckoutPage() {
         <div
             id="checkout-container"
             className="w-full h-full flex flex-col space-y-6">
-            <div className="flex flex-col w-full h-[400px] relative justify-center items-center overflow-hidden">
+            <div className="flex flex-col w-full h-[400px] relative flex justify-center items-center overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/images/banner.jpg')] bg-cover bg-center bg-no-repeat filter blur-sm"></div>
                 <div className="absolute inset-0 bg-white/10"></div>
                 <Image src={logoImg} alt="Furniro" priority className="z-10" />
                 <h1 className="relative z-10 font-bold text-6xl text-sub">
                     Checkout
                 </h1>
+                <nav className="z-10 font-bold text-sm">
+                    <ul className="flex list-none space-x-2">
+                        <li>
+                            <NavLink href="/">Home</NavLink>
+                        </li>
+                        <span className="text-gray-500">{"<"}</span>
+                        <li>
+                            <NavLink href="/checkout">Checkout</NavLink>
+                        </li>
+                    </ul>
+                </nav>
             </div>
             <form
                 action={formAction}
@@ -136,7 +147,7 @@ export default function CheckoutPage() {
                             {isPending ? (
                                 <p className="mt-2 text-gray-500">Loading...</p>
                             ) : (
-                                ""
+                                <p className="mt-2 text-gray-500">{state}</p>
                             )}
                             {/* </Suspense> */}
                         </div>
