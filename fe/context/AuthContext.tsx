@@ -1,7 +1,8 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { login } from "@/services/AuthService";
+import { Login, Register } from "@/services/AuthService";
 import Cookies from "js-cookie";
+import { set } from "zod";
 interface AuthContextProps {
     isLoggedIn: boolean;
     userId: string;
@@ -13,7 +14,10 @@ interface AuthContextProps {
     loginAdmin: (username: string, password: string) => Promise<void>;
     logoutUser: () => Promise<void>;
     logoutAdmin: () => Promise<void>;
-    register: (username: string, password: string) => Promise<void>;
+    register: (
+        username: string,
+        password: string
+    ) => Promise<{ message: string } | { error: string }>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -68,18 +72,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         username: string,
         password: string
     ): Promise<{ message: string } | { error: string }> => {
-        await login({ email: username, password }, "user");
-        // setUserId(res.userId);
-        // would be try catch, not if else
-        // below is testing phase
-        if (username === "user" && password === "password") {
-            updateAuthState(userId, true); // would be updateAuthState(res.userId, true);
-            setError(null);
-            return { message: "success" };
-        } else {
-            setError("Invalid credentials");
-            return { error: "Invalid credentials" };
+        const response = await Login(username, password);
+        if (response.status === "error") {
+            setError(response.message);
+            return { error: response.message };
         }
+        updateAuthState(response.userId, true);
+        setError(null);
+        return { message: response.message };
     };
 
     const logoutUser = async (): Promise<void> => {
@@ -101,8 +101,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const logoutAdmin = async (): Promise<void> => {};
 
-    const register = async (username: string, password: string) => {
+    const register = async (
+        username: string,
+        password: string
+    ): Promise<{ message: string } | { error: string }> => {
+        const response = await Register(username, password);
+        if (response.status === "error") {
+            setError(response.message);
+            return { error: response.message };
+        }
+        setError(null);
         updateAuthState(userId, true);
+        return { message: response.message };
         //setUserId(username);
     };
 

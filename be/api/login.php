@@ -1,5 +1,6 @@
 <?php
-require_once 'config/database.php';
+// HEADER: THIS IS REQUIRED TO BE AT THE TOP OF EVERY API PAGE
+require_once '../config/database.php';
 $http_origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
 
 $allowed_origins = [
@@ -22,33 +23,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+// END HEADER
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Parse raw input
         $rawInput = file_get_contents('php://input');
         $data = json_decode($rawInput, true);
+        
+        $query = "SELECT * FROM user WHERE username = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$data['username']]);
 
-        // Extract route from URL
-        $route = trim($_SERVER['REQUEST_URI'], '/');
+        if ($stmt->rowCount() === 0) {
+            $response = [
+                'status' => 'error',
+                'message' => 'User not found'
+            ];
+            http_response_code(200);
+            echo json_encode($response);
+            exit();
+        }
 
-        // Simply echo back what we received
+        $query = "SELECT * FROM user WHERE username = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$data['username']]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!password_verify($data['password'], $user['password'])) {
+            $response = [
+                'status' => 'error',
+                'message' => 'Password incorrect'
+            ];
+            http_response_code(200);
+            echo json_encode($response);
+            exit();
+        }
+
         $response = [
             'status' => 'success',
-            'message' => 'Data received successfully',
-            'route' => $route,
-            'receivedData' => [
-                'email' => $data['email'] ?? null,
-                'password' => $data['password'] ?? null,
-                'type' => str_contains($route, 'admin') ? 'admin' : 'user'
-            ]
+            'userId' => $user['userId'],
+            'message' => 'Login successful',
         ];
 
         http_response_code(200);
         echo json_encode($response);
         exit();
     } else {
-        // Handle other methods
         http_response_code(405);
         echo json_encode([
             'status' => 'error',

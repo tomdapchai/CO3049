@@ -25,14 +25,12 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-
+import { useToast } from "@/hooks/use-toast";
 const SignUp = () => {
     const { isLoggedIn, register } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-
+    const { toast } = useToast();
     useEffect(() => {
         if (isLoggedIn) {
             const callbackUrl = searchParams.get("callbackUrl");
@@ -52,13 +50,21 @@ const SignUp = () => {
     async function onSubmit(values: z.infer<typeof SignUpSchema>) {
         // push to DB the credentials
         try {
-            await register(values.username, values.password)
-                .then((res) => {
-                    console.log(res);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            await register(values.username, values.password).then((res) => {
+                if ("error" in res) {
+                    toast({
+                        title: "Registration Failed",
+                        description: res.error,
+                        variant: "destructive",
+                    });
+                } else {
+                    toast({
+                        title: "Registration Successful",
+                        description: res.message,
+                        className: "bg-green-500 text-white",
+                    });
+                }
+            });
         } catch (error) {
             console.error(error);
             // suppose to display error message here

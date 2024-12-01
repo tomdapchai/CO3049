@@ -1,22 +1,19 @@
 <?php
-require_once 'config/database.php';
-// Get the origin from the request
+// HEADER: THIS IS REQUIRED TO BE AT THE TOP OF EVERY API PAGE
+require_once '../config/database.php';
 $http_origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
 
-// List of allowed origins (replace with your frontend URL)
 $allowed_origins = [
-    'http://localhost:3000',  // Next.js default dev server
+    'http://localhost:3000', 
     'http://127.0.0.1:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
 ];
 
-// Check if the origin is in the allowed list
 if (in_array($http_origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $http_origin");
 }
 
-// Other necessary CORS headers
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Access-Control-Allow-Credentials: true");
@@ -26,34 +23,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+// END HEADER
 
-// Rest of your previous index.php code remains the same
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Parse raw input
         $rawInput = file_get_contents('php://input');
         $data = json_decode($rawInput, true);
 
-        // Extract route from URL
-        $route = trim($_SERVER['REQUEST_URI'], '/');
+        $checkQuery = "SELECT * FROM user WHERE username = ?";
+        $checkStmt = $conn->prepare($checkQuery);
+        $checkStmt->execute([$data['username']]);
 
-        // Simply echo back what we received
+        // Check if user already existed
+        if ($checkStmt->rowCount() > 0) {
+            $response = [
+                'status' => 'error',
+                'message' => 'User already exists'
+            ];
+            http_response_code(200);
+            echo json_encode($response);
+            exit();
+        }
+        
+        // New user, proceed with registration
+        $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
+        $query = "INSERT INTO user (username, password) VALUES (?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$data['username'], $hashedPassword]);
+        
+        // Get the last inserted ID
+        $userId = $conn->lastInsertId();
+
         $response = [
+            'userId' => $userId,
             'status' => 'success',
-            'message' => 'Data received successfully',
-            'route' => $route,
+            'message' => 'User registered successfully',
             'receivedData' => [
-                'email' => $data['email'] ?? null,
+                'username' => $data['username'] ?? null,
                 'password' => $data['password'] ?? null,
-                'type' => str_contains($route, 'admin') ? 'admin' : 'user'
             ]
         ];
-
+        
         http_response_code(200);
         echo json_encode($response);
         exit();
     } else {
-        // Handle other methods
         http_response_code(405);
         echo json_encode([
             'status' => 'error',
@@ -62,7 +76,6 @@ try {
         exit();
     }
 } catch (Exception $e) {
-    // Error handling
     http_response_code(500);
     echo json_encode([
         'status' => 'error',
