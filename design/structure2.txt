@@ -60,10 +60,5 @@ backend/ (Model + Controller Layers)
 │       └── ValidationHelper.php
 ├── config/
 │   ├── database.php
-│   └── app.php
-├── routes/
-│   ├── api.php
-│   └── admin.php
-└── tests/
-    ├── Unit/
-    └── Feature/
+│   index.php
+

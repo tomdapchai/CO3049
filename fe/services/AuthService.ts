@@ -3,7 +3,7 @@ export const Login = async (
     username: string,
     password: string
 ): Promise<{ message: string; status: string; userId: string }> => {
-    const response = await api.post(`api/login.php`, {
+    const response = await api.post(`api/auth/login.php`, {
         username,
         password,
     });
@@ -21,7 +21,7 @@ export const Register = async (
     username: string,
     password: string
 ): Promise<{ message: string; status: string }> => {
-    const response = await api.post("api/register.php", {
+    const response = await api.post("api/auth/register.php", {
         username,
         password,
     });

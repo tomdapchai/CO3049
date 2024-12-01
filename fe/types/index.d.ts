@@ -1,22 +1,22 @@
-export interface ProductView {
+export type ProductView = {
     slug: string;
     name: string;
     price: number;
     image: string;
     overview: string;
-}
+};
 
-export interface Product {
+export type Product = {
     slug: string;
     name: string;
     price: number;
     overview: string;
     description: string;
     tags: string[];
-}
+};
 
 // this will be the return type of getProduct(slug: string): Promise<ProductDetail>
-export interface ProductDetail {
+export type ProductDetail = {
     slug: string;
     name: string;
     price: number;
@@ -25,30 +25,30 @@ export interface ProductDetail {
     description: string;
     reviews: Review[];
     tags: string[];
-}
+};
 
-export interface ProductImage {
+export type ProductImage = {
     imageId: string;
     src: string;
     productId: string;
-}
+};
 
-export interface BlogImage {
+export type BlogImage = {
     imageId: string;
     src: string;
     blogId: string;
-}
+};
 
-export interface Review {
+export type Review = {
     reviewId: string;
     productId?: string;
     comment: string;
     rating: number;
     reviewer: string;
     date: string;
-}
+};
 
-export interface Order {
+export type Order = {
     orderId: string;
     products: {
         productId: string;
@@ -58,9 +58,9 @@ export interface Order {
     }[];
     status: string;
     createdAt: Date;
-}
+};
 
-export interface productOrder {
+export type productOrder = {
     productId: string;
     quantity: number;
     color: string;
@@ -68,4 +68,4 @@ export interface productOrder {
     productName: string;
     productImage: string;
     productPrice: number;
-}
+};
