@@ -1,16 +1,19 @@
 <?php
-require_once '../config/database.php';
+require_once '../../config/database.php';
 
 class User {
-    private $conn;
+    private $db;
     private $table = 'user';
-    private $userId;
-    private $username;
-    private $password;
-    private $name;
-    private $email;
-    private $phone;
-    private $address;
 
+    public function __construct($db) {
+        $this->db = $db;
+    }
+
+    public function getAllUsers() {
+        $query = "SELECT * FROM $this->table";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->rowCount() > 0 ? $stmt : false;
+    }
 }
-?>
+

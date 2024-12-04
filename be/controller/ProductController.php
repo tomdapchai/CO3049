@@ -36,6 +36,12 @@ class ProductController {
 
     public function createProduct($data) {
         $productModel = new ProductModel($this->db);
+        // check if product already exists
+        if ($productModel->getProductById($data['productId'])) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Product already exists']);
+            return;
+        }
         if ($productModel->createProduct($data)) {
             http_response_code(201);
             echo json_encode(['status' => 'success', 'message' => 'Product created']);
@@ -47,6 +53,13 @@ class ProductController {
 
     public function updateProduct($productId, $data) {
         $productModel = new ProductModel($this->db);
+        // check if product exists
+        if (!$productModel->getProductById($productId)) {
+            http_response_code(404);
+            echo json_encode(['status' => 'error', 'message' => 'Product not found']);
+            return;
+        }
+
         if ($productModel->updateProduct($productId, $data)) {
             echo json_encode(['status' => 'success', 'message' => 'Product updated']);
         } else {

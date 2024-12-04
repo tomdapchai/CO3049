@@ -29,21 +29,31 @@ try {
             break;
 
         case 'PUT':
-            if (!isset($_GET['slug']) || !$input) {
+            if (!isset($_GET['slug']) && !$input) {
                 http_response_code(400);
                 echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
+                exit();
+            }
+            if (!isset($_GET['slug'])) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => 'Product slug is required']);
+                exit();
+            }
+            if (!isset($input)) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => 'Invalid JSON input']);
                 exit();
             }
             $productController->updateProduct($_GET['slug'], $input);
             break;
 
         case 'DELETE':
-            if (!isset($_GET['id'])) {
+            if (!isset($_GET['slug'])) {
                 http_response_code(400);
                 echo json_encode(['status' => 'error', 'message' => 'Product ID is required']);
                 exit();
             }
-            $productController->deleteProduct($_GET['id']);
+            $productController->deleteProduct($_GET['slug']);
             break;
 
         default:

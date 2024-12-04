@@ -45,7 +45,7 @@ class ProductModel {
             $data['price'],
             $data['shortDescription'],
             $data['fullDescription'],
-            $data['tags'],
+            json_encode($data['tags']),
             $productId
         ]);
     }

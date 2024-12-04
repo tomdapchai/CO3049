@@ -17,7 +17,7 @@ try {
         if ($stmt->rowCount() === 0) {
             $response = [
                 'status' => 'error',
-                'message' => 'User not found'
+                'message' => 'Incorrect username or password'
             ];
             http_response_code(200);
             echo json_encode($response);
@@ -32,7 +32,7 @@ try {
         if (!password_verify($data['password'], $user['password'])) {
             $response = [
                 'status' => 'error',
-                'message' => 'Password incorrect'
+                'message' => 'Incorrect username or password'
             ];
             http_response_code(200);
             echo json_encode($response);
