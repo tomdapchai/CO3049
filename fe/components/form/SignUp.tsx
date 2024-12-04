@@ -66,7 +66,7 @@ const SignUp = () => {
                 }
             });
         } catch (error) {
-            console.error(error);
+            console.log(error);
             // suppose to display error message here
         }
     }
