@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 01, 2024 at 02:29 AM
+-- Generation Time: Dec 05, 2024 at 05:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -35,6 +35,13 @@ CREATE TABLE `blog` (
   `tags` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`tags`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `blog`
+--
+
+INSERT INTO `blog` (`blogId`, `title`, `content`, `posted`, `tags`) VALUES
+('new-blog-1', 'This is new blog', 'tét tét tét', '0000-00-00 00:00:00', '[\"tag1\",\"tag2\",\"tag3\"]');
+
 -- --------------------------------------------------------
 
 --
@@ -46,6 +53,13 @@ CREATE TABLE `blog_image` (
   `blogId` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `blog_image`
+--
+
+INSERT INTO `blog_image` (`imageId`, `blogId`) VALUES
+('blog-image-1', 'new-blog-1');
+
 -- --------------------------------------------------------
 
 --
@@ -55,6 +69,7 @@ CREATE TABLE `blog_image` (
 CREATE TABLE `contact` (
   `contactId` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `phone_number` varchar(20) NOT NULL,
   `further_info` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -70,6 +85,16 @@ CREATE TABLE `image` (
   `src` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `image`
+--
+
+INSERT INTO `image` (`imageId`, `src`) VALUES
+('blog-image-1', 'blogImg.src'),
+('new-test', 'source-23.com'),
+('new-test-2', 'source.com'),
+('new-test-desc', 'source.com');
+
 -- --------------------------------------------------------
 
 --
@@ -80,10 +105,19 @@ CREATE TABLE `order` (
   `orderId` int(11) NOT NULL,
   `userId` int(11) NOT NULL,
   `products` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`products`)),
-  `orderAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
   `phone_number` varchar(20) NOT NULL,
-  `address` varchar(500) NOT NULL
+  `address` varchar(500) NOT NULL,
+  `status` enum('completed','pending','cancelled') NOT NULL DEFAULT 'pending',
+  `completedAt` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order`
+--
+
+INSERT INTO `order` (`orderId`, `userId`, `products`, `createdAt`, `phone_number`, `address`, `status`, `completedAt`) VALUES
+(2, 2, '[{\"productId\":\"test-product-1\",\"quantity\":5}]', '2024-12-05 17:46:05', '1234567', '01 Street 07', 'completed', '2024-12-05 12:32:34');
 
 -- --------------------------------------------------------
 
@@ -95,10 +129,20 @@ CREATE TABLE `product` (
   `productId` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `price` decimal(10,2) NOT NULL,
+  `size` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `color` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `short_description` varchar(500) NOT NULL,
   `full_description` varchar(1000) DEFAULT NULL,
   `tags` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`tags`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product`
+--
+
+INSERT INTO `product` (`productId`, `name`, `price`, `size`, `color`, `short_description`, `full_description`, `tags`) VALUES
+('test-product-1', 'Test Product 1', 10000.00, '[\"L\",\"XL\"]', '[\"black\",\"purple\"]', 'This is test', 'Longer one', '[\"tag1\",\"tag2\",\"tag3\"]'),
+('test-product-2', 'Test Product 2', 10000.00, '[\"L\",\"XL\",\"XS\"]', '[\"black\",\"purple\",\"yellow\"]', 'This is test', 'Longer one', '[\"tag1\",\"tag2\",\"tag3\"]');
 
 -- --------------------------------------------------------
 
@@ -108,8 +152,18 @@ CREATE TABLE `product` (
 
 CREATE TABLE `product_image` (
   `imageId` varchar(255) NOT NULL,
-  `productId` varchar(255) NOT NULL
+  `productId` varchar(255) NOT NULL,
+  `type` enum('product','description') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product_image`
+--
+
+INSERT INTO `product_image` (`imageId`, `productId`, `type`) VALUES
+('new-test', 'test-product-1', 'product'),
+('new-test-2', 'test-product-2', 'description'),
+('new-test-desc', 'test-product-1', 'description');
 
 -- --------------------------------------------------------
 
@@ -124,6 +178,14 @@ CREATE TABLE `review` (
   `rating` int(11) NOT NULL,
   `userId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `review`
+--
+
+INSERT INTO `review` (`reviewId`, `productId`, `content`, `rating`, `userId`) VALUES
+(1, 'test-product-1', 'oops bad one', 2, 2),
+(3, 'test-product-2', 'awesome', 5, 4);
 
 -- --------------------------------------------------------
 
@@ -146,10 +208,21 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
   `street` varchar(255) DEFAULT NULL,
-  `city` varchar(255) DEFAULT NULL
+  `city` varchar(255) DEFAULT NULL,
+  `status` enum('active','banned') NOT NULL DEFAULT 'active',
+  `cart` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`cart`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`userId`, `password`, `name`, `username`, `email`, `phone_number`, `street`, `city`, `status`, `cart`) VALUES
+(2, '$2y$10$KQZUryeXXoAFrDMz8tcuOuc7KATco2rta/T4JR7tKipQfISlfVdGK', 'Thanh Tâm', 'test4', 'vothanhtam2407@gmail.com', '0935671005', '01 Street 06, An Phu Ward', 'HCM', 'active', '[{\"quantity\":1,\"color\":\"purple\",\"size\":\"L\",\"productName\":\"Leviosa\",\"productId\":\"leviosa\",\"productImage\":\"\\/images\\/sample-products\\/2.png\",\"productPrice\":2000000},{\"quantity\":1,\"color\":\"purple\",\"size\":\"L\",\"productName\":\"Lolito\",\"productId\":\"lolito\",\"productImage\":\"\\/images\\/sample-products\\/3.png\",\"productPrice\":3000000},{\"quantity\":1,\"color\":\"purple\",\"size\":\"L\",\"productName\":\"Respira\",\"productId\":\"respira\",\"productImage\":\"\\/images\\/sample-products\\/4.jpg\",\"productPrice\":4000000}]'),
+(4, '$2y$10$diRm8Eb/cbnPfJlY70b1CObvGbdFb8LW2unGDZUjf/2Nau3MZmlGC', NULL, 'test2', NULL, NULL, NULL, NULL, 'active', NULL);
 
 --
 -- Indexes for dumped tables
@@ -234,19 +307,19 @@ ALTER TABLE `contact`
 -- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
-  MODIFY `orderId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `orderId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `review`
 --
 ALTER TABLE `review`
-  MODIFY `reviewId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `reviewId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -256,8 +329,8 @@ ALTER TABLE `user`
 -- Constraints for table `blog_image`
 --
 ALTER TABLE `blog_image`
-  ADD CONSTRAINT `blog_image_ibfk_1` FOREIGN KEY (`imageId`) REFERENCES `image` (`imageId`) ON UPDATE CASCADE ON DELETE CASCADE,
-  ADD CONSTRAINT `blog_image_ibfk_2` FOREIGN KEY (`blogId`) REFERENCES `blog` (`blogId`) ON UPDATE CASCADE ON DELETE CASCADE;
+  ADD CONSTRAINT `blog_image_ibfk_1` FOREIGN KEY (`imageId`) REFERENCES `image` (`imageId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `blog_image_ibfk_2` FOREIGN KEY (`blogId`) REFERENCES `blog` (`blogId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `order`
@@ -269,14 +342,14 @@ ALTER TABLE `order`
 -- Constraints for table `product_image`
 --
 ALTER TABLE `product_image`
-  ADD CONSTRAINT `product_image_ibfk_1` FOREIGN KEY (`imageId`) REFERENCES `image` (`imageId`) ON UPDATE CASCADE ON DELETE CASCADE,
-  ADD CONSTRAINT `product_image_ibfk_2` FOREIGN KEY (`productId`) REFERENCES `product` (`productId`) ON UPDATE CASCADE ON DELETE CASCADE;
+  ADD CONSTRAINT `product_image_ibfk_1` FOREIGN KEY (`imageId`) REFERENCES `image` (`imageId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `product_image_ibfk_2` FOREIGN KEY (`productId`) REFERENCES `product` (`productId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `review`
 --
 ALTER TABLE `review`
-  ADD CONSTRAINT `review_ibfk_1` FOREIGN KEY (`productId`) REFERENCES `product` (`productId`) ON UPDATE CASCADE ON DELETE CASCADE,
+  ADD CONSTRAINT `review_ibfk_1` FOREIGN KEY (`productId`) REFERENCES `product` (`productId`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`);
 COMMIT;
 
