@@ -1,6 +1,6 @@
 <?php
 require_once '../../model/BlogModel.php';
-
+include_once '../../model/TagModel.php';
 class BlogController {
     private $db;
 
@@ -41,6 +41,13 @@ class BlogController {
             echo json_encode(['status' => 'error', 'message' => 'Blog with id '.$data['blogId'].' already exists']);
             return;
         }
+        // check if tags exists. If not, create new tags
+        $tagModel = new TagModel($this->db);
+        foreach ($data['tags'] as $tag) {
+            if (!$tagModel->getTagByName($tag)) {
+                $tagModel->createTag($tag);
+            }
+        }
 
         if ($blogModel->createBlog($data)) {
             http_response_code(201);
@@ -58,6 +65,13 @@ class BlogController {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Blog not found']);
             return;
+        }
+        // check if tags exists. If not, create new tags
+        $tagModel = new TagModel($this->db);
+        foreach ($data['tags'] as $tag) {
+            if (!$tagModel->getTagByName($tag)) {
+                $tagModel->createTag($tag);
+            }
         }
 
         if ($blogModel->updateBlog($blogId, $data)) {

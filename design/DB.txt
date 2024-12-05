@@ -14,6 +14,8 @@ PRODUCT:
 ├── price number
 ├── short_description varchar
 ├── full_description? varchar
+├── size JSON(array), ["L", "XL"]
+├── color JSON, ["red", "green",...]
 └── tags?: JSON ([tag1, tag2,...]) @references to TAG.tag_name
 REVIEW: (reviews of product)
 ├── reviewId: int @primary
@@ -46,7 +48,7 @@ BLOG_IMAGE: (for blog cover image)
 ORDER: (for storing orders by users)
 ├── orderId: int @primary (AUTO INCREMENT)
 ├── userId: @references USER.userId
-├── products: JSON {productId: @references PRODUCT.productId, quantity: number}[]
+├── products: JSON {productId: @references PRODUCT.productId, size, color: string, quantity: number}[]
 ├── orderAt: datetime
 ├── phone_number: string
 └── address: varchar

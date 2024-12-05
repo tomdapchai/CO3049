@@ -103,9 +103,14 @@ class ImageController {
             echo json_encode(['status' => 'error', 'message' => 'Image with name '.$data['imageId'].' already exists']);
             return;
         }
-        
+        if ($data['type'] != 'product' && $data['type'] != 'description') {
+            http_response_code(404);
+            echo json_encode(['status'=> 'error', 'message'=> 'Invalid type']);
+            return;
+        }
+
         $imageModel->createImage($data['imageId'], $data['src']);
-        $imageModel->createProductImage($slug, $data['imageId']);
+        $imageModel->createProductImage($slug, $data['imageId'], $data['type']);
         echo json_encode(['status' => 'success', 'message' => 'Product image created']);
     }
 

@@ -34,11 +34,7 @@ try {
         $response = [
             'userId' => $userId,
             'status' => 'success',
-            'message' => 'User registered successfully',
-            'receivedData' => [
-                'username' => $data['username'] ?? null,
-                'password' => $data['password'] ?? null,
-            ]
+            'message' => 'User registered successfully'
         ];
         
         http_response_code(200);

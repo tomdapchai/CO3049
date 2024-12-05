@@ -55,12 +55,12 @@ class ImageModel {
     }
 
     // product images
-    public function createProductImage($productId, $imageId) {
+    public function createProductImage($productId, $imageId, $type) {
         // check if productId exists (this will be executed on controller)
 
-        $query = "INSERT INTO product_image (productId, imageId) VALUES (?, ?)";
+        $query = "INSERT INTO product_image (productId, imageId, type) VALUES (?, ?, ?)";
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([$productId, $imageId]);
+        return $stmt->execute([$productId, $imageId, $type]);
     }
 
     public function getImagesFromProduct($productId) {

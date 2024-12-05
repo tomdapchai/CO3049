@@ -1,6 +1,6 @@
 <?php
-require '../../model/ProductModel.php';
-
+require_once '../../model/ProductModel.php';
+include_once '../../model/TagModel.php';
 class ProductController {
     private $db;
 
@@ -36,6 +36,14 @@ class ProductController {
 
     public function createProduct($data) {
         $productModel = new ProductModel($this->db);
+        // check if tags exists. If not, create new tags
+        $tagModel = new TagModel($this->db);
+        foreach ($data['tags'] as $tag) {
+            if (!$tagModel->getTagByName($tag)) {
+                $tagModel->createTag($tag);
+            }
+        }
+
         // check if product already exists
         if ($productModel->getProductById($data['productId'])) {
             http_response_code(400);
@@ -58,6 +66,14 @@ class ProductController {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Product not found']);
             return;
+        }
+
+        // check if tags exists. If not, create new tags
+        $tagModel = new TagModel($this->db);
+        foreach ($data['tags'] as $tag) {
+            if (!$tagModel->getTagByName($tag)) {
+                $tagModel->createTag($tag);
+            }
         }
 
         if ($productModel->updateProduct($productId, $data)) {
