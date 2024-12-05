@@ -50,3 +50,4 @@ ORDER: (for storing orders by users)
 ├── orderAt: datetime
 ├── phone_number: string
 └── address: varchar
+└── status: 'completed'|'pending'|'rejected'
