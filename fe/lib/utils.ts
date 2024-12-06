@@ -43,7 +43,14 @@ export function convertToReact(input: string): string {
         },
         {
             regex: /P<([^>]+)>/g,
-            replace: '<p class="text-base text-black">$1</p>',
+            // Custom logic for line breaks
+            // @ts-ignore
+            replace: (_, content) => {
+                // @ts-ignore
+                const lines = content.split(/\n/).map((line) => line.trim());
+                const formattedLines = lines.join("<br/>");
+                return `<p class="text-base text-black">${formattedLines}</p>`;
+            },
         },
     ];
 

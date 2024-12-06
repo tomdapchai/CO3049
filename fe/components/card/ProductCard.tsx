@@ -8,7 +8,14 @@ import Link from "next/link";
 import { ProductView } from "@/types";
 import { useState, useEffect } from "react";
 
-const ProductCard = ({ name, overview, price, image, slug }: ProductView) => {
+const ProductCard = ({
+    name,
+    overview,
+    price,
+    image,
+    slug,
+    rating,
+}: ProductView) => {
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const { addToCart } = useCart();
     useEffect(() => {

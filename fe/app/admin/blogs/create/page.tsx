@@ -32,8 +32,9 @@ import { convertToReact } from "@/lib/utils";
 import Image from "next/image";
 import { uploadToCDN } from "@/lib/utils";
 import { CreateBlog } from "@/services/BlogService";
+import { createBlogImage } from "@/services/ImageService";
 import { Blog } from "@/types";
-type UploadedImage = {
+export type UploadedImage = {
     alt: string;
     src: string;
     file: File;
@@ -203,21 +204,41 @@ export default function BlogCreator() {
                 title: values.title,
                 content: convertedContent,
                 tags: values.tags,
-            }).then((res) => {
-                if ("error" in res) {
-                    toast({
-                        title: "Error",
-                        description:
-                            "Something went wrong while creating the blog.",
-                        variant: "destructive",
+            })
+                .then((res) => {
+                    if ("error" in res) {
+                        toast({
+                            title: "Error",
+                            description:
+                                "Something went wrong while creating the blog.",
+                            variant: "destructive",
+                        });
+                    } else {
+                        toast({
+                            title: "Blog Created",
+                            description:
+                                "Your blog has been successfully created!",
+                        });
+                    }
+                })
+                .then(() => {
+                    // create blog images
+                    finalUploadedImages.forEach(async (image) => {
+                        await createBlogImage(values.blogId, {
+                            src: image.src,
+                            imageId: image.alt,
+                        }).then((res) => {
+                            if ("error" in res) {
+                                toast({
+                                    title: "Error",
+                                    description:
+                                        "Something went wrong while creating the blog images.",
+                                    variant: "destructive",
+                                });
+                            }
+                        });
                     });
-                } else {
-                    toast({
-                        title: "Blog Created",
-                        description: "Your blog has been successfully created!",
-                    });
-                }
-            });
+                });
         } catch (error) {
             console.error("Error in onSubmit:", error);
             toast({

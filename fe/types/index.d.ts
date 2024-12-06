@@ -4,6 +4,7 @@ export type ProductView = {
     price: number;
     image: string;
     overview: string;
+    rating: number;
 };
 
 export type Product = {
@@ -22,11 +23,18 @@ export type ProductDetail = {
     slug: string;
     name: string;
     price: number;
-    images: ProductImage[];
+    size?: string[];
+    color?: string[];
+    images: Image[];
     overview: string;
     description: string;
     reviews: Review[];
     tags: string[];
+};
+
+export type ImageDetail = {
+    imageId: string;
+    src: string;
 };
 
 export type ProductImage = {
@@ -35,10 +43,13 @@ export type ProductImage = {
     productId: string;
 };
 
+export type ProductImageCreate = Omit<ProductImage, "productId"> & {
+    type: string;
+};
+
 export type BlogImage = {
     imageId: string;
     src: string;
-    blogId: string;
 };
 
 export type Review = {
@@ -126,6 +137,14 @@ export type Blog = {
     title: string;
     content: string;
     tags?: string[]; // JSON array referencing TAG.tagName
+};
+
+export type BlogTrue = {
+    blogId: string; // slug
+    title: string;
+    content: string;
+    tags: string[];
+    posted: string;
 };
 
 export type Tag = {

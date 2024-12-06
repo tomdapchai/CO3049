@@ -1,22 +1,50 @@
-import Image from "next/image"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { SearchInput } from "@/components/ui/searchinput"
-import { Button } from "@/components/ui/button"
-import { Pagination, PaginationItem, PaginationLink } from "@/components/ui/pagination"
-import { posts } from "@/lib/constants"
-
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { SearchInput } from "@/components/ui/searchinput";
+import { Button } from "@/components/ui/button";
+import {
+    Pagination,
+    PaginationItem,
+    PaginationLink,
+} from "@/components/ui/pagination";
+import { posts } from "@/lib/constants";
+import { GetAllBlogs } from "@/services/BlogService";
+import { useEffect, useState } from "react";
+import { Blog, BlogTrue, ImageDetail } from "@/types";
+import { getImagesFromBlog } from "@/services/ImageService";
+import parser from "html-react-parser";
+import { useRouter } from "next/navigation";
 // todo: implement pagination
 
-const mockBlogPosts = Array.from({ length: 30}, (_, i) => ({
-    title: `${posts[i%3].title}`,
-    author: "Admin",
-    date: `${Math.floor(Math.random())} Nov 2022`,
-    tag: "Wood",
-    image: `/images/blog-posts/post-${i%3}.png`,
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus mauris vitae ultricies leo integer malesuada nunc. In nulla posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar mattis nunc sed blandit libero. Pellentesque elit ullamcorper dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean euismod elementum."}
-))
-
 export default function BlogPage() {
+    const [posts, setPosts] = useState<BlogTrue[]>([]);
+    const [images, setImages] = useState<ImageDetail[]>([]);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+    useEffect(() => {
+        GetAllBlogs().then((data) => {
+            if ("error" in data) {
+                console.error(data.error);
+                return;
+            } else {
+                setPosts(data);
+            }
+            setLoading(false);
+        });
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div className="container mx-auto px-4 py-8">
             <header className="text-center mb-8">
@@ -27,14 +55,14 @@ export default function BlogPage() {
                 <main className="flex-1 space-y-8">
                     {posts.map((post, index) => (
                         <Card key={index} className="flex flex-col">
-                            <Image
+                            {/* <Image
                                 src={post.image}
                                 alt={post.title}
                                 width={400}
                                 height={200}
                                 className="object-cover md:w-full py-6 px-10"
-                            />
-                            <CardContent className="py-6 px-10">
+                            /> */}
+                            <CardContent className="py-6 px-10 h-[600px] overflow-hidden">
                                 <p className="text-md text-muted-foreground">
                                     <Image
                                         src="/images/icons/admin.svg"
@@ -43,7 +71,7 @@ export default function BlogPage() {
                                         height={20}
                                         className="inline-block m-1 w-6"
                                     />
-                                    {post.author} | 
+                                    {"admin"} |
                                     <Image
                                         src="/images/icons/calendar.svg"
                                         alt="calendar-icon"
@@ -51,7 +79,7 @@ export default function BlogPage() {
                                         height={20}
                                         className="inline-block m-1 w-6"
                                     />
-                                    {post.date} |
+                                    {post.posted} |
                                     <Image
                                         src="/images/icons/tag.svg"
                                         alt="calendar-icon"
@@ -59,13 +87,26 @@ export default function BlogPage() {
                                         height={20}
                                         className="inline-block m-1 w-6"
                                     />
-                                    {post.tag}
+                                    {
+                                        // @ts-ignore
+                                        post.tags.join(", ")
+                                    }
                                 </p>
                                 <CardHeader className="px-0">
-                                    <CardTitle className="text-2xl font-bold">{post.title}</CardTitle>
+                                    <CardTitle className="text-2xl font-bold">
+                                        {post.title}
+                                    </CardTitle>
                                 </CardHeader>
-                                <p className="text-md text-muted-foreground">{post.description}</p>
-                                <Button variant="link" className="text-md mt-4 px-0">
+                                <CardDescription className="text-md text-muted-foreground line-clamp-6 h-[400px] overflow-hidden">
+                                    {parser(post.content)}
+                                </CardDescription>
+
+                                <Button
+                                    variant="link"
+                                    className="text-md mt-4 px-0"
+                                    onClick={() => {
+                                        router.push(`/blog/${post.blogId}`);
+                                    }}>
                                     Read More
                                 </Button>
                             </CardContent>
@@ -88,7 +129,10 @@ export default function BlogPage() {
                 </main>
                 <aside className="w-full md:w-1/3 space-y-8">
                     <div>
-                        <SearchInput placeholder="Search..." className="w-full" />
+                        <SearchInput
+                            placeholder="Search..."
+                            className="w-full"
+                        />
                     </div>
                     <div>
                         <h2 className="text-xl font-bold mb-4">Categories</h2>
@@ -109,6 +153,5 @@ export default function BlogPage() {
                 </aside>
             </div>
         </div>
-    )
+    );
 }
-

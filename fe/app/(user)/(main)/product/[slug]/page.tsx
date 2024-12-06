@@ -30,17 +30,14 @@ const mockProductDetail: ProductDetail = {
         {
             imageId: "img1",
             src: "/images/sample-products/4.jpg",
-            productId: "modern-desk-chair",
         },
         {
             imageId: "img2",
             src: "https://via.placeholder.com/300x300.png?text=Modern+Desk+Chair+2",
-            productId: "modern-desk-chair",
         },
         {
             imageId: "img3",
             src: "https://via.placeholder.com/300x300.png?text=Modern+Desk+Chair+3",
-            productId: "modern-desk-chair",
         },
     ],
     overview:

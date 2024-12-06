@@ -43,6 +43,7 @@ const mockProducts: ProductView[] = Array.from({ length: 30 }, (_, i) => ({
     price: Math.floor(Math.random() * 100000) + 1,
     image: `/images/sample-products/1.png`,
     overview: `This is an overview for Product ${i + 1}.`,
+    rating: 5,
 }));
 
 const page = () => {
@@ -155,6 +156,7 @@ const page = () => {
                             price={product.price}
                             slug={product.slug}
                             image={product.image}
+                            rating={5}
                         />
                     ))}
                 </div>

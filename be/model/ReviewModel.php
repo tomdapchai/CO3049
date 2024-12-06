@@ -38,7 +38,7 @@ class ReviewModel {
             $data['productId'],
             $data['userId'],
             $data['rating'],
-            $data['content']
+            $data['comment']
         ]);
     }
 
@@ -48,7 +48,7 @@ class ReviewModel {
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['rating'],
-            $data['content'],
+            $data['comment'],
             $reviewId
         ]);
     }

@@ -1,12 +1,24 @@
 import api from "@/api";
-import { Blog } from "@/types";
+import { Blog, BlogTrue } from "@/types";
 
-export const GetAllBlogs = async (): Promise<Blog[] | { error: string }> => {
+export const GetAllBlogs = async (): Promise<
+    BlogTrue[] | { error: string }
+> => {
     try {
         const response = await api.get("api/blog/routes.php");
 
         console.log("Backend Response:", response.data);
-        return response.data;
+        const newResponse: BlogTrue[] = response.data.data.map((blog: any) => {
+            return {
+                blogId: blog.blogId,
+                title: blog.title,
+                content: blog.content,
+                tags: JSON.parse(blog.tags),
+                posted: blog.posted,
+            };
+        });
+
+        return newResponse;
     } catch (error) {
         console.log("Error:", error);
         return { error: "An error occurred while fetching blogs" };
@@ -15,12 +27,20 @@ export const GetAllBlogs = async (): Promise<Blog[] | { error: string }> => {
 
 export const GetBlogById = async (
     blogId: string
-): Promise<Blog | { error: string }> => {
+): Promise<BlogTrue | { error: string }> => {
     try {
         const response = await api.get(`api/blog/routes.php?blogId=${blogId}`);
 
         console.log("Backend Response:", response.data);
-        return response.data;
+        const { title, content, tags, posted } = response.data.data;
+
+        return {
+            blogId,
+            title,
+            content,
+            tags: JSON.parse(tags),
+            posted,
+        };
     } catch (error) {
         console.log("Error:", error);
         return { error: "An error occurred while fetching blog" };

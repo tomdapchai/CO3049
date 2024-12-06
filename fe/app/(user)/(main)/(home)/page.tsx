@@ -73,6 +73,7 @@ const page = () => {
                                 price={product.price}
                                 image={product.image}
                                 slug={product.slug}
+                                rating={5}
                             />
                         ))}
                     </div>

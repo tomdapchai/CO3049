@@ -101,7 +101,6 @@ export const productImages = [
 export const posts = [
     {
         title: "Going all-in with millennial design",
-        author: "Admin",
         date: "10 Nov 2022",
         tag: "Wood",
         image: "/images/blog-posts/post-1.png",
@@ -110,7 +109,6 @@ export const posts = [
     },
     {
         title: "Exploring new ways of decorating",
-        author: "Admin",
         date: "12 Nov 2022",
         tag: "Handmade",
         image: "/images/blog-posts/post-2.png",
@@ -119,7 +117,6 @@ export const posts = [
     },
     {
         title: "Handmade pieces that took time to make",
-        author: "Admin",
         date: "15 Nov 2022",
         tag: "Wood",
         image: "/images/blog-posts/post-3.png",
