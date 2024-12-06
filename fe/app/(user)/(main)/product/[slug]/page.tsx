@@ -45,23 +45,8 @@ const mockProductDetail: ProductDetail = {
     ],
     overview:
         "A stylish and ergonomic desk chair perfect for home and office use.",
-    description: `
-      <p>The Modern Desk Chair combines style and comfort with its sleek design and durable materials. 
-      Features include adjustable height, 360-degree swivel, and a sturdy base for maximum stability.
-      Suitable for long hours of work or study, this chair provides excellent lumbar support and cushioning.</p>
-
-      <Image
-                            src="/images/sample-products/4.jpg"
-                            alt="Product view 1"
-                            width=600
-                            height=400
-                            className="rounded-lg"
-                        />
-
-                        <p>The Modern Desk Chair combines style and comfort with its sleek design and durable materials. 
-      Features include adjustable height, 360-degree swivel, and a sturdy base for maximum stability.
-      Suitable for long hours of work or study, this chair provides excellent lumbar support and cushioning.</p>
-    `,
+    description:
+        '<div class="w-full flex flex-col justify-center items-start"><h1 class="text-2xl font-bold mb-4">This is heading</h1>\n<div class="w-full flex justify-center items-center">\n            <Image src="https://res.cloudinary.com/dgwujcdba/image/upload/v1733472608/bgwtlm4p6pyjcygwjlr7.png" alt="s3" width="400" height="300" class="rounded-lg" /></div>\n<p class="text-base text-black">Hello</p>\n<div class="w-full flex justify-center items-center">\n            <Image src="https://res.cloudinary.com/dgwujcdba/image/upload/v1733472608/vflpcva8wsmndcbjapzy.png" alt="hcmut" width="200" height="200" class="rounded-lg" /></div></div>',
     reviews: [
         {
             reviewId: "1",
@@ -413,8 +398,10 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                         Reviews ({product.reviews.length})
                     </TabsTrigger>
                 </TabsList>
-                <TabsContent value="description" className="space-y-4 w-full">
-                    <div className="text-muted-foreground flex flex-col justify-start items-center space-y-2">
+                <TabsContent
+                    value="description"
+                    className="space-y-4 flex w-full justify-center items-center">
+                    <div className="w-[800px] flex justify-center items-center space-y-2">
                         {parse(product.description)}
                     </div>
                 </TabsContent>

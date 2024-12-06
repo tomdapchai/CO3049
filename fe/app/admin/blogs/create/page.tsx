@@ -31,6 +31,8 @@ import TagInput from "@/components/form/TagInput";
 import { convertToReact } from "@/lib/utils";
 import Image from "next/image";
 import { uploadToCDN } from "@/lib/utils";
+import { CreateBlog } from "@/services/BlogService";
+import { Blog } from "@/types";
 type UploadedImage = {
     alt: string;
     src: string;
@@ -38,7 +40,7 @@ type UploadedImage = {
 };
 
 const formSchema = z.object({
-    blogName: z.string().min(1, "Blog name is required"),
+    title: z.string().min(1, "Blog title is required"),
     blogId: z
         .string()
         .min(1, "Blog ID is required")
@@ -57,7 +59,7 @@ export default function BlogCreator() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            blogName: "",
+            title: "",
             blogId: "",
             content: "",
             tags: [],
@@ -66,7 +68,8 @@ export default function BlogCreator() {
 
     const handleImageUpload = (file: File) => {
         const blobURL = URL.createObjectURL(file);
-        const alt = file.name;
+        // take the file name and remove the extension, there would be file with . in the middle so to be saft, split at the last dot
+        const alt = file.name.split(".").slice(0, -1).join(".");
         setUploadedImages((prev) => [...prev, { alt, src: blobURL, file }]);
     };
 
@@ -118,10 +121,31 @@ export default function BlogCreator() {
             // Wait for all images to be uploaded
             const successfulUploads = await Promise.all(
                 uploadedImages.map(async (image) => {
-                    const uploadedImage = await uploadToCDN(image.file);
-                    if (typeof uploadedImage === "string") {
-                        return { alt: image.alt, src: uploadedImage };
-                    } else {
+                    try {
+                        console.log(`Starting upload for image: ${image.alt}`);
+                        const uploadedImage = await uploadToCDN(image.file);
+                        if (typeof uploadedImage === "string") {
+                            console.log(
+                                `Successfully uploaded image: ${image.alt}`
+                            );
+                            return { alt: image.alt, src: uploadedImage };
+                        } else {
+                            console.error(
+                                `Failed to upload image: ${image.alt}`,
+                                uploadedImage
+                            );
+                            toast({
+                                title: "Error",
+                                description: `Failed to upload image "${image.alt}"`,
+                                variant: "destructive",
+                            });
+                            return null;
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Error uploading image "${image.alt}":`,
+                            error
+                        );
                         toast({
                             title: "Error",
                             description: `Failed to upload image "${image.alt}"`,
@@ -132,14 +156,12 @@ export default function BlogCreator() {
                 })
             );
 
-            // Filter out null values (failed uploads)
             const finalUploadedImages = successfulUploads.filter(
                 (image) => image !== null
             );
 
             console.log("uploaded", finalUploadedImages);
 
-            // Use the uploaded images and converted content
             let processedContent = values.content;
             const imgRegex = /IMG<([^,]+)(?:,\s*(\d+))?(?:,\s*(\d+))?>/g;
             processedContent = processedContent.replace(
@@ -165,13 +187,36 @@ export default function BlogCreator() {
             const convertedContent = convertToReact(processedContent);
             console.log({
                 ...values,
-                finalUploadedImages, // Attach successfully uploaded images
+                finalUploadedImages,
                 convertedContent,
             });
 
-            toast({
-                title: "Blog Created",
-                description: "Your blog has been successfully created!",
+            console.log({
+                blogId: values.blogId,
+                title: values.title,
+                content: convertedContent,
+                tags: values.tags,
+            });
+
+            await CreateBlog({
+                blogId: values.blogId,
+                title: values.title,
+                content: convertedContent,
+                tags: values.tags,
+            }).then((res) => {
+                if ("error" in res) {
+                    toast({
+                        title: "Error",
+                        description:
+                            "Something went wrong while creating the blog.",
+                        variant: "destructive",
+                    });
+                } else {
+                    toast({
+                        title: "Blog Created",
+                        description: "Your blog has been successfully created!",
+                    });
+                }
             });
         } catch (error) {
             console.error("Error in onSubmit:", error);
@@ -194,7 +239,7 @@ export default function BlogCreator() {
                             <div className="flex gap-4">
                                 <FormField
                                     control={form.control}
-                                    name="blogName"
+                                    name="title"
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormLabel>Blog Name</FormLabel>

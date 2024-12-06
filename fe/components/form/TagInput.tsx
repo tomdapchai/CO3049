@@ -37,7 +37,13 @@ export default function TagInput({ tags, setTags }: TagInputProps) {
                     }}
                     placeholder="Add a tag"
                 />
-                <Button onClick={addTag}>Add</Button>
+                <Button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        addTag();
+                    }}>
+                    Add
+                </Button>
             </div>
             <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
