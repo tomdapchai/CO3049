@@ -24,7 +24,9 @@ class OrderController {
                     'products' => json_decode($products),
                     'phone_number' => $phone_number,
                     'address' => $address,
-                    'status' => $status
+                    'status' => $status,
+                    'createdAt' => $createdAt,
+                    'completedAt' => $completedAt
                 );
                 array_push($orders_arr, $order_item);
             }
@@ -46,7 +48,9 @@ class OrderController {
                     'products' => json_decode($products),
                     'phone_number' => $phone_number,
                     'address' => $address,
-                    'status' => $status
+                    'status' => $status,
+                    'createdAt' => $createdAt,
+                    'completedAt' => $completedAt
                 );
                 array_push($order_arr, $order_item);
             }
@@ -68,7 +72,9 @@ class OrderController {
                     'products' => json_decode($products),
                     'phone_number' => $phone_number,
                     'address' => $address,
-                    'status' => $status
+                    'status' => $status,
+                    'createdAt' => $createdAt,
+                    'completedAt' => $completedAt
                 );
                 array_push($order_arr, $order_item);
             }

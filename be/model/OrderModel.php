@@ -31,14 +31,16 @@ class OrderModel {
     }
 
     public function createOrder($data) {
-        $query = "INSERT INTO $this->table (userId, products, phone_number, address) 
-                  VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO $this->table (userId, products, phone_number, email, address, total) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         $stmt->execute([
             $data['userId'],
             json_encode($data['products']),
-            $data['phone_number'],
-            $data['address']
+            $data['phoneNumber'],
+            $data['email'],
+            $data['address'],
+            $data['total']
         ]);
         // get insertId
         $orderId = $this->db->lastInsertId();
@@ -46,14 +48,16 @@ class OrderModel {
     }
 
     public function updateOrder($orderId, $data) {
-        $query = "UPDATE $this->table SET userId = ?, products = ?, phone_number = ?, address = ?
+        $query = "UPDATE $this->table SET userId = ?, products = ?, phone_number = ?, email = ?, address = ?, total = ?
                   WHERE orderId = ?";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['userId'],
             json_encode($data['products']),
             $data['phone_number'],
+            $data['email'],
             $data['address'],
+            $data['total'],
             $orderId
         ]);
     }

@@ -140,7 +140,7 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
     function onSubmit(data: FormValues) {
         console.log("Form submitted:", data);
 
-        const productOrder = {
+        const productOrderTrue = {
             productId: slug,
             quantity: data.quantity,
             size: data.size,
@@ -150,7 +150,7 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
             productPrice: product ? product.price : 0,
         };
 
-        addToCart(productOrder);
+        addToCart(productOrderTrue);
         // Handle form submission here (e.g., add to cart logic)
     }
 

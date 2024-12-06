@@ -18,7 +18,7 @@ export const links = [
     {
         title: "Blog",
         url: "/blog",
-    }
+    },
 ];
 
 export const categoryImages = [
@@ -41,14 +41,14 @@ export const categoryImages = [
 
 export const productImages = [
     {
-        slug: "syltherine",
+        slug: "test-product-1",
         name: "Syltherine",
         description: "Stylist cafe set",
         price: 1000000,
         image: "/images/sample-products/1.png",
     },
     {
-        slug: "leviosa",
+        slug: "test-product-2",
         name: "Leviosa",
         description: "Elegant chair",
         price: 2000000,
@@ -100,28 +100,30 @@ export const productImages = [
 
 export const posts = [
     {
-      title: "Going all-in with millennial design",
-      author: "Admin",
-      date: "10 Nov 2022",
-      tag: "Wood",
-      image: "/images/blog-posts/post-1.png",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus mauris vitae ultricies leo integer malesuada nunc. In nulla posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar mattis nunc sed blandit libero. Pellentesque elit ullamcorper dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean euismod elementum.",
+        title: "Going all-in with millennial design",
+        author: "Admin",
+        date: "10 Nov 2022",
+        tag: "Wood",
+        image: "/images/blog-posts/post-1.png",
+        description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus mauris vitae ultricies leo integer malesuada nunc. In nulla posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar mattis nunc sed blandit libero. Pellentesque elit ullamcorper dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean euismod elementum.",
     },
     {
-      title: "Exploring new ways of decorating",
-      author: "Admin",
-      date: "12 Nov 2022",
-      tag: "Handmade",
-      image: "/images/blog-posts/post-2.png",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus mauris vitae ultricies leo integer malesuada nunc. In nulla posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar mattis nunc sed blandit libero. Pellentesque elit ullamcorper dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean euismod elementum.",
+        title: "Exploring new ways of decorating",
+        author: "Admin",
+        date: "12 Nov 2022",
+        tag: "Handmade",
+        image: "/images/blog-posts/post-2.png",
+        description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus mauris vitae ultricies leo integer malesuada nunc. In nulla posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar mattis nunc sed blandit libero. Pellentesque elit ullamcorper dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean euismod elementum.",
     },
     {
-      title: "Handmade pieces that took time to make",
-      author: "Admin",
-      date: "15 Nov 2022",
-      tag: "Wood",
-      image: "/images/blog-posts/post-3.png",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus mauris vitae ultricies leo integer malesuada nunc. In nulla posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar mattis nunc sed blandit libero. Pellentesque elit ullamcorper dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean euismod elementum.",
+        title: "Handmade pieces that took time to make",
+        author: "Admin",
+        date: "15 Nov 2022",
+        tag: "Wood",
+        image: "/images/blog-posts/post-3.png",
+        description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus mauris vitae ultricies leo integer malesuada nunc. In nulla posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar mattis nunc sed blandit libero. Pellentesque elit ullamcorper dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean euismod elementum.",
     },
-  ]
-  
+];

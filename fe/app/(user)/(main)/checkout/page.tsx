@@ -2,23 +2,63 @@
 
 import React from "react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { formatPrice } from "@/lib/utils";
-import { PlaceOrder } from "@/lib/placeOrderAction";
-import { useActionState } from "react";
 import Link from "next/link";
 import NavLink from "@/components/profile/nav-link";
 import Image from "next/image";
 import logoImg from "@/public/images/logo.png";
-import AddressesForm from "@/components/form/AddressesForm";
+import AddressForm, { AddressFormValues } from "@/components/form/AddressForm";
+import { useToast } from "@/hooks/use-toast";
+import { createOrder } from "@/services/OrderServices";
 
 export default function CheckoutPage() {
-    const [state, formAction, isPending] = useActionState(PlaceOrder, null);
     const { cart } = useCart();
-
+    const { userId, isLoggedIn } = useAuth();
+    const { toast } = useToast();
     const calculateTotal = () => {
         return cart.reduce((total, item) => {
             return total + item.productPrice * item.quantity;
         }, 0);
+    };
+
+    const handleSubmit = async (data: AddressFormValues) => {
+        // Here you would typically send the order data to your backend
+        const { streetAddress, city, province, ...rest } = data;
+        console.log("Order submitted:", {
+            userId,
+            ...rest,
+            address: `${streetAddress}, ${city}, ${province}`,
+            products: cart,
+            total: calculateTotal(),
+        });
+
+        await createOrder({
+            userId,
+            ...rest,
+            address: `${streetAddress}, ${city}, ${province}`,
+            products: cart,
+            total: calculateTotal(),
+        }).then((res) => {
+            if ("error" in res) {
+                return toast({
+                    title: "Error",
+                    description: "An error occurred while placing the order.",
+                    variant: "destructive",
+                });
+            } else {
+                return toast({
+                    title: "Order placed successfully!",
+                    description:
+                        "We've received your order and will process it shortly.",
+                });
+            }
+        });
+        // Show a success message to the user
+
+        // You might want to clear the cart or redirect the user after a successful order
+        // clearCart()
+        // router.push('/order-confirmation')
     };
 
     return (
@@ -44,11 +84,14 @@ export default function CheckoutPage() {
                     </ul>
                 </nav>
             </div>
-            <form
-                action={formAction}
-                className="bg-white rounded px-8 pt-6 pb-8 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2">
-                    <AddressesForm />
+            <div className="bg-white rounded px-8 pt-6 pb-8 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="w-full px-12 py-12">
+                        <h2 className="mb-4 text-3xl font-bold mb-6">
+                            Billing details
+                        </h2>
+                        <AddressForm onSubmit={handleSubmit} />
+                    </div>
                     <div className="max-w-3xl w-full px-24 py-24 bg-white rounded-md">
                         <div className="grid grid-cols-1 md:grid-cols-2">
                             <div className="text-left">
@@ -85,75 +128,21 @@ export default function CheckoutPage() {
                             </span>
                         </div>
 
-                        <div className="border-t mt-4 pt-4">
-                            <h3 className="text-lg font-bold">
-                                Payment Options
-                            </h3>
-                            <p className="text-sm text-gray-500 mt-1">
-                                Make your payment directly into our bank
-                                account. Please use your Order ID as the payment
-                                reference. Your order will not be shipped until
-                                the funds have cleared in our account.
-                            </p>
-                            <div className="mt-2">
-                                <label className="flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="payment-method"
-                                        value="direct-bank-transfer"
-                                        className="form-radio text-blue-600"
-                                    />
-                                    <span className="ml-2 font-medium text-gray-700">
-                                        Direct Bank Transfer
-                                    </span>
-                                </label>
-                            </div>
-                            <div className="mt-4">
-                                <label className="flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="payment-method"
-                                        value="cash-on-delivery"
-                                        className="form-radio text-blue-600"
-                                    />
-                                    <span className="ml-2 font-medium text-gray-700">
-                                        Cash On Delivery
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-
                         <div className="text-sm text-gray-600 mt-4">
                             Your personal data will be used to support your
                             experience throughout this website, to manage access
                             to your account, and for other purposes described in
                             our{" "}
                             <Link
-                                href="/checkout"
+                                href="/privacy-policy"
                                 className="underline font-extrabold">
                                 privacy policy
                             </Link>
                             .
                         </div>
-
-                        <div className="flex flex-col mt-6 justify-items-center items-center">
-                            {/* when using "use server" */}
-                            {/* <Suspense fallback={<p>Fetching order...</p>}> */}
-                            <button
-                                type="submit"
-                                className="w-3/5 bg-white text-gray-500 py-3 border rounded-md shadow-md hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                Place Order
-                            </button>
-                            {isPending ? (
-                                <p className="mt-2 text-gray-500">Loading...</p>
-                            ) : (
-                                <p className="mt-2 text-gray-500">{state}</p>
-                            )}
-                            {/* </Suspense> */}
-                        </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }

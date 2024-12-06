@@ -2,9 +2,12 @@ DB:
 USER:
 ├── userId int/varchar @primary (AUTO INCREMENT/uuid)
 ├── password varchar (encrypted)
+├── createdAt: datetime (default: current_timestamp)
 ├── name? varchar
 ├── email? varchar
 ├── phone_number? varchar
+├── cart: JSON
+├── status: "active"|"banned"
 └── address?:
     ├── street: varchar
     └── city: varchar
@@ -26,13 +29,14 @@ REVIEW: (reviews of product)
 CONTACT:
 ├── contactId: int @primary
 ├── name: varchar
+├── email: varchar
 ├── phone_number: varchar
 └── further_info? varchar
 BLOG:
 ├── blogId: varchar @primary (slug)
 ├── title: varchar
 ├── content: varchar
-├── posted: datetime
+├── posted: datetime (default: current_timestamp)
 └── tags?: JSON ([tag1, tag2,...]) @references to TAG.tag_name
 TAG:
 └── tag_name: varchar @primary
@@ -41,6 +45,7 @@ IMAGE
 └── src: varchar (image source)
 PRODUCT_IMAGE: (for product, one product can have multiple images)
 ├── imageId: varchar @primary @references to IMAGE.imageId (slug by alt) 
+├── type: "product"|"description"
 └── productId: @references PRODUCT.productId
 BLOG_IMAGE: (for blog cover image)
 ├── imageId: varchar @primary @references to IMAGE.imageId (slug by alt)
@@ -49,7 +54,9 @@ ORDER: (for storing orders by users)
 ├── orderId: int @primary (AUTO INCREMENT)
 ├── userId: @references USER.userId
 ├── products: JSON {productId: @references PRODUCT.productId, size, color: string, quantity: number}[]
-├── orderAt: datetime
+├── createdAt: datetime (default: current_timestamp)
+├── completedAt: datetime (default: current_timestamp)
 ├── phone_number: string
-└── address: varchar
+├── email: string
+├── address: varchar
 └── status: 'completed'|'pending'|'rejected'

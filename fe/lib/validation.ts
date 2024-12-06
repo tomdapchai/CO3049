@@ -28,3 +28,24 @@ export const reviewSchema = z.object({
         })
         .optional(),
 });
+
+export const addressFormSchema = z.object({
+    name: z.string().min(2, {
+        message: "Name must be at least 2 characters.",
+    }),
+    email: z.string().email({
+        message: "Please enter a valid email address.",
+    }),
+    phoneNumber: z.string().regex(/^(\+84|0)[3|5|7|8|9][0-9]{8}$/, {
+        message: "Please enter a valid Vietnamese phone number.",
+    }),
+    streetAddress: z.string().min(5, {
+        message: "Street address must be at least 5 characters.",
+    }),
+    city: z.string().min(2, {
+        message: "City must be at least 2 characters.",
+    }),
+    province: z.string().min(2, {
+        message: "Please select a province.",
+    }),
+});

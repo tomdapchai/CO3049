@@ -4,7 +4,7 @@ import { Minus, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatPrice } from "@/lib/utils";
-export interface ProductOrder {
+export interface productOrderTrue {
     productId: string;
     quantity: number;
     color: string;
@@ -15,7 +15,7 @@ export interface ProductOrder {
 }
 
 interface ProductCartCardProps {
-    product: ProductOrder;
+    product: productOrderTrue;
     onRemove: (index: number) => void;
     updateQuantity: (productId: string, newQuantity: number) => void;
     index: number;

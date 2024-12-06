@@ -1,0 +1,296 @@
+"use client";
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import ImageUploader from "@/components/form/ImageUploader";
+import BlogPreview from "@/components/dialog/Preview";
+import TagInput from "@/components/form/TagInput";
+import { convertToReact } from "@/lib/utils";
+import Image from "next/image";
+import { uploadToCDN } from "@/lib/utils";
+type UploadedImage = {
+    alt: string;
+    src: string;
+    file: File;
+};
+
+const formSchema = z.object({
+    blogName: z.string().min(1, "Blog name is required"),
+    blogId: z
+        .string()
+        .min(1, "Blog ID is required")
+        .regex(
+            /^[a-z0-9-]+$/,
+            "Blog ID must contain only lowercase letters, numbers, and hyphens"
+        ),
+    content: z.string().min(1, "Content is required"),
+    tags: z.array(z.string()),
+});
+
+export default function BlogCreator() {
+    const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+    const [previewContent, setPreviewContent] = useState<string>("");
+    const { toast } = useToast();
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            blogName: "",
+            blogId: "",
+            content: "",
+            tags: [],
+        },
+    });
+
+    const handleImageUpload = (file: File) => {
+        const blobURL = URL.createObjectURL(file);
+        const alt = file.name;
+        setUploadedImages((prev) => [...prev, { alt, src: blobURL, file }]);
+    };
+
+    const deleteImage = (srcToDelete: string) => {
+        setUploadedImages((prev) => {
+            const updatedImages = prev.filter(
+                (image) => image.src !== srcToDelete
+            );
+            URL.revokeObjectURL(srcToDelete);
+            return updatedImages;
+        });
+    };
+
+    const updateImageAlt = (oldAlt: string, newAlt: string) => {
+        setUploadedImages((prev) =>
+            prev.map((img) =>
+                img.alt === oldAlt ? { ...img, alt: newAlt } : img
+            )
+        );
+    };
+
+    const handlePreview = () => {
+        let processedContent = form.getValues("content");
+        const imgRegex = /IMG<([^,]+)(?:,\s*(\d+))?(?:,\s*(\d+))?>/g;
+
+        processedContent = processedContent.replace(
+            imgRegex,
+            (match, alt, width, height) => {
+                const image = uploadedImages.find((img) => img.alt === alt);
+                if (!image) {
+                    toast({
+                        title: "Error",
+                        description: `Image with alt "${alt}" not found`,
+                        variant: "destructive",
+                    });
+                    return match;
+                }
+                return `IMG<${alt},${image.src}${width ? `,${width}` : ""}${
+                    height ? `,${height}` : ""
+                }>`;
+            }
+        );
+
+        setPreviewContent(convertToReact(processedContent));
+    };
+
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            // Wait for all images to be uploaded
+            const successfulUploads = await Promise.all(
+                uploadedImages.map(async (image) => {
+                    const uploadedImage = await uploadToCDN(image.file);
+                    if (typeof uploadedImage === "string") {
+                        return { alt: image.alt, src: uploadedImage };
+                    } else {
+                        toast({
+                            title: "Error",
+                            description: `Failed to upload image "${image.alt}"`,
+                            variant: "destructive",
+                        });
+                        return null;
+                    }
+                })
+            );
+
+            // Filter out null values (failed uploads)
+            const finalUploadedImages = successfulUploads.filter(
+                (image) => image !== null
+            );
+
+            console.log("uploaded", finalUploadedImages);
+
+            // Use the uploaded images and converted content
+            let processedContent = values.content;
+            const imgRegex = /IMG<([^,]+)(?:,\s*(\d+))?(?:,\s*(\d+))?>/g;
+            processedContent = processedContent.replace(
+                imgRegex,
+                (match, alt, width, height) => {
+                    const image = finalUploadedImages.find(
+                        (img) => img.alt === alt
+                    );
+                    if (!image) {
+                        toast({
+                            title: "Error",
+                            description: `Image with alt "${alt}" not found`,
+                            variant: "destructive",
+                        });
+                        return match;
+                    }
+                    return `IMG<${alt},${image.src}${width ? `,${width}` : ""}${
+                        height ? `,${height}` : ""
+                    }>`;
+                }
+            );
+
+            const convertedContent = convertToReact(processedContent);
+            console.log({
+                ...values,
+                finalUploadedImages, // Attach successfully uploaded images
+                convertedContent,
+            });
+
+            toast({
+                title: "Blog Created",
+                description: "Your blog has been successfully created!",
+            });
+        } catch (error) {
+            console.error("Error in onSubmit:", error);
+            toast({
+                title: "Error",
+                description: "Something went wrong while creating the blog.",
+                variant: "destructive",
+            });
+        }
+    };
+
+    return (
+        <div className="w-full ">
+            <Form {...form}>
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-8 p-4">
+                    <div className="flex space-x-10">
+                        <div className="w-3/4 space-y-4">
+                            <div className="flex gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="blogName"
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormLabel>Blog Name</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Enter blog name"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="blogId"
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormLabel>Blog ID</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Enter blog ID"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <FormField
+                                control={form.control}
+                                name="content"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Content</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Write your blog content here..."
+                                                className="min-h-[300px]"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="w-1/4 space-y-4">
+                            <ImageUploader
+                                uploadedImages={uploadedImages}
+                                onUpload={handleImageUpload}
+                                onDelete={deleteImage}
+                                onUpdateAlt={updateImageAlt}
+                            />
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        onClick={handlePreview}
+                                        className="w-full">
+                                        Preview
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-3xl max-h-[80vh]">
+                                    <DialogHeader>
+                                        <DialogTitle>Blog Preview</DialogTitle>
+                                    </DialogHeader>
+                                    <ScrollArea className="h-full max-h-[calc(80vh-4rem)]">
+                                        <BlogPreview content={previewContent} />
+                                    </ScrollArea>
+                                </DialogContent>
+                            </Dialog>
+                            <FormField
+                                control={form.control}
+                                name="tags"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Tags</FormLabel>
+                                        <FormControl>
+                                            <TagInput
+                                                tags={field.value}
+                                                setTags={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="submit" className="w-full">
+                                Create Blog
+                            </Button>
+                        </div>
+                    </div>
+                </form>
+                <Toaster />
+            </Form>
+        </div>
+    );
+}

@@ -1,17 +1,17 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { productOrder } from "@/types";
+import { productOrderTrue } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 
 interface CartContextProps {
     test: string;
-    cart: productOrder[];
-    addToCart: (data: Partial<productOrder>) => void;
+    cart: productOrderTrue[];
+    addToCart: (data: Partial<productOrderTrue>) => void;
     removeFromCart: (index: number) => void;
     updateQuantity: (productId: string, quantity: number) => void;
     updateOrderDetails: (
         productId: string,
-        updates: Partial<productOrder>
+        updates: Partial<productOrderTrue>
     ) => void;
     clearCart: () => void;
     getCartTotal: () => number;
@@ -20,7 +20,7 @@ interface CartContextProps {
 const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 const DEFAULT_ORDER: Omit<
-    productOrder,
+    productOrderTrue,
     "productId" | "productName" | "productImage" | "productPrice"
 > = {
     quantity: 1,
@@ -43,7 +43,7 @@ interface CartProviderProps {
 const STORAGE_KEY = "cart";
 
 const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-    const [cart, setCart] = useState<productOrder[]>([]);
+    const [cart, setCart] = useState<productOrderTrue[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
     const test = "test";
     const { toast } = useToast();
@@ -82,7 +82,7 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         }
     }, [cart, isInitialized, toast]);
 
-    const addToCart = (data: Partial<productOrder>) => {
+    const addToCart = (data: Partial<productOrderTrue>) => {
         try {
             if (!data.productId) {
                 throw new Error("Product ID is required");
@@ -105,7 +105,7 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                     };
                     return updatedCart;
                 } else {
-                    const newOrder: productOrder = {
+                    const newOrder: productOrderTrue = {
                         ...DEFAULT_ORDER,
                         ...data,
                         productId: data.productId!,
@@ -172,7 +172,7 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     const updateOrderDetails = (
         productId: string,
-        updates: Partial<productOrder>
+        updates: Partial<productOrderTrue>
     ) => {
         try {
             setCart((currentCart) => {

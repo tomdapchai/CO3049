@@ -66,7 +66,10 @@ const page = () => {
                                     {formatPrice(calculateTotal())}
                                 </span>
                             </div>
-                            <Button className="w-full" size="lg">
+                            <Button
+                                className="w-full"
+                                size="lg"
+                                onClick={() => router.push("/checkout")}>
                                 Proceed to Checkout
                             </Button>
                         </div>
