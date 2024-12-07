@@ -54,7 +54,7 @@ class UserController {
             return;
         }
 
-        if ($userModel->updateUsername($userId, $data['newUsername'])) {
+        if ($userModel->updateUsername($userId, $data)) {
             echo json_encode(['status' => 'success', 'message' => 'Username updated']);
         } else {
             http_response_code(400);
@@ -88,7 +88,7 @@ class UserController {
             return;
         }
 
-        if ($userModel->updateUserPassword($userId, $data['newPassword'])) {
+        if ($userModel->updateUserPassword($userId, $data)) {
             echo json_encode(['status' => 'success', 'message' => 'Password updated']);
         } else {
             http_response_code(400);

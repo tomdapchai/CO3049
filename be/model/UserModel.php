@@ -30,10 +30,25 @@ class UserModel {
         return $stmt->rowCount() > 0 ? $stmt : false;
     }
 
-    public function updateUsername($userId, $newUsername) {
+    public function updateUsername($userId, $data) {
+        // check if currentUsername is valid, and new username already exists
+        $query = "SELECT * FROM $this->table WHERE userId = ? AND username = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$userId, $data['username']]);
+        if ($stmt->rowCount() === 0) {
+            return false;
+        }
+
+        $query = "SELECT * FROM $this->table WHERE username = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$data['newUsername']]);
+        if ($stmt->rowCount() > 0) {
+            return false;
+        }
+
         $query = "UPDATE $this->table SET username = ? WHERE userId = ?";
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([$newUsername, $userId]);
+        return $stmt->execute([$data['newUsername'], $userId]);
     }
 
     public function updateUserInfo($userId, $data) {
@@ -50,9 +65,18 @@ class UserModel {
         ]);
     }
 
-    public function updateUserPassword($userId, $newPassword) {
-        // hash password first
-        $newPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+    public function updateUserPassword($userId, $data) {
+        // check if current password is correct
+        $query = "SELECT * FROM $this->table WHERE userId = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$userId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!password_verify($data['password'], $user['password'])) {
+            return false;
+        }
+
+        // hash password
+        $newPassword = password_hash($data['newPassword'], PASSWORD_BCRYPT);
 
         $query = "UPDATE $this->table SET password = ? WHERE userId = ?";
         $stmt = $this->db->prepare($query);

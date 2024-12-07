@@ -31,14 +31,15 @@ class ReviewModel {
     }
 
     public function createReview($data) {
-        $query = "INSERT INTO $this->table (productId, userId, rating, content) 
-                  VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO $this->table (productId, userId, rating, content, reviewer) 
+                  VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['productId'],
             $data['userId'],
             $data['rating'],
-            $data['comment']
+            $data['comment'],
+            $data['reviewer']
         ]);
     }
 
