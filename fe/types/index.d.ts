@@ -55,7 +55,7 @@ export type BlogImageCreate = {
 
 export type Review = {
     reviewId: string;
-    productId?: string;
+    productId: string;
     comment: string;
     rating: number;
     reviewer: string;
@@ -115,8 +115,8 @@ export type CartItem = {
 };
 
 export type User = {
-    userId: string | number; // AUTO INCREMENT or UUID
-    password: string; // encrypted
+    userId: number; // AUTO INCREMENT or UUID
+    username: string;
     name?: string;
     email?: string;
     phoneNumber?: string;

@@ -34,24 +34,12 @@ import { uploadToCDN } from "@/lib/utils";
 import { CreateBlog, DeleteBlog } from "@/services/BlogService";
 import { createBlogImage } from "@/services/ImageService";
 import { Blog } from "@/types";
+import { blogSchema } from "@/lib/validation";
 export type UploadedImage = {
     alt: string;
     src: string;
     file: File;
 };
-
-const formSchema = z.object({
-    title: z.string().min(1, "Blog title is required"),
-    blogId: z
-        .string()
-        .min(1, "Blog ID is required")
-        .regex(
-            /^[a-z0-9-]+$/,
-            "Blog ID must contain only lowercase letters, numbers, and hyphens"
-        ),
-    content: z.string().min(1, "Content is required"),
-    tags: z.array(z.string()),
-});
 
 export default function BlogCreator() {
     const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
@@ -59,8 +47,8 @@ export default function BlogCreator() {
     const [previewContent, setPreviewContent] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof blogSchema>>({
+        resolver: zodResolver(blogSchema),
         defaultValues: {
             title: "",
             blogId: "",
@@ -119,7 +107,7 @@ export default function BlogCreator() {
         setPreviewContent(convertToReact(processedContent));
     };
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const onSubmit = async (values: z.infer<typeof blogSchema>) => {
         try {
             setIsSubmitting(true);
             if (uploadedThumbnail === undefined) {
@@ -174,6 +162,11 @@ export default function BlogCreator() {
             const finalUploadedImages = successfulUploads.filter(
                 (image) => image !== null
             );
+
+            if (finalUploadedImages.length !== uploadedImages.length) {
+                setIsSubmitting(false);
+                return;
+            }
 
             console.log("uploaded", finalUploadedImages);
 
@@ -240,6 +233,8 @@ export default function BlogCreator() {
                                 "Something went wrong while creating the blog.",
                             variant: "destructive",
                         });
+                        setIsSubmitting(false);
+                        return;
                     } else {
                         toast({
                             title: "Blog Created",
@@ -393,7 +388,7 @@ export default function BlogCreator() {
                                         Preview
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className="max-w-3xl max-h-[80vh]">
+                                <DialogContent className="max-w-4xl max-h-[80vh]">
                                     <DialogHeader>
                                         <DialogTitle>Blog Preview</DialogTitle>
                                     </DialogHeader>

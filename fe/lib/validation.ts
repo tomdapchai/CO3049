@@ -49,3 +49,16 @@ export const addressFormSchema = z.object({
         message: "Please select a province.",
     }),
 });
+
+export const blogSchema = z.object({
+    title: z.string().min(1, "Blog title is required"),
+    blogId: z
+        .string()
+        .min(1, "Blog ID is required")
+        .regex(
+            /^[a-z0-9-]+$/,
+            "Blog ID must contain only lowercase letters, numbers, and hyphens"
+        ),
+    content: z.string().min(1, "Content is required"),
+    tags: z.array(z.string()),
+});

@@ -31,7 +31,6 @@ class ReviewController {
         $reviewModel = new ReviewModel($this->db);
         $reviews = $reviewModel->getReviewByProductId($productId);
         if (!$reviews) {
-            http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'No reviews found']);
             return;
         }

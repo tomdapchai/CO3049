@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import AdminProductCard from "@/components/admin/AdminProductCard";
 import { Button } from "@/components/ui/button";
-import { ProductDetail } from "@/types";
 import { useRouter } from "next/navigation";
+import { getAllProduct } from "@/services/ProductService";
+import { ProductDetail } from "@/types";
 async function getProducts(): Promise<ProductDetail[]> {
     // This is a placeholder function. In a real application, you would fetch this data from your API or database.
     return [
@@ -35,7 +36,14 @@ async function getProducts(): Promise<ProductDetail[]> {
 export default function ProductsPage() {
     const [products, setProduct] = useState<ProductDetail[]>([]);
     useEffect(() => {
-        getProducts().then(setProduct);
+        getAllProduct().then((data) => {
+            if ("error" in data) {
+                console.error(data.error);
+            } else {
+                console.log("Products:", data);
+                setProduct(data);
+            }
+        });
     }, []);
     const router = useRouter();
     return (
@@ -56,10 +64,12 @@ export default function ProductsPage() {
                         image={product.images[0].src}
                         overview={product.overview}
                         rating={
-                            product.reviews.reduce(
-                                (acc, review) => acc + review.rating,
-                                0
-                            ) / product.reviews.length
+                            product.reviews.length > 0
+                                ? product.reviews.reduce(
+                                      (acc, review) => acc + review.rating,
+                                      0
+                                  ) / product.reviews.length
+                                : 0
                         }
                     />
                 ))}

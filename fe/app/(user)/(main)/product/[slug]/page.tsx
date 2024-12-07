@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReviewForm } from "@/components/form/ReviewForm";
-import { ProductDetail } from "@/types";
+import { ImageDetail, ProductDetail, Review } from "@/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ReviewStar } from "@/components/decoration/ReviewStar";
@@ -22,28 +22,13 @@ import { useCart } from "@/context/CartContext";
 import { ReviewCard } from "@/components/card/ReviewCard";
 import parse from "html-react-parser";
 import { ReviewSection } from "@/components/ReviewSection";
-const mockProductDetail: ProductDetail = {
-    slug: "modern-desk-chair",
-    name: "Modern Desk Chair",
-    price: 199.99,
-    images: [
-        {
-            imageId: "img1",
-            src: "/images/sample-products/4.jpg",
-        },
-        {
-            imageId: "img2",
-            src: "https://via.placeholder.com/300x300.png?text=Modern+Desk+Chair+2",
-        },
-        {
-            imageId: "img3",
-            src: "https://via.placeholder.com/300x300.png?text=Modern+Desk+Chair+3",
-        },
-    ],
-    overview:
-        "A stylish and ergonomic desk chair perfect for home and office use.",
-    description:
-        '<div class="w-full flex flex-col justify-center items-start"><h1 class="text-2xl font-bold mb-4">This is heading</h1>\n<div class="w-full flex justify-center items-center">\n            <Image src="https://res.cloudinary.com/dgwujcdba/image/upload/v1733472608/bgwtlm4p6pyjcygwjlr7.png" alt="s3" width="400" height="300" class="rounded-lg" /></div>\n<p class="text-base text-black">Hello</p>\n<div class="w-full flex justify-center items-center">\n            <Image src="https://res.cloudinary.com/dgwujcdba/image/upload/v1733472608/vflpcva8wsmndcbjapzy.png" alt="hcmut" width="200" height="200" class="rounded-lg" /></div></div>',
+import { getProductBySlug } from "@/services/ProductService";
+import { colorMapping } from "@/components/decoration/ColorMaping";
+import { createReview, ReviewCreate } from "@/services/ReviewService";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+/* const mockProductDetail: ProductDetail = {
     reviews: [
         {
             reviewId: "1",
@@ -86,18 +71,23 @@ const mockProductDetail: ProductDetail = {
         },
     ],
     tags: ["office", "furniture", "chair"],
-};
+}; */
 
 const page = ({ params }: { params: Promise<{ slug: string }> }) => {
     const { addToCart } = useCart();
     const { slug } = use(params);
+    const { userId, isLoggedIn } = useAuth();
     const [product, setProduct] = useState<ProductDetail>();
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
-    const [selectedSize, setSelectedSize] = useState("L");
-    const [selectedColor, setSelectedColor] = useState("purple");
-
-    type FormValues = {
+    const [sizes, setSizes] = useState<string[]>([]);
+    const [colors, setColors] = useState<string[]>([]);
+    const [productImages, setProductImages] = useState<ImageDetail[]>([]);
+    const [selectedSize, setSelectedSize] = useState("");
+    const [selectedColor, setSelectedColor] = useState("");
+    const { toast } = useToast();
+    const router = useRouter();
+    type OrderFormValues = {
         size: string;
         color: string;
         quantity: number;
@@ -105,13 +95,23 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
 
     useEffect(() => {
         // await getProduct(slug).then((res) => {if (res.error) {console.error(res.error);} else {setProduct(res);}});
-        setProduct(mockProductDetail);
+        getProductBySlug(slug).then((res) => {
+            if ("error" in res) {
+                console.log(res.error);
+            } else {
+                console.log(res);
+                const images = res.images.filter(
+                    (image) => image.type == "product"
+                );
+                setProductImages(images);
+                setProduct(res);
+                setSizes(res.size!);
+                setColors(res.color!);
+            }
+        });
     }, []);
 
-    const sizes = ["L", "XL", "XS"];
-    const colors = ["purple", "black", "gold"];
-
-    const form = useForm<FormValues>({
+    const form = useForm<OrderFormValues>({
         defaultValues: {
             size: sizes[0],
             color: colors[0],
@@ -119,7 +119,7 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
         },
     });
 
-    function onSubmit(data: FormValues) {
+    const onSubmit = (data: OrderFormValues) => {
         console.log("Form submitted:", data);
 
         const productOrderTrue = {
@@ -134,7 +134,40 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
 
         addToCart(productOrderTrue);
         // Handle form submission here (e.g., add to cart logic)
-    }
+    };
+
+    const handleReviewSubmit = async (data: any) => {
+        await createReview({ ...data, productId: slug, userId: userId }).then(
+            (res) => {
+                if ("error" in res) {
+                    console.log(res.error);
+                    toast({
+                        title: "Error",
+                        description: "Failed to submit review",
+                        variant: "destructive",
+                        duration: 5000,
+                    });
+                } else {
+                    console.log(res);
+                    toast({
+                        title: "Success",
+                        description: "Review submitted successfully",
+                        variant: "default",
+                        duration: 5000,
+                    });
+                    /* setProduct((prev) => {
+                    if (!prev) {
+                        return prev;
+                    }
+                    return {
+                        ...prev,
+                        reviews: [...prev.reviews, res],
+                    };
+                }); */
+                }
+            }
+        );
+    };
 
     if (!product) {
         return (
@@ -150,7 +183,7 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                 {/* Product Images */}
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="order-2 md:order-1 flex md:flex-col gap-4 overflow-x-auto md:overflow-x-visible">
-                        {product.images.map((image, index) => (
+                        {productImages.map((image, index) => (
                             <button
                                 key={index}
                                 onClick={() => setSelectedImage(index)}
@@ -170,7 +203,7 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                     </div>
                     <div className="order-1 md:order-2 flex-1">
                         <Image
-                            src={product.images[selectedImage].src}
+                            src={productImages[selectedImage].src}
                             alt="Main product image"
                             width={600}
                             height={600}
@@ -192,17 +225,22 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                         <div className="flex items-center gap-2 flex-wrap">
                             <ReviewStar
                                 rating={
-                                    product.reviews.reduce(
-                                        (acc, review) => acc + review.rating,
-                                        0
-                                    ) / product.reviews.length
+                                    product.reviews.length > 0
+                                        ? product.reviews.reduce(
+                                              (acc, review) =>
+                                                  acc + review.rating,
+                                              0
+                                          ) / product.reviews.length
+                                        : 0
                                 }
                             />
                             <span className="text-muted-foreground">
-                                {product.reviews.reduce(
-                                    (acc, review) => acc + review.rating,
-                                    0
-                                ) / product.reviews.length}
+                                {product.reviews.length > 0
+                                    ? product.reviews.reduce(
+                                          (acc, review) => acc + review.rating,
+                                          0
+                                      ) / product.reviews.length
+                                    : 0}
                                 /5
                             </span>
                         </div>
@@ -283,17 +321,15 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                                                                 field.value ===
                                                                     color
                                                                     ? "border-primary"
-                                                                    : "border-transparent",
-                                                                color ===
-                                                                    "purple" &&
-                                                                    "bg-purple-500",
-                                                                color ===
-                                                                    "black" &&
-                                                                    "bg-black",
-                                                                color ===
-                                                                    "gold" &&
-                                                                    "bg-yellow-600"
+                                                                    : "border-transparent"
                                                             )}
+                                                            style={{
+                                                                backgroundColor:
+                                                                    // @ts-ignore
+                                                                    colorMapping[
+                                                                        color
+                                                                    ],
+                                                            }}
                                                             aria-label={`Select ${color} color`}
                                                         />
                                                     ))}
@@ -302,6 +338,7 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                                         </FormItem>
                                     )}
                                 />
+
                                 <div className="flex flex-wrap items-end justify-start gap-4 w-full">
                                     <FormField
                                         control={form.control}
@@ -404,14 +441,37 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                 </TabsContent>
                 <TabsContent value="reviews" className="space-y-4 w-full">
                     <div className="space-y-8">
-                        <ReviewSection reviews={product.reviews} />
+                        {product.reviews.length > 0 ? (
+                            <ReviewSection reviews={product.reviews} />
+                        ) : (
+                            <div className="w-full flex justify-center items-center">
+                                <p className="text-xl font-bold text-sub">
+                                    No review yet, be the first!
+                                </p>
+                            </div>
+                        )}
+
                         <div className="max-w-md mx-auto">
-                            <h3 className="text-lg text-sub font-semibold mb-4">
-                                Write a Review
-                            </h3>
-                            <ReviewForm
-                                onSubmit={(data) => console.log(data)}
-                            />
+                            {isLoggedIn ? (
+                                <div className="max-w-md mx-auto">
+                                    <h3 className="text-lg text-sub font-semibold mb-4">
+                                        Write a Review
+                                    </h3>
+                                    <ReviewForm onSubmit={handleReviewSubmit} />
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center space-y-4">
+                                    <Button
+                                        onClick={() => {
+                                            router.push("/sign-in");
+                                        }}
+                                        className="bg-sub p-6 hover:bg-[#b88e2f]/90">
+                                        <p className="text-lg font-bold">
+                                            Log in to review
+                                        </p>
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </TabsContent>

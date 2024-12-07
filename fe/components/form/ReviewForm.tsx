@@ -20,9 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 const reviewSchema = z.object({
-    name: z.string().min(3, {
-        message: "Name must be at least 3 characters.",
-    }),
     rating: z.number().min(1).max(5),
     comment: z
         .string()
@@ -71,7 +68,6 @@ export function ReviewForm({ onSubmit }: ReviewFormProps) {
     const form = useForm<ReviewFormValues>({
         resolver: zodResolver(reviewSchema),
         defaultValues: {
-            name: "",
             rating: 0,
             comment: "",
         },
@@ -80,19 +76,6 @@ export function ReviewForm({ onSubmit }: ReviewFormProps) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Your name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
                 <FormField
                     control={form.control}
                     name="rating"

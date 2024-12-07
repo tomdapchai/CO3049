@@ -3,6 +3,9 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { Login, Register } from "@/services/AuthService";
 import Cookies from "js-cookie";
 import { set } from "zod";
+import { User } from "@/types";
+import { getUserById } from "@/services/UserService";
+import { log } from "console";
 interface AuthContextProps {
     isLoggedIn: boolean;
     userId: string;
@@ -43,11 +46,12 @@ const COOKIE_OPTIONS = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+    // gonna take all user info once logged in, for better user experience
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userId, setUserId] = useState("1");
     const [error, setError] = useState<string | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
-
+    const [user, setUser] = useState<User | null>(null);
     useEffect(() => {
         const storedUserId = Cookies.get(COOKIE_NAME);
         if (storedUserId) {
@@ -67,6 +71,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUserId(newUserId);
         setIsLoggedIn(isLoggedIn);
     };
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            // Fetch user info
+            // getUserById(userId).then((response) => {
+            //     if ("error" in response) {
+            //         setError(response.error);
+            //     } else {
+            //         setUser(response);
+            //     }
+            // });
+            getUserById(userId).then((res) => {
+                if ("error" in res) {
+                    setError(res.error);
+                } else {
+                    console.log("User:", res);
+                    setUser(res);
+                }
+            });
+        }
+    }, [isLoggedIn]);
 
     const loginUser = async (
         username: string,

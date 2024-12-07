@@ -32,17 +32,22 @@ export const getReviewsByProductId = async (
         const response = await api.get(
             `api/review/routes.php?productId=${slug}`
         );
+        let res: Review[] = [];
         console.log("Backend Response:", response.data);
-        const res: Review[] = response.data.data.map((review: any) => {
-            return {
-                reviewId: review.reviewId,
-                productId: review.productId,
-                reviewer: review.userId,
-                rating: review.rating,
-                comment: review.content,
-                date: new Date(review.createdAt),
-            };
-        });
+        if (response.data.status == "success") {
+            res = response.data.data.map((review: any) => {
+                return {
+                    reviewId: review.reviewId,
+                    productId: review.productId,
+                    reviewer: review.userId,
+                    rating: Number(review.rating),
+                    comment: review.content,
+                    date: review.createdAt,
+                };
+            });
+        } else {
+            res = [];
+        }
         return res;
     } catch (error) {
         console.log("Error fetching reviews:", error);
@@ -50,7 +55,9 @@ export const getReviewsByProductId = async (
     }
 };
 
-type ReviewCreate = Omit<Review, "reviewId" | "date">;
+export type ReviewCreate = Omit<Review, "reviewId" | "date" | "reviewer"> & {
+    userId: string;
+};
 export const createReview = async (
     data: ReviewCreate
 ): Promise<{ message: string } | { error: string }> => {

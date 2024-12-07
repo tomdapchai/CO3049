@@ -8,8 +8,16 @@ export const getProductBySlug = async (
 ): Promise<ProductDetail | { error: string }> => {
     try {
         const product = await api.get(`api/product/routes.php?slug=${slug}`);
-        const { productId, short_description, full_description, ...rest } =
-            product.data.data;
+        const {
+            productId,
+            short_description,
+            full_description,
+            tags,
+            size,
+            color,
+            price,
+            ...rest
+        } = product.data.data;
 
         // get images for product
         const images = await getImagesFromProduct(slug);
@@ -21,11 +29,15 @@ export const getProductBySlug = async (
         const reviews = await getReviewsByProductId(slug);
         return {
             ...rest,
+            price: Number(price),
             slug: productId,
             overview: short_description,
             description: full_description,
             images,
             reviews,
+            tags: JSON.parse(tags),
+            size: JSON.parse(size),
+            color: JSON.parse(color),
         };
     } catch (error) {
         console.log("Error fetching product:", error);
@@ -72,12 +84,21 @@ export const getAllProduct = async (): Promise<
     }
 };
 
-type ProductCreate = Omit<ProductDetail, "images" | "reviews">;
+export type ProductCreate = Omit<ProductDetail, "images" | "reviews">;
 export const createProduct = async (
     product: ProductCreate
 ): Promise<{ message: string } | { error: string }> => {
     try {
-        const response = await api.post("api/product/routes.php", product);
+        const response = await api.post("api/product/routes.php", {
+            productId: product.slug,
+            name: product.name,
+            price: product.price,
+            shortDescription: product.overview,
+            fullDescription: product.description,
+            size: product.size,
+            color: product.color,
+            tags: product.tags,
+        });
         return { message: response.data.message };
     } catch (error) {
         console.log("Error creating product:", error);

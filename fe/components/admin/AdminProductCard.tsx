@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Star } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 interface ProductCardProps {
     slug: string;
@@ -52,7 +53,9 @@ export default function AdminProductCard({
                         {overview}
                     </p>
                     <div className="mt-2 flex items-center justify-between">
-                        <p className="font-semibold">{price}</p>
+                        <p className="font-semibold">
+                            {formatPrice(Number(price))}
+                        </p>
                         <div className="flex items-center">
                             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
                             <span>{rating.toFixed(1)}</span>

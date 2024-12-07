@@ -39,6 +39,16 @@ try {
             exit();
         }
 
+        if ($user['status'] == 'banned') {
+            $response = [
+                'status' => 'error',
+                'message' => 'Your account has been banned, contact admin for more information'
+            ];
+            http_response_code(200);
+            echo json_encode($response);
+            exit();
+        }
+
         $response = [
             'status' => 'success',
             'userId' => $user['userId'],

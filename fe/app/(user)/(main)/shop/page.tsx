@@ -10,7 +10,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
-import { ProductView } from "@/types";
+import { ProductView, ProductDetail } from "@/types";
 import {
     Pagination,
     PaginationContent,
@@ -21,7 +21,7 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 import ProductCard from "@/components/card/ProductCard";
-
+import { getAllProduct } from "@/services/ProductService";
 const filters = [
     {
         name: "Price",
@@ -37,28 +37,37 @@ const filters = [
     },
 ];
 
-const mockProducts: ProductView[] = Array.from({ length: 30 }, (_, i) => ({
-    slug: `product-${i + 1}`,
-    name: `Product ${i + 1}`,
-    price: Math.floor(Math.random() * 100000) + 1,
-    image: `/images/sample-products/1.png`,
-    overview: `This is an overview for Product ${i + 1}.`,
-    rating: 5,
-}));
-
 const page = () => {
     const [sortBy, setSortBy] = useState("");
-    const [products, setProducts] = useState<ProductView[]>([]);
+    const [products, setProducts] = useState<ProductDetail[]>([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
-    const [currentProducts, setCurrentProducts] = useState<ProductView[]>([]);
+    const [currentProducts, setCurrentProducts] = useState<ProductDetail[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 10;
-    const totalPages = Math.ceil(mockProducts.length / productsPerPage);
+    const [totalPages, setTotalPages] = useState(1);
+    /* const totalPages = Math.ceil(mockProducts.length / productsPerPage); */
     const [indexOfFirstProduct, setIndexOfFirstProduct] = useState(0);
     const [indexOfLastProduct, setIndexOfLastProduct] = useState(0);
     const [selectedValue, setSelectedValue] = useState<string | undefined>(
         undefined
     );
+
+    useEffect(() => {
+        // fetch products
+        setSortBy("price");
+        getAllProduct().then((data) => {
+            if ("error" in data) {
+                console.error(data.error);
+            } else {
+                console.log("Products:", data);
+                setProducts(data);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(products.length / productsPerPage));
+    }, [products]);
 
     const handleValueChange = (value: string) => {
         setSelectedValue(value);
@@ -74,12 +83,6 @@ const page = () => {
     };
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-    useEffect(() => {
-        // fetch products
-        setSortBy("price");
-        setProducts(mockProducts);
-    }, []);
 
     useEffect(() => {
         const last = currentPage * productsPerPage;
@@ -107,8 +110,7 @@ const page = () => {
                     <div className="flex justify-between gap-2 items-center h-fit">
                         <p>
                             Showing {indexOfFirstProduct + 1} -{" "}
-                            {indexOfLastProduct} of {mockProducts.length}{" "}
-                            products
+                            {indexOfLastProduct} of {products.length} products
                         </p>
                         <Button variant={"ghost"} onClick={() => {}}>
                             Filter
@@ -153,9 +155,9 @@ const page = () => {
                             key={index}
                             name={product.name}
                             overview={product.overview}
-                            price={product.price}
+                            price={Number(product.price)}
                             slug={product.slug}
-                            image={product.image}
+                            image={product.images[0].src}
                             rating={5}
                         />
                     ))}

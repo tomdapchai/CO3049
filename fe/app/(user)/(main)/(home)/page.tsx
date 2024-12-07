@@ -1,13 +1,27 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { categoryImages, productImages } from "@/lib/constants";
-import React from "react";
+import { categoryImages } from "@/lib/constants";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import ProductCard from "@/components/card/ProductCard";
 import Slideshow from "@/components/Slideshow";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getAllProduct } from "@/services/ProductService";
+import { Product, ProductDetail, ProductView } from "@/types";
 const page = () => {
+    const [productImages, setProductImages] = useState<ProductDetail[]>([]);
+    useEffect(() => {
+        getAllProduct().then((data) => {
+            if ("error" in data) {
+                console.error(data.error);
+            } else {
+                console.log("Products:", data);
+                data.slice(0, 8);
+                setProductImages(data);
+            }
+        });
+    }, []);
     const router = useRouter();
     return (
         <div className="w-full h-full flex flex-col gap-10 pb-8">
@@ -69,9 +83,9 @@ const page = () => {
                             <ProductCard
                                 key={product.name}
                                 name={product.name}
-                                overview={product.description}
-                                price={product.price}
-                                image={product.image}
+                                overview={product.overview}
+                                price={Number(product.price)}
+                                image={product.images[0].src}
                                 slug={product.slug}
                                 rating={5}
                             />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -16,18 +16,32 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import TagInput from "@/components/form/TagInput";
 import ImageUploader from "@/components/form/ImageUploader";
+import BlogPreview from "@/components/dialog/Preview";
 import { UploadedImage } from "../../blogs/create/page";
 import { uploadToCDN } from "@/lib/utils";
 import { convertToReact } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { CheckboxGroup } from "@/components/input/CheckBoxGroup";
+import { ColorMapping } from "@/components/decoration/ColorMaping";
+import { createProduct, ProductCreate } from "@/services/ProductService";
+import { createProductImage } from "@/services/ImageService";
 
 const productSchema = z.object({
     productId: z.string().min(1, "Product ID is required"),
     name: z.string().min(1, "Name is required"),
     price: z.number().min(0, "Price must be a positive number"),
-    size: z.array(z.string()),
-    color: z.array(z.string()),
+    size: z.array(z.string()).min(1, "At least one size must be selected"),
+    color: z.array(z.string()).min(1, "At least one color must be selected"),
     shortDescription: z.string().min(1, "Short description is required"),
     fullDescription: z.string().min(1, "Full description is required"),
     tags: z.array(z.string()),
@@ -35,13 +49,30 @@ const productSchema = z.object({
 
 type ProductFormValues = z.infer<typeof productSchema>;
 
-export default function page() {
+const sizeOptions = [
+    { id: "compact", label: "Compact" },
+    { id: "standard", label: "Standard" },
+    { id: "large", label: "Large" },
+    { id: "oversized", label: "Oversized" },
+];
+
+const colorOptions = [
+    { id: "black", label: "Black" },
+    { id: "yellow", label: "Yellow" },
+    { id: "violet", label: "Violet" },
+    { id: "blue", label: "Blue" },
+    { id: "green", label: "Green" },
+];
+
+export default function CreateProductPage() {
     const [tags, setTags] = useState<string[]>([]);
     const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
     const [descriptionImages, setDescriptionImages] = useState<UploadedImage[]>(
         []
     );
     const [previewContent, setPreviewContent] = useState<string>("");
+    const [isCreating, setIsCreating] = useState(false);
+    const { toast } = useToast();
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(productSchema),
@@ -56,13 +87,6 @@ export default function page() {
             tags: [],
         },
     });
-
-    const onSubmit = (data: ProductFormValues) => {
-        // Here you would typically send the data to your API
-        console.log(data);
-        console.log("Uploaded Images:", uploadedImages);
-        console.log("Description Images:", descriptionImages);
-    };
 
     const handleImageUpload = (file: File) => {
         const blobUrl = URL.createObjectURL(file);
@@ -112,6 +136,256 @@ export default function page() {
         );
     };
 
+    const handlePreview = () => {
+        let processedDescription = form.getValues("fullDescription");
+        const imgRegex = /IMG<([^,]+)(?:,\s*(\d+))?(?:,\s*(\d+))?>/g;
+
+        processedDescription = processedDescription.replace(
+            imgRegex,
+            (match, alt, width, height) => {
+                const image = descriptionImages.find((img) => img.alt === alt);
+                if (!image) {
+                    toast({
+                        title: "Error",
+                        description: `Image with alt "${alt}" not found`,
+                        variant: "destructive",
+                    });
+                    return match;
+                }
+                return `IMG<${alt},${image.src}${width ? `,${width}` : ""}${
+                    height ? `,${height}` : ""
+                }>`;
+            }
+        );
+
+        setPreviewContent(convertToReact(processedDescription));
+    };
+
+    const onSubmit = async (values: z.infer<typeof productSchema>) => {
+        try {
+            setIsCreating(true);
+            if (uploadedImages.length === 0) {
+                toast({
+                    title: "Error",
+                    description: "Please upload at least one product image",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            const uploadProductImages = await Promise.all(
+                uploadedImages.map(async (image) => {
+                    try {
+                        console.log(`Starting upload for image: ${image.alt}`);
+                        const url = await uploadToCDN(image.file);
+                        if (typeof url === "string") {
+                            console.log(
+                                `Successfully uploaded image: ${image.alt}`
+                            );
+                            return { alt: image.alt, src: url };
+                        } else {
+                            console.log("Error uploading image:", image.alt);
+                            toast({
+                                title: "Error",
+                                description: `Error uploading image: ${image.alt}`,
+                                variant: "destructive",
+                            });
+                            setIsCreating(false);
+                            return null;
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Error uploading image "${image.alt}":`,
+                            error
+                        );
+                        toast({
+                            title: "Error",
+                            description: `Failed to upload image "${image.alt}"`,
+                            variant: "destructive",
+                        });
+                        setIsCreating(false);
+                        return null;
+                    }
+                })
+            );
+
+            const finalUploadedImages = uploadProductImages.filter(
+                (image) => image !== null
+            );
+
+            if (finalUploadedImages.length !== uploadedImages.length) {
+                toast({
+                    title: "Error",
+                    description: "Failed to upload all images",
+                    variant: "destructive",
+                });
+                setIsCreating(false);
+                return;
+            }
+
+            const uploadDescriptionImages = await Promise.all(
+                descriptionImages.map(async (image) => {
+                    try {
+                        console.log(`Starting upload for image: ${image.alt}`);
+                        const url = await uploadToCDN(image.file);
+                        if (typeof url === "string") {
+                            console.log(
+                                `Successfully uploaded image: ${image.alt}`
+                            );
+                            return { alt: image.alt, src: url };
+                        } else {
+                            console.log("Error uploading image:", image.alt);
+                            toast({
+                                title: "Error",
+                                description: `Error uploading image: ${image.alt}`,
+                                variant: "destructive",
+                            });
+                            setIsCreating(false);
+                            return null;
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Error uploading image "${image.alt}":`,
+                            error
+                        );
+                        toast({
+                            title: "Error",
+                            description: `Failed to upload image "${image.alt}"`,
+                            variant: "destructive",
+                        });
+                        setIsCreating(false);
+                        return null;
+                    }
+                })
+            );
+
+            const finalDescriptionImages = uploadDescriptionImages.filter(
+                (image) => image !== null
+            );
+
+            if (finalDescriptionImages.length !== descriptionImages.length) {
+                toast({
+                    title: "Error",
+                    description: "Failed to upload all images",
+                    variant: "destructive",
+                });
+                setIsCreating(false);
+                return;
+            }
+
+            let processedDescription = values.fullDescription;
+            const imgRegex = /IMG<([^,]+)(?:,\s*(\d+))?(?:,\s*(\d+))?>/g;
+            processedDescription = processedDescription.replace(
+                imgRegex,
+                (match, alt, width, height) => {
+                    const image = finalDescriptionImages.find(
+                        (img) => img.alt === alt
+                    );
+                    if (!image) {
+                        toast({
+                            title: "Error",
+                            description: `Image with alt "${alt}" not found`,
+                            variant: "destructive",
+                        });
+                        return match;
+                    }
+                    return `IMG<${alt},${image.src}${width ? `,${width}` : ""}${
+                        height ? `,${height}` : ""
+                    }>`;
+                }
+            );
+
+            const convertedDescription = convertToReact(processedDescription);
+
+            console.log({
+                ...values,
+                images: finalUploadedImages,
+                fullDescription: convertedDescription,
+            });
+            console.log("Uploaded Images:", finalUploadedImages);
+            console.log("Description Images:", finalDescriptionImages);
+
+            const { productId, shortDescription, fullDescription, ...rest } =
+                values;
+
+            console.log("Product Data:", { ...rest });
+            await createProduct({
+                ...rest,
+                slug: productId,
+                overview: shortDescription,
+                description: convertedDescription,
+            })
+                .then((res) => {
+                    if ("error" in res) {
+                        toast({
+                            title: "Error",
+                            description: "Failed to create product",
+                            variant: "destructive",
+                        });
+                        setIsCreating(false);
+                        return;
+                    } else {
+                        toast({
+                            title: "Success",
+                            description: "Product created successfully",
+                            variant: "default",
+                        });
+                    }
+                })
+                .then(() => {
+                    // create product images
+                    finalUploadedImages.forEach(async (image) => {
+                        await createProductImage(values.productId, {
+                            src: image.src,
+                            imageId: image.alt,
+                            type: "product",
+                        }).then((res) => {
+                            if ("error" in res) {
+                                toast({
+                                    title: "Error",
+                                    description:
+                                        "Failed to create product image",
+                                    variant: "destructive",
+                                });
+                                setIsCreating(false);
+                                return;
+                            }
+                        });
+                    });
+
+                    // create description images
+                    finalDescriptionImages.forEach(async (image) => {
+                        await createProductImage(values.productId, {
+                            src: image.src,
+                            imageId: image.alt,
+                            type: "description",
+                        }).then((res) => {
+                            if ("error" in res) {
+                                toast({
+                                    title: "Error",
+                                    description:
+                                        "Failed to create description image",
+                                    variant: "destructive",
+                                });
+                                setIsCreating(false);
+                                return;
+                            }
+                        });
+                    });
+                })
+                .finally(() => {
+                    setIsCreating(false);
+                });
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Error",
+                description: "Failed to create product",
+                variant: "destructive",
+            });
+        }
+    };
+
     return (
         <div className="container mx-auto py-8">
             <h1 className="text-3xl font-bold mb-8">Create New Product</h1>
@@ -119,146 +393,188 @@ export default function page() {
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="productId"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Product ID</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter a unique identifier for the product.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Product Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter the name of the product.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="price"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Price</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        {...field}
-                                        onChange={(e) =>
-                                            field.onChange(
-                                                parseFloat(e.target.value)
-                                            )
-                                        }
-                                    />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter the price of the product.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="size"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Sizes</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        placeholder="S, M, L"
-                                        onChange={(e) =>
-                                            field.onChange(
-                                                e.target.value
-                                                    .split(",")
-                                                    .map((s) => s.trim())
-                                            )
-                                        }
-                                    />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter sizes separated by commas.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="color"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Colors</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        placeholder="Red, Blue, Green"
-                                        onChange={(e) =>
-                                            field.onChange(
-                                                e.target.value
-                                                    .split(",")
-                                                    .map((s) => s.trim())
-                                            )
-                                        }
-                                    />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter colors separated by commas.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="shortDescription"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Short Description</FormLabel>
-                                <FormControl>
-                                    <Textarea {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter a brief description of the product.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="fullDescription"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Full Description</FormLabel>
-                                <FormControl>
-                                    <Textarea {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter a detailed description of the product.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <div className=" w-full flex max-md:flex-col justify-between space-x-10 items-start">
+                        <div className="flex w-full flex-grow flex-col justify-start items-start space-y-6">
+                            <FormField
+                                control={form.control}
+                                name="productId"
+                                render={({ field }) => (
+                                    <FormItem className="w-full flex-1">
+                                        <FormLabel>Product ID</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>
+                                            Enter a unique identifier for the
+                                            product.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem className="w-full flex-1">
+                                        <FormLabel>Product Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>
+                                            Enter the name of the product.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="price"
+                                render={({ field }) => (
+                                    <FormItem className="w-full flex-1">
+                                        <FormLabel>Price</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                onChange={(e) =>
+                                                    field.onChange(
+                                                        parseFloat(
+                                                            e.target.value
+                                                        )
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormDescription>
+                                            Enter the price of the product.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="size"
+                                render={({ field }) => (
+                                    <FormItem className="w-full flex-1">
+                                        <FormLabel>Sizes</FormLabel>
+                                        <CheckboxGroup
+                                            name="size"
+                                            items={sizeOptions}
+                                            control={form.control}
+                                        />
+                                        <FormDescription>
+                                            Select available sizes for the
+                                            product.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="color"
+                                render={({ field }) => (
+                                    <FormItem className="w-full flex-1">
+                                        <FormLabel>Colors</FormLabel>
+                                        <CheckboxGroup
+                                            name="color"
+                                            items={colorOptions}
+                                            control={form.control}
+                                        />
+                                        <FormDescription>
+                                            Select available colors for the
+                                            product.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <ColorMapping />
+                            <FormField
+                                control={form.control}
+                                name="shortDescription"
+                                render={({ field }) => (
+                                    <FormItem className="w-full flex-1">
+                                        <FormLabel>Short Description</FormLabel>
+                                        <FormControl>
+                                            <Textarea {...field} />
+                                        </FormControl>
+                                        <FormDescription>
+                                            Enter a brief description of the
+                                            product.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="lg:w-[500px]">
+                            <h3 className="text-lg font-semibold mb-2">
+                                Product Images
+                            </h3>
+                            <ImageUploader
+                                uploadedImages={uploadedImages}
+                                onUpload={handleImageUpload}
+                                onDelete={deleteImageUpload}
+                                onUpdateAlt={updateImageAlt}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex w-full justify-between space-x-10 items-start">
+                        <FormField
+                            control={form.control}
+                            name="fullDescription"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>Full Description</FormLabel>
+                                    <FormControl>
+                                        <Textarea {...field} />
+                                    </FormControl>
+                                    <FormDescription>
+                                        Enter a detailed description of the
+                                        product.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <div className="flex flex-col justify-start items-start space-y-6 lg:w-[500px]">
+                            <div className="w-full">
+                                <h3 className="text-lg font-semibold mb-2">
+                                    Description Images
+                                </h3>
+                                <ImageUploader
+                                    uploadedImages={descriptionImages}
+                                    onUpload={handleDescriptionImageUpload}
+                                    onDelete={deleteImageDescription}
+                                    onUpdateAlt={updateDescriptionImageAlt}
+                                />
+                            </div>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        onClick={handlePreview}
+                                        className="w-full">
+                                        Preview
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl max-h-[80vh]">
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Product Description Preview
+                                        </DialogTitle>
+                                    </DialogHeader>
+                                    <ScrollArea className="h-full max-h-[calc(80vh-4rem)]">
+                                        <BlogPreview content={previewContent} />
+                                    </ScrollArea>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                    </div>
                     <FormField
                         control={form.control}
                         name="tags"
@@ -281,53 +597,21 @@ export default function page() {
                             </FormItem>
                         )}
                     />
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">
-                            Product Images
-                        </h3>
-                        <ImageUploader
-                            uploadedImages={uploadedImages}
-                            onUpload={handleImageUpload}
-                            onDelete={(src) =>
-                                setUploadedImages((prev) =>
-                                    prev.filter((img) => img.src !== src)
-                                )
-                            }
-                            onUpdateAlt={(oldAlt, newAlt) =>
-                                setUploadedImages((prev) =>
-                                    prev.map((img) =>
-                                        img.alt === oldAlt
-                                            ? { ...img, alt: newAlt }
-                                            : img
-                                    )
-                                )
-                            }
-                        />
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">
-                            Description Images
-                        </h3>
-                        <ImageUploader
-                            uploadedImages={descriptionImages}
-                            onUpload={handleDescriptionImageUpload}
-                            onDelete={(src) =>
-                                setDescriptionImages((prev) =>
-                                    prev.filter((img) => img.src !== src)
-                                )
-                            }
-                            onUpdateAlt={(oldAlt, newAlt) =>
-                                setDescriptionImages((prev) =>
-                                    prev.map((img) =>
-                                        img.alt === oldAlt
-                                            ? { ...img, alt: newAlt }
-                                            : img
-                                    )
-                                )
-                            }
-                        />
-                    </div>
-                    <Button type="submit">Create Product</Button>
+                    <Button
+                        type="submit"
+                        className={`${
+                            isCreating
+                                ? "bg-[#030391]/20 cursor-not-allowed hover:bg-[#030391]/20 active:bg-[#030391]/20"
+                                : "bg-sub hover:bg-main/90 active:bg-main/95"
+                        } w-full relative`}>
+                        {isCreating ? (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="animate-spin rounded-full h-3 w-3 border-b border-gray-900" />
+                            </div>
+                        ) : (
+                            "Create Product"
+                        )}
+                    </Button>
                 </form>
             </Form>
         </div>
