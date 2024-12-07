@@ -47,9 +47,10 @@ export type ProductImageCreate = Omit<ProductImage, "productId"> & {
     type: string;
 };
 
-export type BlogImage = {
+export type BlogImageCreate = {
     imageId: string;
     src: string;
+    isThumbnail: boolean;
 };
 
 export type Review = {

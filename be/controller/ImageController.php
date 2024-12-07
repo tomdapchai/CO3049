@@ -126,7 +126,8 @@ class ImageController {
         foreach ($images as $image) {
             $response[] = [
                 'imageId' => $image['imageId'],
-                'src' => $image['src']
+                'src' => $image['src'],
+                'type' => $image['type']
             ];
         }
         echo json_encode(['status' => 'success', 'data' => $response]);
@@ -143,7 +144,7 @@ class ImageController {
 
         $imageModel = new ImageModel($this->db);
         $imageModel->createImage($data['imageId'], $data['src']);
-        $imageModel->createBlogImage($blogId, $data['imageId']);
+        $imageModel->createBlogImage($blogId, $data['imageId'], $data['isThumbnail']);
         echo json_encode(['status' => 'success', 'message' => 'Blog image created']);
     }
 
@@ -159,7 +160,8 @@ class ImageController {
         foreach ($images as $image) {
             $response[] = [
                 'imageId' => $image['imageId'],
-                'src' => $image['src']
+                'src' => $image['src'],
+                'isThumbnail' => $image['isThumbnail']
             ];
         }
         echo json_encode(['status' => 'success', 'data' => $response]);

@@ -18,7 +18,7 @@ import {
 import { posts } from "@/lib/constants";
 import { GetAllBlogs } from "@/services/BlogService";
 import { useEffect, useState } from "react";
-import { Blog, BlogTrue, ImageDetail } from "@/types";
+import { Blog, BlogImageCreate, BlogTrue, ImageDetail } from "@/types";
 import { getImagesFromBlog } from "@/services/ImageService";
 import parser from "html-react-parser";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 
 export default function BlogPage() {
     const [posts, setPosts] = useState<BlogTrue[]>([]);
-    const [images, setImages] = useState<ImageDetail[]>([]);
+    const [thumbs, setThumbs] = useState<BlogImageCreate[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     useEffect(() => {
@@ -37,9 +37,25 @@ export default function BlogPage() {
             } else {
                 setPosts(data);
             }
-            setLoading(false);
         });
     }, []);
+
+    // after getting all the blogs, get the images
+    useEffect(() => {
+        if (posts.length > 0) {
+            getImagesFromBlog(posts[0].blogId).then((data) => {
+                if ("error" in data) {
+                    console.error(data.error);
+                    return;
+                } else {
+                    const thumb = data.filter((thumb) => thumb.isThumbnail);
+                    console.log("thumbs", thumb);
+                    setThumbs(thumb);
+                }
+                setLoading(false);
+            });
+        }
+    }, [posts]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -54,15 +70,20 @@ export default function BlogPage() {
             <div className="flex flex-col md:flex-row gap-8">
                 <main className="flex-1 space-y-8">
                     {posts.map((post, index) => (
-                        <Card key={index} className="flex flex-col">
-                            {/* <Image
-                                src={post.image}
-                                alt={post.title}
-                                width={400}
-                                height={200}
-                                className="object-cover md:w-full py-6 px-10"
-                            /> */}
-                            <CardContent className="py-6 px-10 h-[600px] overflow-hidden">
+                        <Card
+                            key={index}
+                            className="flex flex-col overflow-hidden">
+                            <div className="relative h-[300px]">
+                                <Image
+                                    src={thumbs[index].src}
+                                    alt={post.title}
+                                    fill
+                                    className="object-cover"
+                                    style={{ filter: "blur(2px)" }}
+                                />
+                                <div className="absolute inset-0 bg-black/20" />
+                            </div>
+                            <CardContent className="py-6 px-10">
                                 <p className="text-md text-muted-foreground">
                                     <Image
                                         src="/images/icons/admin.svg"
@@ -97,9 +118,6 @@ export default function BlogPage() {
                                         {post.title}
                                     </CardTitle>
                                 </CardHeader>
-                                <CardDescription className="text-md text-muted-foreground line-clamp-6 h-[400px] overflow-hidden">
-                                    {parser(post.content)}
-                                </CardDescription>
 
                                 <Button
                                     variant="link"

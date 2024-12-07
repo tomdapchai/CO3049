@@ -15,6 +15,7 @@ type ImageUploaderProps = {
     onUpload: (file: File) => void;
     onDelete: (src: string) => void;
     onUpdateAlt: (oldAlt: string, newAlt: string) => void;
+    isMultiple?: boolean;
 };
 
 export default function ImageUploader({
@@ -22,6 +23,7 @@ export default function ImageUploader({
     onUpload,
     onDelete,
     onUpdateAlt,
+    isMultiple = true,
 }: ImageUploaderProps) {
     const [editingAlt, setEditingAlt] = useState<string | null>(null);
     const [newAlt, setNewAlt] = useState<string>("");
@@ -50,7 +52,7 @@ export default function ImageUploader({
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                multiple
+                multiple={isMultiple}
             />
             <ScrollArea className="h-fit">
                 {uploadedImages.map((image) => (

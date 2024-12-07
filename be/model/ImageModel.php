@@ -64,40 +64,41 @@ class ImageModel {
     }
 
     public function getImagesFromProduct($productId) {
-        $query = "SELECT * FROM product_image WHERE productId = ?";
+        $query = "
+            SELECT i.*, pi.type 
+            FROM product_image pi
+            INNER JOIN image i ON pi.imageId = i.imageId
+            WHERE pi.productId = ?
+        ";
         $stmt = $this->db->prepare($query);
         $stmt->execute([$productId]);
-        // take the imageIds of result, then search in image table to get src
-        $images = [];
-        while ($image = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $query = "SELECT * FROM image WHERE imageId = ?";
-            $stmt2 = $this->db->prepare($query);
-            $stmt2->execute([$image['imageId']]);
-            $images[] = $stmt2->fetch(PDO::FETCH_ASSOC);
-        }
+    
+        $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
         return $images;
     }
 
     // blog images
-    public function createBlogImage($blogId, $imageId) {
-        $query = "INSERT INTO blog_image (blogId, imageId) VALUES (?, ?)";
+    public function createBlogImage($blogId, $imageId, $isThumbnail) {
+        $query = "INSERT INTO blog_image (blogId, imageId, isThumbnail) VALUES (?, ?, ?)";
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([$blogId, $imageId]);
+        return $stmt->execute([$blogId, $imageId, $isThumbnail]);
     }
 
     public function getImagesFromBlog($blogId) {
-        $query = "SELECT * FROM blog_image WHERE blogId = ?";
+        $query = "
+            SELECT i.*, bi.isThumbnail 
+            FROM blog_image bi
+            INNER JOIN image i ON bi.imageId = i.imageId
+            WHERE bi.blogId = ?
+        ";
         $stmt = $this->db->prepare($query);
         $stmt->execute([$blogId]);
-        // take the imageIds of result, then search in image table to get src
-        $images = [];
-        while ($image = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $query = "SELECT * FROM image WHERE imageId = ?";
-            $stmt2 = $this->db->prepare($query);
-            $stmt2->execute([$image['imageId']]);
-            $images[] = $stmt2->fetch(PDO::FETCH_ASSOC);
-        }
+    
+        $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
         return $images;
     }
+    
 
 }

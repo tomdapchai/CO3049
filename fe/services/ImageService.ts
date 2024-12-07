@@ -1,6 +1,6 @@
 import api from "@/api";
 import axios from "axios";
-import { ImageDetail, ProductImageCreate } from "@/types";
+import { ImageDetail, ProductImageCreate, BlogImageCreate, Blog } from "@/types";
 // upload image will be done via cdn, cloudinary (already had the code)
 export const getAllImages = async (): Promise<
     ImageDetail[] | { error: string }
@@ -55,13 +55,13 @@ export const getImagesFromProduct = async (
 
 export const getImagesFromBlog = async (
     blogId: string
-): Promise<ImageDetail[] | { error: string }> => {
+): Promise<BlogImageCreate[] | { error: string }> => {
     try {
         const response = await api.get(
             `api/image/routes.php?blogId=${blogId}&type=blog`
         );
         console.log("Backend Response:", response.data);
-        const res: ImageDetail[] = response.data.data;
+        const res: BlogImageCreate[] = response.data.data;
         return res;
     } catch (error) {
         console.log("Error fetching image:", error);
@@ -86,7 +86,7 @@ export const createProductImage = async (
     }
 };
 
-export const createBlogImage = async (blogId: string, data: ImageDetail) => {
+export const createBlogImage = async (blogId: string, data: BlogImageCreate) => {
     try {
         const response = await api.post(
             `api/image/routes.php?slug=${blogId}&type=blog`,

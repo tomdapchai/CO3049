@@ -31,7 +31,7 @@ import TagInput from "@/components/form/TagInput";
 import { convertToReact } from "@/lib/utils";
 import Image from "next/image";
 import { uploadToCDN } from "@/lib/utils";
-import { CreateBlog } from "@/services/BlogService";
+import { CreateBlog, DeleteBlog } from "@/services/BlogService";
 import { createBlogImage } from "@/services/ImageService";
 import { Blog } from "@/types";
 export type UploadedImage = {
@@ -55,7 +55,9 @@ const formSchema = z.object({
 
 export default function BlogCreator() {
     const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+    const [uploadedThumbnail, setUploadedThumbnail] = useState<UploadedImage>();
     const [previewContent, setPreviewContent] = useState<string>("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -119,6 +121,16 @@ export default function BlogCreator() {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
+            setIsSubmitting(true);
+            if (uploadedThumbnail === undefined) {
+                toast({
+                    title: "Error",
+                    description: "Thumbnail is required",
+                    variant: "destructive",
+                });
+                setIsSubmitting(false);
+                return;
+            }
             // Wait for all images to be uploaded
             const successfulUploads = await Promise.all(
                 uploadedImages.map(async (image) => {
@@ -140,6 +152,7 @@ export default function BlogCreator() {
                                 description: `Failed to upload image "${image.alt}"`,
                                 variant: "destructive",
                             });
+                            setIsSubmitting(false);
                             return null;
                         }
                     } catch (error) {
@@ -152,6 +165,7 @@ export default function BlogCreator() {
                             description: `Failed to upload image "${image.alt}"`,
                             variant: "destructive",
                         });
+                        setIsSubmitting(false);
                         return null;
                     }
                 })
@@ -184,6 +198,19 @@ export default function BlogCreator() {
                     }>`;
                 }
             );
+
+            const thumbnail = await uploadToCDN(uploadedThumbnail.file);
+            if (typeof thumbnail === "string") {
+            } else {
+                console.error("Failed to upload thumbnail:", thumbnail);
+                toast({
+                    title: "Error",
+                    description: "Failed to upload thumbnail",
+                    variant: "destructive",
+                });
+                setIsSubmitting(false);
+                return;
+            }
 
             const convertedContent = convertToReact(processedContent);
             console.log({
@@ -227,6 +254,7 @@ export default function BlogCreator() {
                         await createBlogImage(values.blogId, {
                             src: image.src,
                             imageId: image.alt,
+                            isThumbnail: false,
                         }).then((res) => {
                             if ("error" in res) {
                                 toast({
@@ -235,9 +263,47 @@ export default function BlogCreator() {
                                         "Something went wrong while creating the blog images.",
                                     variant: "destructive",
                                 });
+                                DeleteBlog(values.blogId).then((res) => {
+                                    if ("error" in res) {
+                                        toast({
+                                            title: "Error",
+                                            description:
+                                                "Something went wrong while deleting the blog.",
+                                            variant: "destructive",
+                                        });
+                                    }
+                                });
                             }
                         });
                     });
+
+                    createBlogImage(values.blogId, {
+                        src: thumbnail,
+                        imageId: uploadedThumbnail.alt,
+                        isThumbnail: true,
+                    }).then((res) => {
+                        if ("error" in res) {
+                            toast({
+                                title: "Error",
+                                description:
+                                    "Something went wrong while creating the blog thumbnail.",
+                                variant: "destructive",
+                            });
+                            DeleteBlog(values.blogId).then((res) => {
+                                if ("error" in res) {
+                                    toast({
+                                        title: "Error",
+                                        description:
+                                            "Something went wrong while deleting the blog.",
+                                        variant: "destructive",
+                                    });
+                                }
+                            });
+                        }
+                    });
+                })
+                .finally(() => {
+                    setIsSubmitting(false);
                 });
         } catch (error) {
             console.error("Error in onSubmit:", error);
@@ -310,6 +376,9 @@ export default function BlogCreator() {
                             />
                         </div>
                         <div className="w-1/4 space-y-4">
+                            <p className="text-lg font-bold">
+                                Choose images for content
+                            </p>
                             <ImageUploader
                                 uploadedImages={uploadedImages}
                                 onUpload={handleImageUpload}
@@ -333,6 +402,34 @@ export default function BlogCreator() {
                                     </ScrollArea>
                                 </DialogContent>
                             </Dialog>
+                            <p className="text-lg font-bold">
+                                Choose thumbnail
+                            </p>
+                            <ImageUploader
+                                uploadedImages={
+                                    uploadedThumbnail ? [uploadedThumbnail] : []
+                                }
+                                onUpload={(file) => {
+                                    const blobURL = URL.createObjectURL(file);
+                                    const alt = file.name
+                                        .split(".")
+                                        .slice(0, -1)
+                                        .join(".");
+                                    setUploadedThumbnail({
+                                        alt,
+                                        src: blobURL,
+                                        file,
+                                    });
+                                }}
+                                onDelete={() => setUploadedThumbnail(undefined)}
+                                onUpdateAlt={(oldAlt, newAlt) => {
+                                    setUploadedThumbnail((prev) => ({
+                                        ...prev,
+                                        alt: newAlt,
+                                    }));
+                                }}
+                                isMultiple={false}
+                            />
                             <FormField
                                 control={form.control}
                                 name="tags"
@@ -349,8 +446,20 @@ export default function BlogCreator() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="w-full">
-                                Create Blog
+                            <Button
+                                type="submit"
+                                className={`${
+                                    isSubmitting
+                                        ? "bg-[#030391]/20 cursor-not-allowed hover:bg-[#030391]/20 active:bg-[#030391]/20"
+                                        : "bg-sub hover:bg-main/90 active:bg-main/95"
+                                } w-full relative`}>
+                                {isSubmitting ? (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-3 w-3 border-b border-gray-900" />
+                                    </div>
+                                ) : (
+                                    "Create Blog"
+                                )}
                             </Button>
                         </div>
                     </div>
