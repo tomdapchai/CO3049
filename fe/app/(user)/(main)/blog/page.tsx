@@ -40,22 +40,30 @@ export default function BlogPage() {
         });
     }, []);
 
-    // after getting all the blogs, get the images
+    // after getting all the blogs, get the thumbs
     useEffect(() => {
         if (posts.length > 0) {
-            getImagesFromBlog(posts[0].blogId).then((data) => {
-                if ("error" in data) {
-                    console.error(data.error);
-                    return;
-                } else {
-                    const thumb = data.filter((thumb) => thumb.isThumbnail);
-                    console.log("thumbs", thumb);
-                    setThumbs(thumb);
-                }
-                setLoading(false);
-            });
+            Promise.all(
+                posts.map(async (post) => {
+                    await getImagesFromBlog(post.blogId).then((data) => {
+                        if ("error" in data) {
+                            console.error(data.error);
+                            return;
+                        } else {
+                            const thumb = data.filter(
+                                (thumb) => thumb.isThumbnail
+                            );
+                            setThumbs((prev) => [...prev, ...thumb]);
+                        }
+                    });
+                })
+            ).then(() => setLoading(false));
         }
     }, [posts]);
+
+    useEffect(() => {
+        console.log(thumbs);
+    }, [thumbs]);
 
     if (loading) {
         return <div>Loading...</div>;
