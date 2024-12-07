@@ -15,6 +15,8 @@ const ProductCard = ({
     image,
     slug,
     rating,
+    size,
+    color,
 }: ProductView) => {
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const { addToCart } = useCart();
@@ -60,14 +62,17 @@ const ProductCard = ({
                             <Button
                                 variant="secondary"
                                 className="w-3/4 bg-sub hover:bg-[#b88e2f]/90"
-                                onClick={() =>
+                                onClick={() => {
+                                    console.log(size, color);
                                     addToCart({
                                         productName: name,
                                         productId: slug,
                                         productImage: image,
                                         productPrice: price,
-                                    })
-                                }>
+                                        size: size,
+                                        color: color,
+                                    });
+                                }}>
                                 Add to cart
                             </Button>
                         </div>
@@ -88,14 +93,17 @@ const ProductCard = ({
                     <Button
                         variant="secondary"
                         className="w-3/4 bg-sub hover:bg-[#b88e2f]/90"
-                        onClick={() =>
+                        onClick={() => {
+                            console.log(size, color);
                             addToCart({
                                 productName: name,
                                 productId: slug,
                                 productImage: image,
                                 productPrice: price,
-                            })
-                        }>
+                                size: size,
+                                color: color,
+                            });
+                        }}>
                         Add to cart
                     </Button>
                 </div>

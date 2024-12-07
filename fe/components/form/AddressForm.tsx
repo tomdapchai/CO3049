@@ -19,16 +19,24 @@ import {
     CountryRegionData,
 } from "react-country-region-selector";
 import { addressFormSchema } from "@/lib/validation";
-
+import { Label } from "../ui/label";
+import { useAuth } from "@/context/AuthContext";
 export type AddressFormValues = z.infer<typeof addressFormSchema>;
 
 interface AddressFormProps {
     onSubmit: (data: AddressFormValues) => void;
+    detail?: boolean;
 }
 
-export default function AddressForm({ onSubmit }: AddressFormProps) {
+export default function AddressForm({
+    onSubmit,
+    detail = false,
+}: AddressFormProps) {
+    // gonna get user info from context
+    const { user } = useAuth();
     const country = "Vietnam";
     const [region, setRegion] = useState("");
+
     const form = useForm<AddressFormValues>({
         resolver: zodResolver(addressFormSchema),
         defaultValues: {
@@ -41,38 +49,122 @@ export default function AddressForm({ onSubmit }: AddressFormProps) {
         },
     });
 
+    useEffect(() => {
+        if (user) {
+            form.setValue("name", user.name ? user.name : "");
+            form.setValue("email", user.email ? user.email : "");
+            form.setValue(
+                "phoneNumber",
+                user.phoneNumber ? user.phoneNumber : ""
+            );
+            form.setValue(
+                "streetAddress",
+                user.address ? user.address.street : ""
+            );
+            form.setValue(
+                "city",
+                user.address ? user.address.city.split(",")[0] : ""
+            );
+            form.setValue(
+                "province",
+                user.address ? user.address.city.split(",")[1].trim() : ""
+            );
+        }
+    }, [user]);
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="John Doe" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input
-                                    placeholder="johndoe@example.com"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8 w-full">
+                {!detail ? (
+                    <>
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="John Doe"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="johndoe@example.com"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </>
+                ) : (
+                    <div className="flex flex-col justify-start items-start space-y-4">
+                        <p className="text-xl font-bold">User info</p>
+                        <div className="flex w-full justify-between space-x-10">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>Display name</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="John Doe"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <Label className="text-xs text-slate-500">
+                                            This will be used for default
+                                            billing name, and in your reviews.
+                                        </Label>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="johndoe@example.com"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <Label className="text-xs text-slate-500">
+                                            This will be used when we need to
+                                            contact you if there is problem
+                                            about the account.
+                                        </Label>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+                )}
+                {detail ? (
+                    <p className="text-xl font-bold">Billing info</p>
+                ) : (
+                    ""
+                )}
                 <FormField
                     control={form.control}
                     name="phoneNumber"
@@ -141,7 +233,7 @@ export default function AddressForm({ onSubmit }: AddressFormProps) {
                     )}
                 />
                 <Button type="submit" className="w-full">
-                    Submit
+                    Save
                 </Button>
             </form>
         </Form>

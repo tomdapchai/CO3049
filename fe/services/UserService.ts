@@ -111,7 +111,7 @@ export const updateUserInfo = async (
 
 export const updateUsername = async (
     userId: string,
-    data: { newUsername: string }
+    data: { username: string; newUsername: string }
 ): Promise<{ message: string } | { error: string }> => {
     try {
         const response = await api.put(
@@ -128,7 +128,7 @@ export const updateUsername = async (
 
 export const updateUserPassword = async (
     userId: string,
-    data: { newPassword: string }
+    data: { password: string; newPassword: string }
 ): Promise<{ message: string } | { error: string }> => {
     try {
         const response = await api.put(

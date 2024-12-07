@@ -76,7 +76,7 @@ import { useRouter } from "next/navigation";
 const page = ({ params }: { params: Promise<{ slug: string }> }) => {
     const { addToCart } = useCart();
     const { slug } = use(params);
-    const { userId, isLoggedIn } = useAuth();
+    const { userId, isLoggedIn, user } = useAuth();
     const [product, setProduct] = useState<ProductDetail>();
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -137,25 +137,29 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
     };
 
     const handleReviewSubmit = async (data: any) => {
-        await createReview({ ...data, productId: slug, userId: userId }).then(
-            (res) => {
-                if ("error" in res) {
-                    console.log(res.error);
-                    toast({
-                        title: "Error",
-                        description: "Failed to submit review",
-                        variant: "destructive",
-                        duration: 5000,
-                    });
-                } else {
-                    console.log(res);
-                    toast({
-                        title: "Success",
-                        description: "Review submitted successfully",
-                        variant: "default",
-                        duration: 5000,
-                    });
-                    /* setProduct((prev) => {
+        await createReview({
+            ...data,
+            productId: slug,
+            userId: userId,
+            reviewer: user!.name ? user!.name : user!.username,
+        }).then((res) => {
+            if ("error" in res) {
+                console.log(res.error);
+                toast({
+                    title: "Error",
+                    description: "Failed to submit review",
+                    variant: "destructive",
+                    duration: 5000,
+                });
+            } else {
+                console.log(res);
+                toast({
+                    title: "Success",
+                    description: "Review submitted successfully",
+                    variant: "default",
+                    duration: 5000,
+                });
+                /* setProduct((prev) => {
                     if (!prev) {
                         return prev;
                     }
@@ -164,9 +168,8 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                         reviews: [...prev.reviews, res],
                     };
                 }); */
-                }
             }
-        );
+        });
     };
 
     if (!product) {
@@ -236,10 +239,13 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                             />
                             <span className="text-muted-foreground">
                                 {product.reviews.length > 0
-                                    ? product.reviews.reduce(
-                                          (acc, review) => acc + review.rating,
-                                          0
-                                      ) / product.reviews.length
+                                    ? (
+                                          product.reviews.reduce(
+                                              (acc, review) =>
+                                                  acc + review.rating,
+                                              0
+                                          ) / product.reviews.length
+                                      ).toFixed(1)
                                     : 0}
                                 /5
                             </span>

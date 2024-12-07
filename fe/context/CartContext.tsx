@@ -21,11 +21,14 @@ const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 const DEFAULT_ORDER: Omit<
     productOrderTrue,
-    "productId" | "productName" | "productImage" | "productPrice"
+    | "productId"
+    | "productName"
+    | "productImage"
+    | "productPrice"
+    | "size"
+    | "color"
 > = {
     quantity: 1,
-    color: "purple",
-    size: "L",
 };
 
 export const useCart = () => {
@@ -92,8 +95,8 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                 const existingProductIndex = currentCart.findIndex(
                     (item) =>
                         item.productId === data.productId &&
-                        item.color === (data.color || DEFAULT_ORDER.color) &&
-                        item.size === (data.size || DEFAULT_ORDER.size)
+                        item.color === data.color &&
+                        item.size === data.size
                 );
                 if (existingProductIndex >= 0) {
                     const updatedCart = [...currentCart];
@@ -112,6 +115,8 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                         productName: data.productName!,
                         productImage: data.productImage!,
                         productPrice: data.productPrice!,
+                        size: data.size!,
+                        color: data.color!,
                     };
                     return [...currentCart, newOrder];
                 }

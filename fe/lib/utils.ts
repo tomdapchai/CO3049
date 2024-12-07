@@ -13,6 +13,16 @@ export const formatPrice = (price: number): string => {
     });
 };
 
+export function formatDate(date: Date): string {
+    return new Intl.DateTimeFormat("vi-VN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+    }).format(date);
+}
+
 export const sortProducts = (products: any[], sortBy: string) => {};
 
 export function convertToReact(input: string): string {

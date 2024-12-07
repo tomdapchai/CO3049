@@ -5,13 +5,13 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
-import NavLink from "@/components/profile/nav-link";
 import Image from "next/image";
 import logoImg from "@/public/images/logo.png";
-import AddressForm, { AddressFormValues } from "@/components/form/AddressForm";
+import AddressForm from "@/components/form/AddressForm";
 import { useToast } from "@/hooks/use-toast";
 import { createOrder } from "@/services/OrderServices";
-
+import * as z from "zod";
+import { addressFormSchema } from "@/lib/validation";
 export default function CheckoutPage() {
     const { cart } = useCart();
     const { userId, isLoggedIn } = useAuth();
@@ -22,7 +22,7 @@ export default function CheckoutPage() {
         }, 0);
     };
 
-    const handleSubmit = async (data: AddressFormValues) => {
+    const handleSubmit = async (data: z.infer<typeof addressFormSchema>) => {
         // Here you would typically send the order data to your backend
         const { streetAddress, city, province, ...rest } = data;
         console.log("Order submitted:", {
@@ -65,29 +65,18 @@ export default function CheckoutPage() {
         <div
             id="checkout-container"
             className="w-full h-full flex flex-col space-y-6">
-            <div className="flex flex-col w-full h-[400px] relative flex justify-center items-center overflow-hidden">
+            <div className="flex flex-col w-full h-[400px] relative justify-center items-center overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/images/banner.jpg')] bg-cover bg-center bg-no-repeat filter blur-sm"></div>
                 <div className="absolute inset-0 bg-white/10"></div>
                 <Image src={logoImg} alt="Furniro" priority className="z-10" />
                 <h1 className="relative z-10 font-bold text-6xl text-sub">
                     Checkout
                 </h1>
-                <nav className="z-10 font-bold text-sm">
-                    <ul className="flex list-none space-x-2">
-                        <li>
-                            <NavLink href="/">Home</NavLink>
-                        </li>
-                        <span className="text-gray-500">{"<"}</span>
-                        <li>
-                            <NavLink href="/checkout">Checkout</NavLink>
-                        </li>
-                    </ul>
-                </nav>
             </div>
             <div className="bg-white rounded px-8 pt-6 pb-8 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="w-full px-12 py-12">
-                        <h2 className="mb-4 text-3xl font-bold mb-6">
+                        <h2 className="text-3xl font-bold mb-6">
                             Billing details
                         </h2>
                         <AddressForm onSubmit={handleSubmit} />
@@ -105,9 +94,9 @@ export default function CheckoutPage() {
                                 </h2>
                             </div>
                         </div>
-                        {cart.map((item) => (
+                        {cart.map((item, index) => (
                             <div
-                                key={`${item.productId}_${item.productName}`}
+                                key={index}
                                 className="flex justify-between mb-2">
                                 <span className="text-gray-400">
                                     {item.productName}
@@ -117,7 +106,9 @@ export default function CheckoutPage() {
                                 </span>
 
                                 <span className="text-gray-700 font-medium">
-                                    {formatPrice(item.productPrice)}
+                                    {formatPrice(
+                                        item.productPrice * item.quantity
+                                    )}
                                 </span>
                             </div>
                         ))}

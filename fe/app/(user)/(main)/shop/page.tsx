@@ -158,6 +158,8 @@ const page = () => {
                             price={Number(product.price)}
                             slug={product.slug}
                             image={product.images[0].src}
+                            size={product.size[0]}
+                            color={product.color[0]}
                             rating={5}
                         />
                     ))}

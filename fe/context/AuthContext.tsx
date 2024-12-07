@@ -9,6 +9,7 @@ import { log } from "console";
 interface AuthContextProps {
     isLoggedIn: boolean;
     userId: string;
+    user: User | null;
     error: string | null;
     loginUser: (
         username: string,
@@ -151,6 +152,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 isLoggedIn,
                 userId,
                 error,
+                user,
                 loginUser,
                 logoutUser,
                 loginAdmin,

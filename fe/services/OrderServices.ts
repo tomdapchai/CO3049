@@ -17,11 +17,14 @@ export const GetOrdersByUserId = async (
                         quantity: product.quantity,
                         color: product.color,
                         size: product.size,
+                        productName: product.productName,
+                        productImage: product.productImage,
+                        productPrice: product.productPrice,
                     };
                 }),
                 status: order.status,
-                createdAt: new Date(order.createdAt),
-                completedAt: new Date(order.completedAt),
+                createdAt: order.createdAt,
+                completedAt: order.completedAt,
             };
         });
         return res;
@@ -44,11 +47,14 @@ export const getAllOrders = async (): Promise<Order[] | { error: string }> => {
                         quantity: product.quantity,
                         color: product.color,
                         size: product.size,
+                        productName: product.productName,
+                        productImage: product.productImage,
+                        productPrice: product.productPrice,
                     };
                 }),
                 status: order.status,
-                createdAt: new Date(order.createdAt),
-                completedAt: new Date(order.completedAt),
+                createdAt: order.createdAt,
+                completedAt: order.completedAt,
             };
         });
         return res;
@@ -75,11 +81,14 @@ export const getOderById = async (
                         quantity: product.quantity,
                         color: product.color,
                         size: product.size,
+                        productName: product.productName,
+                        productImage: product.productImage,
+                        productPrice: product.productPrice,
                     };
                 }),
                 status: order.status,
-                createdAt: new Date(order.createdAt),
-                completedAt: new Date(order.completedAt),
+                createdAt: order.createdAt,
+                completedAt: order.completedAt,
             };
         });
         return res;

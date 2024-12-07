@@ -59,6 +59,8 @@ export const getAllProduct = async (): Promise<
                     productId,
                     short_description,
                     full_description,
+                    size,
+                    color,
                     ...rest
                 } = product;
                 const images = await getImagesFromProduct(productId);
@@ -68,6 +70,8 @@ export const getAllProduct = async (): Promise<
                 const reviews = await getReviewsByProductId(productId);
                 return {
                     ...rest,
+                    size: JSON.parse(size),
+                    color: JSON.parse(color),
                     slug: productId,
                     overview: short_description,
                     description: full_description,

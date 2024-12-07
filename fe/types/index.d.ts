@@ -5,6 +5,8 @@ export type ProductView = {
     image: string;
     overview: string;
     rating: number;
+    size: string;
+    color: string;
 };
 
 export type Product = {
@@ -23,8 +25,8 @@ export type ProductDetail = {
     slug: string;
     name: string;
     price: number;
-    size?: string[];
-    color?: string[];
+    size: string[];
+    color: string[];
     images: Image[];
     overview: string;
     description: string;
@@ -64,15 +66,21 @@ export type Review = {
 
 export type Order = {
     orderId: string;
+    userId: string;
     products: {
         productId: string;
         quantity: number;
         color: string;
         size: string;
+        productName: string;
+        productImage: string;
+        productPrice: number;
     }[];
+    phone_number: string;
+    address: string;
     status: string;
-    createdAt: Date;
-    completedAt: Date;
+    createdAt: string;
+    completedAt: string | null;
 };
 
 export type productOrderTrue = {

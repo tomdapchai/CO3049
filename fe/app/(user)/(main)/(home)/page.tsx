@@ -87,6 +87,8 @@ const page = () => {
                                 price={Number(product.price)}
                                 image={product.images[0].src}
                                 slug={product.slug}
+                                size={product.size[0]}
+                                color={product.color[0]}
                                 rating={5}
                             />
                         ))}

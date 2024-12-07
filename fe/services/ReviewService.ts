@@ -12,7 +12,7 @@ export const getAllReviews = async (): Promise<
             return {
                 reviewId: review.reviewId,
                 productId: review.productId,
-                reviewer: review.userId,
+                reviewer: review.reviewer,
                 rating: review.rating,
                 comment: review.content,
                 date: new Date(review.createdAt),
@@ -39,7 +39,7 @@ export const getReviewsByProductId = async (
                 return {
                     reviewId: review.reviewId,
                     productId: review.productId,
-                    reviewer: review.userId,
+                    reviewer: review.reviewer,
                     rating: Number(review.rating),
                     comment: review.content,
                     date: review.createdAt,
@@ -55,13 +55,14 @@ export const getReviewsByProductId = async (
     }
 };
 
-export type ReviewCreate = Omit<Review, "reviewId" | "date" | "reviewer"> & {
+export type ReviewCreate = Omit<Review, "reviewId" | "date"> & {
     userId: string;
 };
 export const createReview = async (
     data: ReviewCreate
 ): Promise<{ message: string } | { error: string }> => {
     try {
+        console.log("Data:", data);
         const response = await api.post(`api/review/routes.php`, data);
         console.log("Backend Response:", response.data);
         return { message: response.data.message };

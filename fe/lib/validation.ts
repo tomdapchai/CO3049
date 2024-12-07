@@ -50,6 +50,15 @@ export const addressFormSchema = z.object({
     }),
 });
 
+export const detailFormSchema = z.object({
+    name: z.string(),
+    email: z.string().email(),
+    phoneNumber: z.string().regex(/^(\+84|0)[3|5|7|8|9][0-9]{8}$/),
+    streetAddress: z.string(),
+    city: z.string(),
+    province: z.string(),
+});
+
 export const blogSchema = z.object({
     title: z.string().min(1, "Blog title is required"),
     blogId: z
