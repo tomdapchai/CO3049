@@ -65,10 +65,14 @@ export const CreateBlog = async (
 };
 
 export const UpdateBlog = async (
-    data: Blog
+    blogId: string,
+    data: Partial<Blog>
 ): Promise<{ message: string } | { error: string }> => {
     try {
-        const response = await api.put("api/blog/routes.php", data);
+        const response = await api.put(
+            `api/blog/routes.php?blogId=${blogId}`,
+            data
+        );
 
         console.log("Backend Response:", response.data);
         return { message: response.data.message };

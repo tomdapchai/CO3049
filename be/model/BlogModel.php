@@ -37,13 +37,14 @@ class BlogModel {
     }
 
     public function updateBlog($blogId, $data) {
-        $query = "UPDATE $this->table SET title = ?, content = ?, tags = ? 
+        $query = "UPDATE $this->table SET title = ?, content = ?, tags = ?, content_original = ? 
                   WHERE blogId = ?";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['title'],
             $data['content'],
             json_encode($data['tags']),
+            $data['contentOriginal'],
             $blogId
         ]);
     }

@@ -150,7 +150,7 @@ export type Blog = {
     title: string;
     content: string;
     tags?: string[]; // JSON array referencing TAG.tagName
-    contentOriginal?: String;
+    contentOriginal?: string;
 };
 
 export type BlogTrue = {
@@ -159,7 +159,7 @@ export type BlogTrue = {
     content: string;
     tags: string[];
     posted: string;
-    contentOriginal?: String;
+    contentOriginal?: string;
 };
 
 export type Tag = {
