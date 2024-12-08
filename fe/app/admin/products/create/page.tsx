@@ -35,34 +35,10 @@ import { CheckboxGroup } from "@/components/input/CheckBoxGroup";
 import { ColorMapping } from "@/components/decoration/ColorMaping";
 import { createProduct, ProductCreate } from "@/services/ProductService";
 import { createProductImage } from "@/services/ImageService";
-
-const productSchema = z.object({
-    productId: z.string().min(1, "Product ID is required"),
-    name: z.string().min(1, "Name is required"),
-    price: z.number().min(0, "Price must be a positive number"),
-    size: z.array(z.string()).min(1, "At least one size must be selected"),
-    color: z.array(z.string()).min(1, "At least one color must be selected"),
-    shortDescription: z.string().min(1, "Short description is required"),
-    fullDescription: z.string().min(1, "Full description is required"),
-    tags: z.array(z.string()),
-});
-
+import { productSchema } from "@/lib/validation";
+import { sizeOptions, colorOptions } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 type ProductFormValues = z.infer<typeof productSchema>;
-
-const sizeOptions = [
-    { id: "compact", label: "Compact" },
-    { id: "standard", label: "Standard" },
-    { id: "large", label: "Large" },
-    { id: "oversized", label: "Oversized" },
-];
-
-const colorOptions = [
-    { id: "black", label: "Black" },
-    { id: "yellow", label: "Yellow" },
-    { id: "violet", label: "Violet" },
-    { id: "blue", label: "Blue" },
-    { id: "green", label: "Green" },
-];
 
 export default function CreateProductPage() {
     const [tags, setTags] = useState<string[]>([]);
@@ -73,6 +49,7 @@ export default function CreateProductPage() {
     const [previewContent, setPreviewContent] = useState<string>("");
     const [isCreating, setIsCreating] = useState(false);
     const { toast } = useToast();
+    const router = useRouter();
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(productSchema),
@@ -170,6 +147,7 @@ export default function CreateProductPage() {
                     description: "Please upload at least one product image",
                     variant: "destructive",
                 });
+                setIsCreating(false);
                 return;
             }
 
@@ -177,7 +155,7 @@ export default function CreateProductPage() {
                 uploadedImages.map(async (image) => {
                     try {
                         console.log(`Starting upload for image: ${image.alt}`);
-                        const url = await uploadToCDN(image.file);
+                        const url = await uploadToCDN(image.file!);
                         if (typeof url === "string") {
                             console.log(
                                 `Successfully uploaded image: ${image.alt}`
@@ -194,7 +172,7 @@ export default function CreateProductPage() {
                             return null;
                         }
                     } catch (error) {
-                        console.error(
+                        console.log(
                             `Error uploading image "${image.alt}":`,
                             error
                         );
@@ -227,7 +205,7 @@ export default function CreateProductPage() {
                 descriptionImages.map(async (image) => {
                     try {
                         console.log(`Starting upload for image: ${image.alt}`);
-                        const url = await uploadToCDN(image.file);
+                        const url = await uploadToCDN(image.file!);
                         if (typeof url === "string") {
                             console.log(
                                 `Successfully uploaded image: ${image.alt}`
@@ -314,6 +292,7 @@ export default function CreateProductPage() {
                 slug: productId,
                 overview: shortDescription,
                 description: convertedDescription,
+                descriptionOriginal: values.fullDescription,
             })
                 .then((res) => {
                     if ("error" in res) {
@@ -374,6 +353,7 @@ export default function CreateProductPage() {
                     });
                 })
                 .finally(() => {
+                    router.push("/admin/products");
                     setIsCreating(false);
                 });
         } catch (error) {
@@ -464,6 +444,7 @@ export default function CreateProductPage() {
                                             name="size"
                                             items={sizeOptions}
                                             control={form.control}
+                                            isEditing={true}
                                         />
                                         <FormDescription>
                                             Select available sizes for the
@@ -483,6 +464,7 @@ export default function CreateProductPage() {
                                             name="color"
                                             items={colorOptions}
                                             control={form.control}
+                                            isEditing={true}
                                         />
                                         <FormDescription>
                                             Select available colors for the
@@ -520,6 +502,7 @@ export default function CreateProductPage() {
                                 onUpload={handleImageUpload}
                                 onDelete={deleteImageUpload}
                                 onUpdateAlt={updateImageAlt}
+                                isEditing={true}
                             />
                         </div>
                     </div>
@@ -552,6 +535,7 @@ export default function CreateProductPage() {
                                     onUpload={handleDescriptionImageUpload}
                                     onDelete={deleteImageDescription}
                                     onUpdateAlt={updateDescriptionImageAlt}
+                                    isEditing={true}
                                 />
                             </div>
                             <Dialog>
@@ -588,6 +572,7 @@ export default function CreateProductPage() {
                                             setTags(newTags);
                                             field.onChange(newTags);
                                         }}
+                                        isEditing={true}
                                     />
                                 </FormControl>
                                 <FormDescription>

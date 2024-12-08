@@ -12,10 +12,12 @@ import { useToast } from "@/hooks/use-toast";
 import { createOrder } from "@/services/OrderServices";
 import * as z from "zod";
 import { addressFormSchema } from "@/lib/validation";
+import { useRouter } from "next/navigation";
 export default function CheckoutPage() {
-    const { cart } = useCart();
+    const { cart, clearCart } = useCart();
     const { userId, isLoggedIn } = useAuth();
     const { toast } = useToast();
+    const router = useRouter();
     const calculateTotal = () => {
         return cart.reduce((total, item) => {
             return total + item.productPrice * item.quantity;
@@ -34,26 +36,33 @@ export default function CheckoutPage() {
         });
 
         await createOrder({
-            userId,
+            userId: isLoggedIn ? userId : null,
             ...rest,
             address: `${streetAddress}, ${city}, ${province}`,
             products: cart,
             total: calculateTotal(),
-        }).then((res) => {
-            if ("error" in res) {
-                return toast({
-                    title: "Error",
-                    description: "An error occurred while placing the order.",
-                    variant: "destructive",
-                });
-            } else {
-                return toast({
-                    title: "Order placed successfully!",
-                    description:
-                        "We've received your order and will process it shortly.",
-                });
-            }
-        });
+        })
+            .then((res) => {
+                if ("error" in res) {
+                    toast({
+                        title: "Error",
+                        description:
+                            "An error occurred while placing the order.",
+                        variant: "destructive",
+                    });
+                } else {
+                    toast({
+                        title: "Order placed successfully!",
+                        description:
+                            "We've received your order and will process it shortly.",
+                    });
+                    const orderId = res.orderId;
+                    router.push(`/success/${orderId}`);
+                }
+            })
+            .finally(() => {
+                clearCart();
+            });
         // Show a success message to the user
 
         // You might want to clear the cart or redirect the user after a successful order

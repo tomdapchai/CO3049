@@ -32,6 +32,7 @@ export type ProductDetail = {
     description: string;
     reviews: Review[];
     tags: string[];
+    descriptionOriginal?: string;
 };
 
 export type ImageDetail = {
@@ -66,7 +67,8 @@ export type Review = {
 
 export type Order = {
     orderId: string;
-    userId: string;
+    userId: string | null;
+    name: string;
     products: {
         productId: string;
         quantity: number;
@@ -81,6 +83,7 @@ export type Order = {
     status: string;
     createdAt: string;
     completedAt: string | null;
+    total: number;
 };
 
 export type productOrderTrue = {
@@ -99,12 +102,13 @@ export type productOrder = Omit<
 >;
 
 export type OrderCreate = {
-    userId: string;
+    userId: string | null;
     products: productOrder[];
     phoneNumber: string;
     email: string;
     address: string;
     total: number;
+    name: string;
 };
 
 type Address = {
@@ -146,6 +150,7 @@ export type Blog = {
     title: string;
     content: string;
     tags?: string[]; // JSON array referencing TAG.tagName
+    contentOriginal?: String;
 };
 
 export type BlogTrue = {
@@ -154,6 +159,7 @@ export type BlogTrue = {
     content: string;
     tags: string[];
     posted: string;
+    contentOriginal?: String;
 };
 
 export type Tag = {

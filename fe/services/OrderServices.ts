@@ -25,6 +25,11 @@ export const GetOrdersByUserId = async (
                 status: order.status,
                 createdAt: order.createdAt,
                 completedAt: order.completedAt,
+                userId: order.userId,
+                phone_number: order.phone_number,
+                address: order.address,
+                total: Number(order.total),
+                name: order.name,
             };
         });
         return res;
@@ -55,6 +60,11 @@ export const getAllOrders = async (): Promise<Order[] | { error: string }> => {
                 status: order.status,
                 createdAt: order.createdAt,
                 completedAt: order.completedAt,
+                userId: order.userId,
+                phone_number: order.phone_number,
+                address: order.address,
+                total: Number(order.total),
+                name: order.name,
             };
         });
         return res;
@@ -72,25 +82,28 @@ export const getOderById = async (
             `api/order/routes.php?orderId=${orderId}`
         );
         console.log("Backend Response:", response.data);
-        const res: Order = response.data.map((order: Order) => {
-            return {
-                orderId: order.orderId,
-                products: order.products.map((product) => {
-                    return {
-                        productId: product.productId,
-                        quantity: product.quantity,
-                        color: product.color,
-                        size: product.size,
-                        productName: product.productName,
-                        productImage: product.productImage,
-                        productPrice: product.productPrice,
-                    };
-                }),
-                status: order.status,
-                createdAt: order.createdAt,
-                completedAt: order.completedAt,
-            };
-        });
+        const res: Order = {
+            orderId: response.data.orderId,
+            products: response.data.products.map((product: any) => {
+                return {
+                    productId: product.productId,
+                    quantity: product.quantity,
+                    color: product.color,
+                    size: product.size,
+                    productName: product.productName,
+                    productImage: product.productImage,
+                    productPrice: product.productPrice,
+                };
+            }),
+            status: response.data.status,
+            createdAt: response.data.createdAt,
+            completedAt: response.data.completedAt,
+            userId: response.data.userId,
+            phone_number: response.data.phone_number,
+            address: response.data.address,
+            total: Number(response.data.total),
+            name: response.data.name,
+        };
         return res;
     } catch (error) {
         console.log("Error fetching orders:", error);
@@ -100,11 +113,11 @@ export const getOderById = async (
 
 export const createOrder = async (
     data: OrderCreate
-): Promise<{ message: string } | { error: string }> => {
+): Promise<{ orderId: string } | { error: string }> => {
     try {
         const response = await api.post(`api/order/routes.php`, data);
         console.log("Backend Response:", response.data);
-        return { message: response.data.message };
+        return { orderId: response.data.orderId };
     } catch (error) {
         console.log("Error creating order:", error);
         return { error: "Error creating order" };
@@ -116,10 +129,9 @@ export const updateOrderStatus = async (
     status: string
 ): Promise<{ message: string } | { error: string }> => {
     try {
-        const response = await api.put(`api/order/routes.php`, {
-            orderId,
-            status,
-        });
+        const response = await api.put(
+            `api/order/routes.php?orderId=${orderId}&status=${status}`
+        );
         console.log("Backend Response:", response.data);
         return { message: response.data.message };
     } catch (error) {

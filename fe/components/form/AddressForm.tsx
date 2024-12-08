@@ -233,7 +233,7 @@ export default function AddressForm({
                     )}
                 />
                 <Button type="submit" className="w-full">
-                    Save
+                    {detail ? "Save Address" : "Order"}
                 </Button>
             </form>
         </Form>

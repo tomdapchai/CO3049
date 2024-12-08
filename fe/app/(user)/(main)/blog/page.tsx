@@ -15,7 +15,6 @@ import {
     PaginationItem,
     PaginationLink,
 } from "@/components/ui/pagination";
-import { posts } from "@/lib/constants";
 import { GetAllBlogs } from "@/services/BlogService";
 import { useEffect, useState } from "react";
 import { Blog, BlogImageCreate, BlogTrue, ImageDetail } from "@/types";
@@ -51,8 +50,9 @@ export default function BlogPage() {
                             return;
                         } else {
                             const thumb = data.filter(
-                                (thumb) => thumb.isThumbnail
+                                (thumb) => thumb.isThumbnail == true
                             );
+
                             setThumbs((prev) => [...prev, ...thumb]);
                         }
                     });
@@ -73,7 +73,9 @@ export default function BlogPage() {
         <div className="container mx-auto px-4 py-8">
             <header className="text-center mb-8">
                 <h1 className="text-4xl font-bold">Blog</h1>
-                <p className="text-muted-foreground">November 21, 2024</p>
+                <p className="text-muted-foreground text-xl">
+                    {new Date().toISOString().split("T")[0]}
+                </p>
             </header>
             <div className="flex flex-col md:flex-row gap-8">
                 <main className="flex-1 space-y-8">

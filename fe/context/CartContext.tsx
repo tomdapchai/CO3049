@@ -8,7 +8,7 @@ interface CartContextProps {
     cart: productOrderTrue[];
     addToCart: (data: Partial<productOrderTrue>) => void;
     removeFromCart: (index: number) => void;
-    updateQuantity: (productId: string, quantity: number) => void;
+    updateQuantity: (productIndex: number, quantity: number) => void;
     updateOrderDetails: (
         productId: string,
         updates: Partial<productOrderTrue>
@@ -154,11 +154,11 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         }
     };
 
-    const updateQuantity = (productId: string, quantity: number) => {
+    const updateQuantity = (productIndex: number, quantity: number) => {
         try {
             setCart((currentCart) => {
-                const updatedCart = currentCart.map((item) =>
-                    item.productId === productId
+                const updatedCart = currentCart.map((item, index) =>
+                    productIndex === index
                         ? { ...item, quantity: Math.max(1, quantity) }
                         : item
                 );

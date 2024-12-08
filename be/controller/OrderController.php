@@ -26,7 +26,9 @@ class OrderController {
                     'address' => $address,
                     'status' => $status,
                     'createdAt' => $createdAt,
-                    'completedAt' => $completedAt
+                    'completedAt' => $completedAt,
+                    'total' => $total,
+                    'name' => $name
                 );
                 array_push($orders_arr, $order_item);
             }
@@ -39,22 +41,21 @@ class OrderController {
     public function getOrderById($orderId) {
         $order = $this->orderModel->getOrderById($orderId);
         if ($order) {
-            $order_arr = array();
-            while ($row = $order->fetch(PDO::FETCH_ASSOC)) {
-                extract($row);
-                $order_item = array(
-                    'orderId' => $orderId,
-                    'userId' => $userId,
-                    'products' => json_decode($products),
-                    'phone_number' => $phone_number,
-                    'address' => $address,
-                    'status' => $status,
-                    'createdAt' => $createdAt,
-                    'completedAt' => $completedAt
-                );
-                array_push($order_arr, $order_item);
-            }
-            echo json_encode($order_arr);
+            $row = $order->fetch(PDO::FETCH_ASSOC);
+            extract($row);
+            $order_item = array(
+                'orderId' => $orderId,
+                'userId' => $userId,
+                'products' => json_decode($products),
+                'phone_number' => $phone_number,
+                'address' => $address,
+                'status' => $status,
+                'createdAt' => $createdAt,
+                'completedAt' => $completedAt,
+                'total' => $total,
+                'name' => $name
+            );
+            echo json_encode($order_item);
         } else {
             echo json_encode(array('message' => 'No order found'));
         }
@@ -74,7 +75,9 @@ class OrderController {
                     'address' => $address,
                     'status' => $status,
                     'createdAt' => $createdAt,
-                    'completedAt' => $completedAt
+                    'completedAt' => $completedAt,
+                    'total' => $total,
+                    'name' => $name
                 );
                 array_push($order_arr, $order_item);
             }
@@ -86,14 +89,7 @@ class OrderController {
 
 
     public function createOrder($data) {
-        //check if userId exists
-        $userModel = new UserModel($this->db);
-        if (!$userModel->getUserById($data['userId'])) {
-            http_response_code(404);
-            echo json_encode(['status' => 'error', 'message' => 'User not found']);
-            return;
-        }
-        // then check if products exists
+        // check if products exists
         $productModel = new ProductModel($this->db);
         // check if products exists, by checking each productId in data['products']
         // data['products'] is an array of productId and quantity

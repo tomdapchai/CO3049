@@ -7,9 +7,14 @@ import { X } from "lucide-react";
 interface TagInputProps {
     tags: string[];
     setTags: React.Dispatch<React.SetStateAction<string[]>>;
+    isEditing?: boolean;
 }
 
-export default function TagInput({ tags, setTags }: TagInputProps) {
+export default function TagInput({
+    tags,
+    setTags,
+    isEditing = false,
+}: TagInputProps) {
     const [inputValue, setInputValue] = useState("");
 
     const addTag = () => {
@@ -36,26 +41,31 @@ export default function TagInput({ tags, setTags }: TagInputProps) {
                         }
                     }}
                     placeholder="Add a tag"
+                    disabled={!isEditing}
                 />
-                <Button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        addTag();
-                    }}>
-                    Add
-                </Button>
+                {isEditing && (
+                    <Button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            addTag();
+                        }}>
+                        Add
+                    </Button>
+                )}
             </div>
             <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-sm">
                         {tag}
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="ml-2 h-4 w-4 p-0"
-                            onClick={() => removeTag(tag)}>
-                            <X className="h-3 w-3" />
-                        </Button>
+                        {isEditing && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="ml-2 h-4 w-4 p-0"
+                                onClick={() => removeTag(tag)}>
+                                <X className="h-3 w-3" />
+                            </Button>
+                        )}
                     </Badge>
                 ))}
             </div>

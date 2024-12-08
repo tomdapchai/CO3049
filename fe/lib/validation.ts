@@ -71,3 +71,14 @@ export const blogSchema = z.object({
     content: z.string().min(1, "Content is required"),
     tags: z.array(z.string()),
 });
+
+export const productSchema = z.object({
+    productId: z.string().min(1, "Product ID is required"),
+    name: z.string().min(1, "Name is required"),
+    price: z.number().min(0, "Price must be a positive number"),
+    size: z.array(z.string()).min(1, "At least one size must be selected"),
+    color: z.array(z.string()).min(1, "At least one color must be selected"),
+    shortDescription: z.string().min(1, "Short description is required"),
+    fullDescription: z.string().min(1, "Full description is required"),
+    tags: z.array(z.string()),
+});

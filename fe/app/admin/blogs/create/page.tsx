@@ -38,7 +38,7 @@ import { blogSchema } from "@/lib/validation";
 export type UploadedImage = {
     alt: string;
     src: string;
-    file: File;
+    file: File | null;
 };
 
 export default function BlogCreator() {
@@ -124,7 +124,7 @@ export default function BlogCreator() {
                 uploadedImages.map(async (image) => {
                     try {
                         console.log(`Starting upload for image: ${image.alt}`);
-                        const uploadedImage = await uploadToCDN(image.file);
+                        const uploadedImage = await uploadToCDN(image.file!);
                         if (typeof uploadedImage === "string") {
                             console.log(
                                 `Successfully uploaded image: ${image.alt}`
@@ -192,7 +192,7 @@ export default function BlogCreator() {
                 }
             );
 
-            const thumbnail = await uploadToCDN(uploadedThumbnail.file);
+            const thumbnail = await uploadToCDN(uploadedThumbnail.file!);
             if (typeof thumbnail === "string") {
             } else {
                 console.error("Failed to upload thumbnail:", thumbnail);
@@ -224,6 +224,7 @@ export default function BlogCreator() {
                 title: values.title,
                 content: convertedContent,
                 tags: values.tags,
+                contentOriginal: values.content,
             })
                 .then((res) => {
                     if ("error" in res) {
@@ -379,6 +380,7 @@ export default function BlogCreator() {
                                 onUpload={handleImageUpload}
                                 onDelete={deleteImage}
                                 onUpdateAlt={updateImageAlt}
+                                isEditing
                             />
                             <Dialog>
                                 <DialogTrigger asChild>
@@ -424,6 +426,7 @@ export default function BlogCreator() {
                                     }));
                                 }}
                                 isMultiple={false}
+                                isEditing
                             />
                             <FormField
                                 control={form.control}
@@ -435,6 +438,7 @@ export default function BlogCreator() {
                                             <TagInput
                                                 tags={field.value}
                                                 setTags={field.onChange}
+                                                isEditing
                                             />
                                         </FormControl>
                                         <FormMessage />

@@ -24,13 +24,14 @@ class BlogModel {
     }
 
     public function createBlog($data) {
-        $query = "INSERT INTO $this->table (blogId, title, content, tags) 
-                  VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO $this->table (blogId, title, content, content_original, tags) 
+                  VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['blogId'],
             $data['title'],
             $data['content'],
+            $data['contentOriginal'],
             json_encode($data['tags'])
         ]);
     }

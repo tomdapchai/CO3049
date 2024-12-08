@@ -16,6 +16,7 @@ export const getProductBySlug = async (
             size,
             color,
             price,
+            full_description_original,
             ...rest
         } = product.data.data;
 
@@ -38,6 +39,7 @@ export const getProductBySlug = async (
             tags: JSON.parse(tags),
             size: JSON.parse(size),
             color: JSON.parse(color),
+            descriptionOriginal: full_description_original,
         };
     } catch (error) {
         console.log("Error fetching product:", error);
@@ -61,6 +63,7 @@ export const getAllProduct = async (): Promise<
                     full_description,
                     size,
                     color,
+                    full_description_original,
                     ...rest
                 } = product;
                 const images = await getImagesFromProduct(productId);
@@ -77,6 +80,7 @@ export const getAllProduct = async (): Promise<
                     description: full_description,
                     images,
                     reviews,
+                    descriptionOriginal: full_description_original,
                 };
             })
         );
@@ -102,6 +106,7 @@ export const createProduct = async (
             size: product.size,
             color: product.color,
             tags: product.tags,
+            fullDescriptionOriginal: product.descriptionOriginal,
         });
         return { message: response.data.message };
     } catch (error) {
@@ -112,13 +117,20 @@ export const createProduct = async (
 
 export const updateProduct = async (
     slug: string,
-    product: ProductDetail
+    product: Partial<ProductCreate>
 ): Promise<{ message: string } | { error: string }> => {
     try {
-        const response = await api.put(
-            `api/product/routes.php?slug=${slug}`,
-            product
-        );
+        console.log("Updating product:", product);
+        const response = await api.put(`api/product/routes.php?slug=${slug}`, {
+            name: product.name,
+            price: product.price,
+            shortDescription: product.overview,
+            fullDescription: product.description,
+            size: product.size,
+            color: product.color,
+            tags: product.tags,
+            fullDescriptionOriginal: product.descriptionOriginal,
+        });
         return { message: response.data.message };
     } catch (error) {
         console.log("Error updating product:", error);

@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check } from "lucide-react";
-
-type UploadedImage = {
+import { UploadedImage } from "@/app/admin/blogs/create/page";
+/* type UploadedImage = {
     alt: string;
     src: string;
     file: File;
-};
+}; */
 
 type ImageUploaderProps = {
     uploadedImages: UploadedImage[];
@@ -16,6 +16,7 @@ type ImageUploaderProps = {
     onDelete: (src: string) => void;
     onUpdateAlt: (oldAlt: string, newAlt: string) => void;
     isMultiple?: boolean;
+    isEditing?: boolean;
 };
 
 export default function ImageUploader({
@@ -24,9 +25,12 @@ export default function ImageUploader({
     onDelete,
     onUpdateAlt,
     isMultiple = true,
+    isEditing = false,
 }: ImageUploaderProps) {
     const [editingAlt, setEditingAlt] = useState<string | null>(null);
     const [newAlt, setNewAlt] = useState<string>("");
+
+    console.log(uploadedImages);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -53,6 +57,7 @@ export default function ImageUploader({
                 accept="image/*"
                 onChange={handleFileChange}
                 multiple={isMultiple}
+                disabled={!isEditing}
             />
             <ScrollArea className="h-fit">
                 {uploadedImages.map((image) => (
@@ -82,12 +87,17 @@ export default function ImageUploader({
                                 {image.alt}
                             </span>
                         )}
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => onDelete(image.src)}>
-                            Delete
-                        </Button>
+                        {isEditing && (
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    onDelete(image.src);
+                                }}>
+                                Delete
+                            </Button>
+                        )}
                     </div>
                 ))}
             </ScrollArea>

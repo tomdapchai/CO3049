@@ -23,8 +23,8 @@ class ProductModel {
     }
 
     public function createProduct($data) {
-        $query = "INSERT INTO $this->table (productId, name, price, size, color, short_description, full_description, tags) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO $this->table (productId, name, price, size, color, short_description, full_description, tags, full_description_original) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['productId'],
@@ -34,12 +34,13 @@ class ProductModel {
             json_encode($data['color']),
             $data['shortDescription'],
             $data['fullDescription'],
-            json_encode($data['tags'])
+            json_encode($data['tags']),
+            $data['fullDescriptionOriginal']
         ]);
     }
 
     public function updateProduct($productId, $data) {
-        $query = "UPDATE $this->table SET name = ?, price = ?, size = ?, color =?, short_description = ?, full_description = ?, tags = ? 
+        $query = "UPDATE $this->table SET name = ?, price = ?, size = ?, color =?, short_description = ?, full_description = ?, tags = ?, full_description_original = ? 
                   WHERE productId = ?";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
@@ -50,6 +51,7 @@ class ProductModel {
             $data['shortDescription'],
             $data['fullDescription'],
             json_encode($data['tags']),
+            $data['fullDescriptionOriginal'],
             $productId
         ]);
     }

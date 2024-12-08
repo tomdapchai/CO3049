@@ -17,7 +17,7 @@ export interface productOrderTrue {
 interface ProductCartCardProps {
     product: productOrderTrue;
     onRemove: (index: number) => void;
-    updateQuantity: (productId: string, newQuantity: number) => void;
+    updateQuantity: (productIndex: number, newQuantity: number) => void;
     index: number;
 }
 
@@ -29,7 +29,7 @@ export default function ProductCartCard({
 }: ProductCartCardProps) {
     const handleQuantityChange = (amount: number) => {
         const newQuantity = Math.max(1, product.quantity + amount);
-        updateQuantity(product.productId, newQuantity);
+        updateQuantity(index, newQuantity);
     };
 
     return (

@@ -1,30 +1,47 @@
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { Order } from "@/types";
+import { Button } from "../ui/button";
 
 interface OrderCardProps {
     order: Order;
+    admin?: boolean;
+    onComplete?: () => void;
+    onCancel?: () => void;
 }
 
-export default function OrderCard({ order }: OrderCardProps) {
-    const totalPrice = order.products.reduce(
-        (sum, product) => sum + product.quantity * product.productPrice,
-        0
-    );
-
+export default function OrderCard({
+    order,
+    admin = false,
+    onComplete = () => {},
+    onCancel = () => {},
+}: OrderCardProps) {
     return (
-        <Card className="w-full max-w-4xl">
+        <Card className="w-full max-w-4xl min-w-fit">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-xl font-bold">
                     Order #{order.orderId}
                 </CardTitle>
                 <Badge
                     variant={
                         order.status === "completed" ? "default" : "secondary"
-                    }>
+                    }
+                    className={`${
+                        order.status === "completed"
+                            ? "bg-green-500"
+                            : order.status === "pending"
+                            ? "bg-yellow-400"
+                            : "bg-red-400"
+                    }`}>
                     {order.status}
                 </Badge>
             </CardHeader>
@@ -32,7 +49,7 @@ export default function OrderCard({ order }: OrderCardProps) {
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                            <p>User ID: {order.userId}</p>
+                            <p>Customer: {order.name}</p>
                             <p>Phone: {order.phone_number}</p>
                         </div>
                         <div>
@@ -55,7 +72,7 @@ export default function OrderCard({ order }: OrderCardProps) {
                             {order.products.map((product, index) => (
                                 <div
                                     key={index}
-                                    className="flex items-center space-x-4 bg-secondary/10 p-2 rounded-md w-[calc(50%-0.5rem)]">
+                                    className="flex items-center space-x-4 bg-secondary/10 p-2 rounded-md w-[calc(50%-2rem)]">
                                     <div className="relative w-[60px] h-[60px] flex-shrink-0">
                                         <Image
                                             src={product.productImage}
@@ -90,11 +107,26 @@ export default function OrderCard({ order }: OrderCardProps) {
                     <div className="flex justify-between items-center pt-4 border-t">
                         <span className="font-semibold">Total:</span>
                         <span className="font-semibold">
-                            {formatPrice(totalPrice)}
+                            {formatPrice(order.total)}
                         </span>
                     </div>
                 </div>
             </CardContent>
+            {admin && order.status == "pending" && (
+                <CardFooter className="w-full flex justify-end items-center space-x-4">
+                    <Button
+                        className="bg-red-400 hover:bg-red-400/90"
+                        onClick={onCancel}>
+                        {" "}
+                        Order cancel
+                    </Button>
+                    <Button
+                        className="bg-sub text-main hover:bg-[#b88e2f]/90"
+                        onClick={onComplete}>
+                        Order complete
+                    </Button>
+                </CardFooter>
+            )}
         </Card>
     );
 }

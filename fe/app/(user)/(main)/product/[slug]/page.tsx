@@ -28,50 +28,6 @@ import { createReview, ReviewCreate } from "@/services/ReviewService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-/* const mockProductDetail: ProductDetail = {
-    reviews: [
-        {
-            reviewId: "1",
-            reviewer: "John Doe",
-            rating: 4,
-            comment:
-                "Great experience! The service was excellent, and I'll definitely come back.",
-            date: "2024-11-24",
-        },
-        {
-            reviewId: "2",
-            reviewer: "Jane Smith",
-            rating: 3,
-            comment: "The product was decent, but the delivery was delayed.",
-            date: "2024-11-22",
-        },
-        {
-            reviewId: "3",
-            reviewer: "Michael Johnson",
-            rating: 5,
-            comment:
-                "Outstanding quality! Exceeded my expectations in every way.",
-            date: "2024-11-20",
-        },
-        {
-            reviewId: "4",
-            reviewer: "Emily Davis",
-            rating: 2,
-            comment:
-                "Not worth the price. The materials felt cheap, and the fit was poor.",
-            date: "2024-11-18",
-        },
-        {
-            reviewId: "5",
-            reviewer: "Chris Lee",
-            rating: 4,
-            comment:
-                "Good overall, but there’s room for improvement in the packaging.",
-            date: "2024-11-15",
-        },
-    ],
-    tags: ["office", "furniture", "chair"],
-}; */
 
 const page = ({ params }: { params: Promise<{ slug: string }> }) => {
     const { addToCart } = useCart();
