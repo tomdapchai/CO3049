@@ -1,4 +1,4 @@
-import { productOrderTrue } from "@/types";
+import { Order, productOrderTrue, User } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
@@ -100,3 +100,207 @@ export const uploadToCDN = async (
         return { error: "Upload error" };
     }
 };
+
+export type ColStatistic = {
+    date: string;
+    total: number;
+};
+
+export type PieStatistic = {
+    status: "completed" | "pending" | "cancelled";
+    total: number;
+};
+
+export type LineStatistic = {
+    date: string;
+    totalOrder: number;
+    totalRevenue: number;
+    totalUser: number;
+};
+
+export function lastOrdersPeriodDays(
+    total: Order[],
+    p: number,
+    type: "col" | "pie"
+): ColStatistic[] | PieStatistic[] {
+    const currentDate = new Date();
+
+    if (type === "col") {
+        const statistics: ColStatistic[] = [];
+
+        for (let i = p; i >= 0; i--) {
+            const date = new Date(currentDate);
+            date.setDate(currentDate.getDate() - i);
+
+            const formattedDate = date.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            });
+
+            const ordersForDate = total.filter((order) => {
+                const orderDate = new Date(order.createdAt);
+                return (
+                    orderDate.getDate() === date.getDate() &&
+                    orderDate.getMonth() === date.getMonth() &&
+                    orderDate.getFullYear() === date.getFullYear()
+                );
+            });
+
+            statistics.push({
+                date: formattedDate,
+                total: ordersForDate.length,
+            });
+        }
+
+        return statistics;
+    } else {
+        const statusCounts: Record<string, number> = {
+            completed: 0,
+            pending: 0,
+            cancelled: 0,
+        };
+
+        const startDate = new Date(currentDate);
+        startDate.setDate(currentDate.getDate() - p);
+
+        total.forEach((order) => {
+            const orderDate = new Date(order.createdAt);
+            if (orderDate >= startDate && orderDate <= currentDate) {
+                statusCounts[order.status] =
+                    (statusCounts[order.status] || 0) + 1;
+            }
+        });
+
+        return Object.entries(statusCounts).map(([status, total]) => ({
+            status: status as "completed" | "pending" | "cancelled",
+            total,
+        }));
+    }
+}
+
+export function lastUsersPeriodDays(total: User[], p: number): ColStatistic[] {
+    const currentDate = new Date();
+    const statistics: ColStatistic[] = [];
+
+    for (let i = p; i >= 0; i--) {
+        const date = new Date(currentDate);
+        date.setDate(currentDate.getDate() - i);
+
+        const formattedDate = date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+
+        const usersForDate = total.filter((user) => {
+            const userDate = new Date(user.joinAt);
+            return (
+                userDate.getDate() === date.getDate() &&
+                userDate.getMonth() === date.getMonth() &&
+                userDate.getFullYear() === date.getFullYear()
+            );
+        });
+
+        statistics.push({
+            date: formattedDate,
+            total: usersForDate.length,
+        });
+    }
+
+    return statistics;
+}
+
+export function lastRevenuePeriodDays(
+    total: Order[],
+    p: number
+): ColStatistic[] {
+    const currentDate = new Date();
+    const statistics: ColStatistic[] = [];
+
+    for (let i = p; i >= 0; i--) {
+        const date = new Date(currentDate);
+        date.setDate(currentDate.getDate() - i);
+
+        const formattedDate = date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+
+        const ordersForDate = total.filter((order) => {
+            const orderDate = new Date(order.createdAt);
+            return (
+                orderDate.getDate() === date.getDate() &&
+                orderDate.getMonth() === date.getMonth() &&
+                orderDate.getFullYear() === date.getFullYear()
+            );
+        });
+
+        const totalRevenue = ordersForDate.reduce(
+            (acc, order) =>
+                acc + (order.status === "completed" ? order.total : 0),
+            0
+        );
+
+        statistics.push({
+            date: formattedDate,
+            total: totalRevenue / 1000,
+        });
+    }
+
+    return statistics;
+}
+
+export function lastStatsPeriodDays(
+    orders: Order[],
+    users: User[],
+    period: number
+): LineStatistic[] {
+    const currentDate = new Date();
+    const statistics: LineStatistic[] = [];
+
+    for (let i = period; i >= 0; i--) {
+        const date = new Date(currentDate);
+        date.setDate(currentDate.getDate() - i);
+
+        const formattedDate = date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+
+        const ordersForDate = orders.filter((order) => {
+            const orderDate = new Date(order.createdAt);
+            return (
+                orderDate.getDate() === date.getDate() &&
+                orderDate.getMonth() === date.getMonth() &&
+                orderDate.getFullYear() === date.getFullYear()
+            );
+        });
+
+        const usersForDate = users.filter((user) => {
+            const userDate = new Date(user.joinAt);
+            return (
+                userDate.getDate() === date.getDate() &&
+                userDate.getMonth() === date.getMonth() &&
+                userDate.getFullYear() === date.getFullYear()
+            );
+        });
+
+        const totalRevenue = ordersForDate.reduce(
+            (acc, order) =>
+                acc + (order.status === "completed" ? order.total : 0),
+            0
+        );
+
+        statistics.push({
+            date: formattedDate,
+            totalOrder: ordersForDate.length,
+            totalRevenue: totalRevenue / 10000000,
+            totalUser: usersForDate.length,
+        });
+    }
+
+    return statistics;
+}

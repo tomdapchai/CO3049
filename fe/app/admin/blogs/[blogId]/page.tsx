@@ -32,7 +32,11 @@ import { convertToReact } from "@/lib/utils";
 import Image from "next/image";
 import { uploadToCDN } from "@/lib/utils";
 import { CreateBlog, DeleteBlog, UpdateBlog } from "@/services/BlogService";
-import { createBlogImage, deleteImage } from "@/services/ImageService";
+import {
+    createBlogImage,
+    deleteImage,
+    updateImageId,
+} from "@/services/ImageService";
 import { Blog } from "@/types";
 import { blogSchema } from "@/lib/validation";
 import { UploadedImage } from "../create/page";
@@ -134,7 +138,12 @@ const page = () => {
         });
     };
 
-    const updateImageAlt = (oldAlt: string, newAlt: string) => {
+    const updateImageAlt = async (oldAlt: string, newAlt: string) => {
+        const image = uploadedImages.filter((img) => img.alt === oldAlt);
+        if (image[0].alt === oldAlt) {
+            await updateImageId({ imageId: oldAlt, newId: newAlt });
+        }
+
         setUploadedImages((prev) =>
             prev.map((img) =>
                 img.alt === oldAlt ? { ...img, alt: newAlt } : img
@@ -159,7 +168,10 @@ const page = () => {
         setUploadedThumbnail(undefined);
     };
 
-    const updateThumbnailAlt = (oldAlt: string, newAlt: string) => {
+    const updateThumbnailAlt = async (oldAlt: string, newAlt: string) => {
+        if (!uploadedThumbnail!.src.startsWith("blob")) {
+            await updateImageId({ imageId: oldAlt, newId: newAlt });
+        }
         setUploadedThumbnail((prev) => ({ ...prev, alt: newAlt }));
     };
 

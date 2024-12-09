@@ -1,7 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { GetOrdersByUserId } from "@/services/OrderServices";
-import { useAuth } from "@/context/AuthContext";
 import { Order } from "@/types";
 import OrderCard from "@/components/card/OrderCard";
 import { Input } from "@/components/ui/input";
@@ -24,13 +22,13 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
-import MetricCard from "@/components/card/MetricCard";
-const ORDERS_PER_PAGE = 3;
+import MetricCard from "../card/MetricCard";
 
-const page = () => {
-    const { userId } = useAuth();
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+const ORDERS_PER_PAGE = 4;
+
+const UserOrderHistory = ({ orders }: { orders: Order[] }) => {
+    const [pOrders, setPOrders] = useState<Order[]>(orders);
+    const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
     const [currentPage, setCurrentPage] = useState(1);
     const [statusFilter, setStatusFilter] = useState("all");
     const [sortBy, setSortBy] = useState("createdAt");
@@ -38,18 +36,11 @@ const page = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        GetOrdersByUserId(userId).then((data) => {
-            if ("error" in data) {
-                console.log(data.error);
-            } else {
-                setFilteredOrders(data);
-                setOrders(data);
-            }
-        });
+        setPOrders(orders);
     }, []);
 
     useEffect(() => {
-        let result = [...orders];
+        let result = [...pOrders];
 
         // Apply status filter
         if (statusFilter !== "all") {
@@ -84,9 +75,12 @@ const page = () => {
 
         setFilteredOrders(result);
         setCurrentPage(1);
-    }, [orders, statusFilter, sortBy, sortOrder, searchTerm]);
+    }, [pOrders, statusFilter, sortBy, sortOrder, searchTerm]);
 
-    const totalAmount = orders.reduce((sum, order) => sum + order.total, 0);
+    const totalAmount = orders.reduce(
+        (sum, order) => sum + (order.status == "completed" ? order.total : 0),
+        0
+    );
     const totalOrders = orders.length;
     const completedOrders = orders.filter(
         (order) => order.status === "completed"
@@ -158,7 +152,7 @@ const page = () => {
                 </Button>
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
                 {paginatedOrders.map((order) => (
                     <OrderCard key={order.orderId} order={order} />
                 ))}
@@ -166,7 +160,7 @@ const page = () => {
 
             <Pagination>
                 <PaginationContent>
-                    <PaginationItem>
+                    <PaginationItem className="cursor-pointer">
                         <PaginationPrevious
                             onClick={() =>
                                 setCurrentPage((prev) => Math.max(prev - 1, 1))
@@ -175,7 +169,7 @@ const page = () => {
                         />
                     </PaginationItem>
                     {[...Array(pageCount)].map((_, i) => (
-                        <PaginationItem key={i}>
+                        <PaginationItem key={i} className="cursor-pointer">
                             <PaginationLink
                                 onClick={() => setCurrentPage(i + 1)}
                                 isActive={currentPage === i + 1}>
@@ -183,7 +177,7 @@ const page = () => {
                             </PaginationLink>
                         </PaginationItem>
                     ))}
-                    <PaginationItem>
+                    <PaginationItem className="cursor-pointer">
                         <PaginationNext
                             onClick={() =>
                                 setCurrentPage((prev) =>
@@ -199,4 +193,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default UserOrderHistory;

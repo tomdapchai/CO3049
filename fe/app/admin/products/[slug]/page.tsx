@@ -37,7 +37,11 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckboxGroup } from "@/components/input/CheckBoxGroup";
 import { ColorMapping } from "@/components/decoration/ColorMaping";
 import { createProduct, ProductCreate } from "@/services/ProductService";
-import { createProductImage, deleteImage } from "@/services/ImageService";
+import {
+    createProductImage,
+    deleteImage,
+    updateImageId,
+} from "@/services/ImageService";
 import { productSchema } from "@/lib/validation";
 import { sizeOptions, colorOptions } from "@/lib/constants";
 import { useRouter } from "next/navigation";
@@ -149,7 +153,16 @@ export default function ProductDetailPage() {
         });
     };
 
-    const updateImageAlt = (oldAlt: string, newAlt: string) => {
+    const updateImageAlt = async (oldAlt: string, newAlt: string) => {
+        const image = uploadedImages.filter((img) => img.alt == oldAlt);
+        console.log("editing", image);
+        if (!image[0].src.startsWith("blob")) {
+            console.log(image);
+            await updateImageId({
+                imageId: oldAlt,
+                newId: newAlt,
+            });
+        }
         setUploadedImages((prev) =>
             prev.map((img) =>
                 img.alt === oldAlt ? { ...img, alt: newAlt } : img
@@ -180,6 +193,13 @@ export default function ProductDetailPage() {
     };
 
     const updateDescriptionImageAlt = (oldAlt: string, newAlt: string) => {
+        const image = descriptionImages.filter((img) => img.alt == oldAlt);
+        if (!image[0].src.startsWith("blob")) {
+            updateImageId({
+                imageId: oldAlt,
+                newId: newAlt,
+            });
+        }
         setDescriptionImages((prev) =>
             prev.map((img) =>
                 img.alt === oldAlt ? { ...img, alt: newAlt } : img

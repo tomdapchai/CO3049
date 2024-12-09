@@ -63,6 +63,7 @@ export type Review = {
     rating: number;
     reviewer: string;
     date: string;
+    userId: string;
 };
 
 export type Order = {
@@ -135,6 +136,7 @@ export type User = {
     cart: CartItem[]; // JSON structure for cart
     status: "active" | "banned";
     address?: Address;
+    joinAt: string;
 };
 
 export type Contact = {
@@ -142,7 +144,8 @@ export type Contact = {
     name: string;
     email: string;
     phoneNumber: string;
-    furtherInfo?: string;
+    subject: string;
+    message: string;
 };
 
 export type Blog = {

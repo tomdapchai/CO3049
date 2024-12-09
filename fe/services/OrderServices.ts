@@ -8,30 +8,34 @@ export const GetOrdersByUserId = async (
     try {
         const response = await api.get(`api/order/routes.php?userId=${userId}`);
         console.log("Backend Response:", response.data);
-        const res: Order[] = response.data.map((order: Order) => {
-            return {
-                orderId: order.orderId,
-                products: order.products.map((product) => {
-                    return {
-                        productId: product.productId,
-                        quantity: product.quantity,
-                        color: product.color,
-                        size: product.size,
-                        productName: product.productName,
-                        productImage: product.productImage,
-                        productPrice: product.productPrice,
-                    };
-                }),
-                status: order.status,
-                createdAt: order.createdAt,
-                completedAt: order.completedAt,
-                userId: order.userId,
-                phone_number: order.phone_number,
-                address: order.address,
-                total: Number(order.total),
-                name: order.name,
-            };
-        });
+        let res: Order[] = [];
+        if (response.data.length > 0) {
+            res = response.data.map((order: Order) => {
+                return {
+                    orderId: order.orderId,
+                    products: order.products.map((product) => {
+                        return {
+                            productId: product.productId,
+                            quantity: product.quantity,
+                            color: product.color,
+                            size: product.size,
+                            productName: product.productName,
+                            productImage: product.productImage,
+                            productPrice: product.productPrice,
+                        };
+                    }),
+                    status: order.status,
+                    createdAt: order.createdAt,
+                    completedAt: order.completedAt,
+                    userId: order.userId,
+                    phone_number: order.phone_number,
+                    address: order.address,
+                    total: Number(order.total),
+                    name: order.name,
+                };
+            });
+        }
+
         return res;
     } catch (error) {
         console.error("Error fetching orders:", error);

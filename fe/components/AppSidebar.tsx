@@ -66,6 +66,11 @@ const items = [
         url: "/admin/tags",
         icon: Calendar,
     },
+    {
+        title: "Contacts",
+        url: "/admin/contacts",
+        icon: Calendar,
+    },
 ];
 
 export function AppSidebar() {

@@ -20,20 +20,21 @@ import {
 } from "react-country-region-selector";
 import { addressFormSchema } from "@/lib/validation";
 import { Label } from "../ui/label";
-import { useAuth } from "@/context/AuthContext";
-export type AddressFormValues = z.infer<typeof addressFormSchema>;
+import { User } from "@/types";
+import { AddressFormValues } from "./AddressForm";
 
 interface AddressFormProps {
     onSubmit: (data: AddressFormValues) => void;
     detail?: boolean;
+    user: User;
 }
 
-export default function AddressForm({
+export default function AdminAddressForm({
     onSubmit,
     detail = false,
+    user,
 }: AddressFormProps) {
     // gonna get user info from context
-    const { user } = useAuth();
     const country = "Vietnam";
     const [region, setRegion] = useState("");
 

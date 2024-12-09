@@ -21,7 +21,7 @@ export default function ProductsPage() {
     const router = useRouter();
     return (
         <div className="container mx-auto py-8">
-            <h1 className="text-3xl font-bold mb-8">Product Management</h1>
+            <h1 className="text-2xl font-bold mb-8">Product Management</h1>
             <Button
                 className="mb-4"
                 onClick={() => router.push("./products/create")}>

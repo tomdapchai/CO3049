@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
     Select,
     SelectContent,
@@ -51,6 +52,9 @@ const page = () => {
     const [selectedValue, setSelectedValue] = useState<string | undefined>(
         undefined
     );
+
+    const [searchParams] = useSearchParams();
+    console.log("Search Params:", searchParams);
 
     useEffect(() => {
         // fetch products

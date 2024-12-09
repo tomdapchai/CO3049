@@ -6,16 +6,17 @@ export const getAllReviews = async (): Promise<
     Review[] | { error: string }
 > => {
     try {
-        const response = await api.get(`api/review/routes.php`);
+        const response = await api.get("api/review/routes.php");
         console.log("Backend Response:", response.data);
         const res: Review[] = response.data.data.map((review: any) => {
             return {
                 reviewId: review.reviewId,
                 productId: review.productId,
                 reviewer: review.reviewer,
-                rating: review.rating,
+                rating: Number(review.rating),
                 comment: review.content,
-                date: new Date(review.createdAt),
+                date: review.createdAt,
+                userId: review.userId,
             };
         });
         return res;
@@ -43,6 +44,7 @@ export const getReviewsByProductId = async (
                     rating: Number(review.rating),
                     comment: review.content,
                     date: review.createdAt,
+                    userId: review.userId,
                 };
             });
         } else {

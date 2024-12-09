@@ -19,6 +19,7 @@ export const getAllUsers = async (): Promise<User[] | { error: string }> => {
                         : { street: "", city: "" },
                 cart: user.cart ? JSON.parse(user.cart) : [],
                 status: user.status,
+                joinAt: user.joinAt,
             };
         });
         return res;
@@ -50,6 +51,7 @@ export const getUserById = async (
                     : { street: "", city: "" },
             cart: user.cart ? JSON.parse(user.cart) : [],
             status: user.status,
+            joinAt: user.joinAt,
         };
     } catch (error) {
         console.log("Error fetching user:", error);
@@ -81,6 +83,7 @@ export const getUserByUsername = async (
                     : { street: "", city: "" },
             cart: user.cart ? JSON.parse(user.cart) : [],
             status: user.status,
+            joinAt: user.joinAt,
         };
     } catch (error) {
         console.log("Error fetching user:", error);
@@ -91,7 +94,7 @@ export const getUserByUsername = async (
 export type UserInfo = Omit<User, "userId" | "cart" | "status" | "username">;
 export const updateUserInfo = async (
     userId: string,
-    data: UserInfo
+    data: Partial<UserInfo>
 ): Promise<{ message: string } | { error: string }> => {
     try {
         const response = await api.put(`api/user/routes.php?userId=${userId}`, {
@@ -143,6 +146,25 @@ export const updateUserPassword = async (
     }
 };
 
+export const adminUpdateUserPassword = async (
+    userId: string,
+    data: {
+        newPassword: string;
+    }
+): Promise<{ message: string } | { error: string }> => {
+    try {
+        const response = await api.put(
+            `api/user/routes.php?updateType=adminPassword&userId=${userId}`,
+            data
+        );
+        console.log("Backend Response:", response.data);
+        return { message: response.data.message };
+    } catch (error) {
+        console.log("Error updating user:", error);
+        return { error: "Error updating password" };
+    }
+};
+
 export const deleteUser = async (
     userId: string
 ): Promise<{ message: string } | { error: string }> => {
@@ -155,6 +177,22 @@ export const deleteUser = async (
     } catch (error) {
         console.log("Error deleting user:", error);
         return { error: "Error deleting user" };
+    }
+};
+
+export const updateUserStatus = async (
+    userId: string,
+    status: "banned" | "active"
+): Promise<{ message: string } | { error: string }> => {
+    try {
+        const response = await api.post(
+            `api/user/routes.php?type=${status}&userId=${userId}`
+        );
+        console.log("Backend Response:", response.data);
+        return { message: response.data.message };
+    } catch (error) {
+        console.log("Error updating user status:", error);
+        return { error: "Error updating user status" };
     }
 };
 

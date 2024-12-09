@@ -11,7 +11,7 @@ export function ReviewStar({ rating }: { rating: number }) {
     return (
         <div
             className="flex"
-            aria-label={`Rating: ${rating.toFixed(1)} out of 5 stars`}>
+            aria-label={`Rating: ${Number(rating).toFixed(1)} out of 5 stars`}>
             {[...Array(5)].map((_, index) => (
                 <Star
                     key={index}
