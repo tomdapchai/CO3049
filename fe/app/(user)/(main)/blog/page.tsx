@@ -12,8 +12,11 @@ import { SearchInput } from "@/components/ui/searchinput";
 import { Button } from "@/components/ui/button";
 import {
     Pagination,
+    PaginationContent,
     PaginationItem,
     PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
 } from "@/components/ui/pagination";
 import { GetAllBlogs } from "@/services/BlogService";
 import { useEffect, useState } from "react";
@@ -21,12 +24,19 @@ import { Blog, BlogImageCreate, BlogTrue, ImageDetail } from "@/types";
 import { getImagesFromBlog } from "@/services/ImageService";
 import parser from "html-react-parser";
 import { useRouter } from "next/navigation";
+import { set } from "date-fns";
+import { Input } from "@/components/ui/input";
 // todo: implement pagination
 
+const MAX_BLOGS_PER_PAGE = 3;
 export default function BlogPage() {
     const [posts, setPosts] = useState<BlogTrue[]>([]);
     const [thumbs, setThumbs] = useState<BlogImageCreate[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
     useEffect(() => {
         GetAllBlogs().then((data) => {
@@ -42,6 +52,7 @@ export default function BlogPage() {
     // after getting all the blogs, get the thumbs
     useEffect(() => {
         if (posts.length > 0) {
+            setTotalPages(Math.ceil(posts.length / MAX_BLOGS_PER_PAGE));
             Promise.all(
                 posts.map(async (post) => {
                     await getImagesFromBlog(post.blogId).then((data) => {
@@ -68,6 +79,17 @@ export default function BlogPage() {
     if (loading) {
         return <div>Loading...</div>;
     }
+
+    const filteredPosts = posts.filter((post) =>
+        (post.title.toLowerCase() + post.tags.join(" ")).includes(
+            searchTerm.toLowerCase()
+        )
+    );
+
+    const paginatedPosts = filteredPosts.slice(
+        (currentPage - 1) * MAX_BLOGS_PER_PAGE,
+        currentPage * MAX_BLOGS_PER_PAGE
+    );
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -140,26 +162,47 @@ export default function BlogPage() {
                             </CardContent>
                         </Card>
                     ))}
-                    <Pagination className="mt-8">
-                        <PaginationItem>
-                            <PaginationLink href="#">1</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">2</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">3</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">Next</PaginationLink>
-                        </PaginationItem>
+                    <Pagination className="mt-4">
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    onClick={() =>
+                                        setCurrentPage((prev) =>
+                                            Math.max(prev - 1, 1)
+                                        )
+                                    }
+                                    isActive={!(currentPage === 1)}
+                                />
+                            </PaginationItem>
+                            {[...Array(totalPages)].map((_, i) => (
+                                <PaginationItem key={i}>
+                                    <PaginationLink
+                                        onClick={() => setCurrentPage(i + 1)}
+                                        isActive={currentPage === i + 1}>
+                                        {i + 1}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}
+                            <PaginationItem>
+                                <PaginationNext
+                                    onClick={() =>
+                                        setCurrentPage((prev) =>
+                                            Math.min(prev + 1, totalPages)
+                                        )
+                                    }
+                                    isActive={!(currentPage === totalPages)}
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
                     </Pagination>
                 </main>
                 <aside className="w-full md:w-1/3 space-y-8">
                     <div>
-                        <SearchInput
-                            placeholder="Search..."
-                            className="w-full"
+                        <Input
+                            placeholder="Search blogs..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="max-w-sm"
                         />
                     </div>
                     <div>

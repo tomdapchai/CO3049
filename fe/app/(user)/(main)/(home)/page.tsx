@@ -9,10 +9,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getAllProduct } from "@/services/ProductService";
 import { Product, ProductDetail, ProductView } from "@/types";
+import { useProduct } from "@/context/ProductContext";
 const page = () => {
+    const { products } = useProduct();
     const [productImages, setProductImages] = useState<ProductDetail[]>([]);
     useEffect(() => {
-        getAllProduct().then((data) => {
+        /* getAllProduct().then((data) => {
             if ("error" in data) {
                 console.error(data.error);
             } else {
@@ -20,7 +22,9 @@ const page = () => {
                 data.slice(0, 8);
                 setProductImages(data);
             }
-        });
+        }); */
+        console.log("Products in home:", products);
+        setProductImages(products.slice(0, 8));
     }, []);
     const router = useRouter();
     return (

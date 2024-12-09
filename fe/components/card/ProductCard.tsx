@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { ProductView } from "@/types";
 import { useState, useEffect } from "react";
+import { Star } from "lucide-react";
 
 const ProductCard = ({
     name,
@@ -46,8 +47,12 @@ const ProductCard = ({
                     <p className="text-sm text-muted-foreground flex-grow">
                         {overview}
                     </p>
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-2 flex items-center justify-between">
                         <p className="font-semibold">{formatPrice(price)}</p>
+                        <div className="flex items-center">
+                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
+                            <span>{rating.toFixed(1)}</span>
+                        </div>
                     </div>
                     {!isLargeScreen && (
                         <div className="flex gap-4 mt-4">

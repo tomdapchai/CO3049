@@ -27,6 +27,7 @@ import { Separator } from "../ui/separator";
 import ProductCartCard from "../card/ProductCartCard";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { ProductSearch } from "../dialog/SearchDialog";
 const Header = () => {
     // const {userId} = useAuth();
     const { isLoggedIn, logoutUser } = useAuth();
@@ -91,14 +92,7 @@ const Header = () => {
                     </div>
 
                     <div className="flex justify-between items-center gap-4">
-                        <Button size="icon" variant="ghost">
-                            <Image
-                                src={"/images/icons/search.svg"}
-                                alt="Search"
-                                width={20}
-                                height={20}
-                            />
-                        </Button>
+                        <ProductSearch />
                         <Sheet open={open} onOpenChange={setOpen}>
                             <SheetTrigger className="flex items-center justify-start space-x-2">
                                 <Image

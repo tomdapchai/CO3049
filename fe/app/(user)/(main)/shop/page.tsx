@@ -23,24 +23,11 @@ import {
 } from "@/components/ui/pagination";
 import ProductCard from "@/components/card/ProductCard";
 import { getAllProduct } from "@/services/ProductService";
-const filters = [
-    {
-        name: "Price",
-        type: "price",
-        optionName: ["Low to High", "High to Low"],
-        option: ["price_l2h", "price_h2l"],
-    },
-    {
-        name: "Rating",
-        type: "rating",
-        optionName: ["Low to High", "High to Low"],
-        option: ["rating_l2h", "rating_h2l"],
-    },
-];
+import { useProduct } from "@/context/ProductContext";
 
 const page = () => {
+    const { products } = useProduct();
     const [sortBy, setSortBy] = useState("");
-    const [products, setProducts] = useState<ProductDetail[]>([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [currentProducts, setCurrentProducts] = useState<ProductDetail[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -52,39 +39,34 @@ const page = () => {
     const [selectedValue, setSelectedValue] = useState<string | undefined>(
         undefined
     );
-
+    const [query, setQuery] = useState("");
     const [searchParams] = useSearchParams();
-    console.log("Search Params:", searchParams);
-
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+    const [queryProducts, setQueryProducts] = useState<ProductDetail[]>([]);
     useEffect(() => {
         // fetch products
-        setSortBy("price");
-        getAllProduct().then((data) => {
-            if ("error" in data) {
-                console.error(data.error);
-            } else {
-                console.log("Products:", data);
-                setProducts(data);
-            }
-        });
+        if (searchParams) setQuery(searchParams[1]);
     }, []);
 
     useEffect(() => {
-        setTotalPages(Math.ceil(products.length / productsPerPage));
-    }, [products]);
-
-    const handleValueChange = (value: string) => {
-        setSelectedValue(value);
-        console.log(value);
-        const [filterName, optionName] = value.split(": ");
-        const filter = filters.find((f) => f.name === filterName);
-        if (filter) {
-            const optionIndex = filter.optionName.indexOf(optionName);
-            const optionValue = filter.option[optionIndex];
-            console.log(`Selected: ${value}, Value: ${optionValue}`);
-            // Perform your filter action here
+        if (query && query !== "") {
+            const filtered = products.filter((product) =>
+                (
+                    product.name.toLowerCase() +
+                    product.tags.join(", ") +
+                    product.overview +
+                    product.slug
+                ).includes(query.toLowerCase())
+            );
+            setQueryProducts(filtered);
+        } else {
+            setQueryProducts(products);
         }
-    };
+    }, [query]);
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(queryProducts.length / productsPerPage));
+    }, [queryProducts]);
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -93,12 +75,49 @@ const page = () => {
         const first = last - productsPerPage;
         setIndexOfLastProduct(last);
         setIndexOfFirstProduct(first);
-        setCurrentProducts(products.slice(first, last));
-    }, [currentPage, products]);
+        setCurrentProducts(queryProducts.slice(first, last));
+        console.log("Current products: ", currentProducts);
+    }, [currentPage, queryProducts]);
 
     useEffect(() => {
         //sort products
-    }, [sortBy]);
+        console.log("Sort by: ", sortBy);
+        if (sortBy == "price") {
+            const sorted = [...queryProducts].sort((a, b) => {
+                return sortOrder === "asc"
+                    ? Number(a.price) - Number(b.price)
+                    : Number(b.price) - Number(a.price);
+            });
+            setQueryProducts(sorted);
+        } else if (sortBy == "rating") {
+            const sorted = [...queryProducts].sort((a, b) => {
+                return sortOrder === "asc"
+                    ? b.reviews.length > 0
+                        ? b.reviews.reduce(
+                              (acc, review) => acc + review.rating,
+                              0
+                          ) / b.reviews.length
+                        : 0 - a.reviews.length > 0
+                        ? a.reviews.reduce(
+                              (acc, review) => acc + review.rating,
+                              0
+                          ) / a.reviews.length
+                        : 0
+                    : a.reviews.length > 0
+                    ? a.reviews.reduce(
+                          (acc, review) => acc + review.rating,
+                          0
+                      ) / a.reviews.length
+                    : 0 - b.reviews.length > 0
+                    ? b.reviews.reduce(
+                          (acc, review) => acc + review.rating,
+                          0
+                      ) / b.reviews.length
+                    : 0;
+            });
+            setQueryProducts(sorted);
+        }
+    }, [sortBy, sortOrder]);
     return (
         <div className="w-full h-full flex flex-col space-y-6">
             <div className="w-full flex flex-col">
@@ -114,41 +133,39 @@ const page = () => {
                     <div className="flex justify-between gap-2 items-center h-fit">
                         <p>
                             Showing {indexOfFirstProduct + 1} -{" "}
-                            {indexOfLastProduct} of {products.length} products
+                            {indexOfLastProduct} of {queryProducts.length}{" "}
+                            products
                         </p>
                         <Button variant={"ghost"} onClick={() => {}}>
                             Filter
                         </Button>
-                        <Separator orientation="vertical" />
                     </div>
                     <div className="flex justify-between items-center gap-2">
-                        <p className="whitespace-nowrap">Sort by</p>
-                        <Select
-                            value={selectedValue}
-                            onValueChange={handleValueChange}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Default" />
+                        {searchParams && searchParams[1] && (
+                            <Button
+                                variant="outline"
+                                onClick={() => setQuery("")}>
+                                Clear search
+                            </Button>
+                        )}
+                        <Select value={selectedValue} onValueChange={setSortBy}>
+                            <SelectTrigger className="w-full bg-white">
+                                <SelectValue placeholder="Sort by" />
                             </SelectTrigger>
                             <SelectContent className="p-2">
-                                {filters.map((filter) => (
-                                    <SelectGroup key={filter.name}>
-                                        <SelectLabel className="font-bold">
-                                            {filter.name}
-                                        </SelectLabel>
-                                        <Separator />
-                                        {filter.optionName.map(
-                                            (name, index) => (
-                                                <SelectItem
-                                                    key={`${filter.type}_${filter.option[index]}`}
-                                                    value={`${filter.name}: ${name}`}>
-                                                    {name}
-                                                </SelectItem>
-                                            )
-                                        )}
-                                    </SelectGroup>
-                                ))}
+                                <SelectItem value="price">Price</SelectItem>
+                                <SelectItem value="rating">Rating</SelectItem>
                             </SelectContent>
                         </Select>
+                        <Button
+                            variant="outline"
+                            onClick={() =>
+                                setSortOrder(
+                                    sortOrder === "asc" ? "desc" : "asc"
+                                )
+                            }>
+                            {sortOrder === "asc" ? "Ascending" : "Descending"}
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -164,7 +181,13 @@ const page = () => {
                             image={product.images[0].src}
                             size={product.size[0]}
                             color={product.color[0]}
-                            rating={5}
+                            rating={
+                                product.reviews.length > 0
+                                    ? product.reviews.reduce((acc, review) => {
+                                          return acc + review.rating;
+                                      }, 0) / product.reviews.length
+                                    : 0
+                            }
                         />
                     ))}
                 </div>
