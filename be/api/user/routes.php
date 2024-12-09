@@ -84,6 +84,10 @@ try {
                     $userController->updateCart($_GET['userId'], $input);
                     break;
                 }
+                else if ($_GET['updateType'] == 'adminPassword') {
+                    $userController->adminUpdateUserPassword($_GET['userId'], $input);
+                    break;
+                }
                 else {
                     http_response_code(400);
                     echo json_encode([

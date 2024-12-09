@@ -24,28 +24,29 @@ class ContactModel {
     }
 
     public function createContact($data) {
-        $query = "INSERT INTO $this->table (name, email, phone_number, further_info) 
-                  VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO $this->table (name, email, phone_number, subject, message) 
+                  VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
-        $contactId = $this->db->lastInsertId();
         // return contactId along with the result
         return $stmt->execute([
             $data['name'],
             $data['email'],
-            $data['phone_number'],
-            $data['further_info']
-        ]) ? $contactId : false;
+            $data['phoneNumber'],
+            $data['subject'],
+            $data['message']
+        ]);
     }
 
     public function updateContact($contactId, $data) {
-        $query = "UPDATE $this->table SET name = ?, email = ?, phone_number = ?, further_info = ?
+        $query = "UPDATE $this->table SET name = ?, email = ?, phone_number = ?, subject = ?, message = ?
                   WHERE contactId = ?";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['name'],
             $data['email'],
-            $data['phone_number'],
-            $data['further_info'],
+            $data['phoneNumber'],
+            $data['subject'],
+            $data['message'],
             $contactId
         ]);
     }

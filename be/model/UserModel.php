@@ -83,6 +83,13 @@ class UserModel {
         return $stmt->execute([$newPassword, $userId]);
     }
 
+    public function adminUpdateUserPassword($userId, $newPassword) {
+        $newPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+        $query = "UPDATE $this->table SET password = ? WHERE userId = ?";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([$newPassword, $userId]);
+    } 
+
     public function banUser($userId) {
         $query = "UPDATE $this->table SET status = 'banned' WHERE userId = ?";
         $stmt = $this->db->prepare($query);

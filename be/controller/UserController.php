@@ -96,6 +96,23 @@ class UserController {
         }
     }
 
+    public function adminUpdateUserPassword($userId, $data) {
+        $userModel = new UserModel($this->db);
+        // check if user exists
+        if (!$userModel->getUserById($userId)) {
+            http_response_code(404);
+            echo json_encode(['status' => 'error', 'message' => 'User not found']);
+            return;
+        }
+
+        if ($userModel->adminUpdateUserPassword($userId, $data['newPassword'])) {
+            echo json_encode(['status' => 'success', 'message' => 'Password updated']);
+        } else {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to update password']);
+        }
+    }
+
     public function banUser($userId) {
         $userModel = new UserModel($this->db);
         // check if user exists
