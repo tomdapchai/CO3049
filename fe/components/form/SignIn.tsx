@@ -83,7 +83,15 @@ const SignIn = ({ type }: { type: string }) => {
             if (type === "admin") {
                 await loginAdmin(values.username, values.password)
                     .then((res) => {
-                        console.log(res);
+                        if ("error" in res) {
+                            toast({
+                                title: "Login failed",
+                                description: "Invalid credentials",
+                                variant: "destructive",
+                            });
+                        } else {
+                            router.push("/admin/dashboard");
+                        }
                     })
                     .catch((err) => {
                         console.log(err);

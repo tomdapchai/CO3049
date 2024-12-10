@@ -30,10 +30,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ProductSearch } from "../dialog/SearchDialog";
 const Header = () => {
     // const {userId} = useAuth();
-    const { isLoggedIn, logoutUser } = useAuth();
+    const { isLoggedIn, logoutUser, userId } = useAuth();
     const { cart, test, removeFromCart, updateQuantity, clearCart } = useCart();
     console.log(test);
-    const userId = 1;
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const router = useRouter();
     const [open, setOpen] = useState(false);

@@ -7,6 +7,7 @@ import { User } from "@/types";
 import { getUserById } from "@/services/UserService";
 import { log } from "console";
 interface AuthContextProps {
+    isAdmin: boolean;
     isLoggedIn: boolean;
     userId: string;
     user: User | null;
@@ -15,7 +16,10 @@ interface AuthContextProps {
         username: string,
         password: string
     ) => Promise<{ message: string } | { error: string }>;
-    loginAdmin: (username: string, password: string) => Promise<void>;
+    loginAdmin: (
+        username: string,
+        password: string
+    ) => Promise<{ message: string } | { error: string }>;
     logoutUser: () => Promise<void>;
     logoutAdmin: () => Promise<void>;
     register: (
@@ -46,6 +50,14 @@ const COOKIE_OPTIONS = {
     path: "/",
 };
 
+const COOKIE_NAME_ADMIN = "adminData";
+const COOKIE_OPTIONS_ADMIN = {
+    expires: 1,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict" as const,
+    path: "/admin",
+};
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     // gonna take all user info once logged in, for better user experience
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -53,8 +65,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [error, setError] = useState<string | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
     useEffect(() => {
         const storedUserId = Cookies.get(COOKIE_NAME);
+        const storeAdmin = Cookies.get(COOKIE_NAME_ADMIN);
+        if (storeAdmin) {
+            setIsAdmin(true);
+        }
         if (storedUserId) {
             setUserId(storedUserId);
             setIsLoggedIn(true);
@@ -113,19 +131,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setError(null);
     };
 
-    const loginAdmin = async (username: string, password: string) => {
+    const loginAdmin = async (
+        username: string,
+        password: string
+    ): Promise<{ message: string } | { error: string }> => {
         // await login({ email: username, password }, "admin");
 
         // below is testing phase
         if (username === "admin" && password === "password") {
             /* setIsLoggedIn(true);
             setUserId(userId); */
+            setIsAdmin(true);
+            Cookies.set(COOKIE_NAME_ADMIN, "admin", COOKIE_OPTIONS_ADMIN);
+            return { message: "Admin logged in" };
         } else {
             setError("Invalid credentials");
+            return { error: "Invalid credentials" };
         }
     };
 
-    const logoutAdmin = async (): Promise<void> => {};
+    const logoutAdmin = async (): Promise<void> => {
+        setIsAdmin(false);
+        Cookies.remove(COOKIE_NAME_ADMIN, { path: "/admin" });
+    };
 
     const register = async (
         username: string,
@@ -149,6 +177,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return (
         <AuthContext.Provider
             value={{
+                isAdmin,
                 isLoggedIn,
                 userId,
                 error,

@@ -4,34 +4,52 @@ import type { NextRequest } from "next/server";
 // Auth-related public routes
 const authRoutes = ["/sign-in", "/sign-up", "/admin/sign-in"];
 
+const protectedRoutes = ["/admin/", "/profile/"];
+// others are public routes
+
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    /* const isAuthenticated = !!request.cookies.get("studentData");
+    const isAuthenticated = !!request.cookies.get("authUser");
 
     const isAdmin = !!request.cookies.get("adminData");
-    console.log(isAdmin);
-    // User is authenticated and trying to access auth routes
-    if (isAuthenticated && authRoutes.includes(pathname)) {
-        const dashboardUrl = new URL("/dashboard", request.url);
-        return NextResponse.redirect(dashboardUrl);
+
+    if (
+        isAuthenticated &&
+        (pathname.includes("/sign-in") || pathname.includes("/sign-up")) &&
+        !pathname.startsWith("/admin")
+    ) {
+        const homeUrl = new URL("/", request.url);
+        return NextResponse.redirect(homeUrl);
     }
 
-    if (isAdmin && authRoutes.includes(pathname)) {
-        const dashboardUrl = new URL("/admin/dashboard", request.url);
-        return NextResponse.redirect(dashboardUrl);
+    if (
+        isAdmin &&
+        pathname.includes("/admin/sign-in") &&
+        pathname.startsWith("/admin")
+    ) {
+        const adminUrl = new URL("/admin/dashboard", request.url);
+        return NextResponse.redirect(adminUrl);
     }
 
-    // User is NOT authenticated and trying to access any path other than auth routes
     if (
         !isAuthenticated &&
-        !isAdmin &&
-        !authRoutes.includes(pathname) &&
-        pathname !== "/"
+        !(pathname.startsWith("/sign-in") || pathname.startsWith("sign-up")) &&
+        pathname.startsWith("/profile")
     ) {
         const signInUrl = new URL("/sign-in", request.url);
         return NextResponse.redirect(signInUrl);
-    } */
+    }
+
+    if (
+        !isAdmin &&
+        !pathname.startsWith("/admin/sign-in") &&
+        pathname.startsWith("/admin")
+    ) {
+        console.log("Protected route");
+        const signInUrl = new URL("/admin/sign-in", request.url);
+        return NextResponse.redirect(signInUrl);
+    }
 
     return NextResponse.next();
 }
@@ -47,5 +65,7 @@ export const config = {
          * - public folder
          */
         "/((?!api|_next/static|_next/image|images|favicon.ico).*)",
+        "/admin/:path*",
+        "/profile/:path*",
     ],
 };
