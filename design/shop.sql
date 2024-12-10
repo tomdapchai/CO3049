@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 09, 2024 at 05:11 PM
+-- Generation Time: Dec 10, 2024 at 07:08 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -104,6 +104,10 @@ CREATE TABLE `image` (
 --
 
 INSERT INTO `image` (`imageId`, `src`) VALUES
+('about-1', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733808487/wxscpedp1425kojpyxyl.jpg'),
+('about-2', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733808488/ughstw9omnle3evqryzu.jpg'),
+('about-3', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733808489/wfgjmdutx9pgcjfu2gk7.jpg'),
+('about-4', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733808489/efnl6f59lpjrdpybtnzn.jpg'),
 ('blog-sunday-1', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733649446/cqjtgjvir0jmzoac4ogy.jpg'),
 ('blog-sunday-2', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733649447/fkasycdvthtzjogam5ek.png'),
 ('blog-sunday-3', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733674065/ydauu7tcbdxubpaxcwnp.png'),
@@ -301,6 +305,28 @@ INSERT INTO `user` (`userId`, `password`, `name`, `joinAt`, `username`, `email`,
 (4, '$2y$10$z2N9HXu9967EHnFwmkHUs.xKn2XQ37tnvJKqwDGM5AXRp3Rjuitzi', NULL, '2024-12-08 23:13:31', 'test3', NULL, NULL, NULL, NULL, 'active', NULL),
 (5, '$2y$10$91YTRnAsAQh.MXHzxQ.SFuPSaSQ4MhyxRarhREeg4UnhmxnAcYZ1m', 'Thanh Tam', '2024-12-08 23:13:31', 'tomdapchai', 'vothanhtam2407@gmail.com', '0935671005', '01 Street 06', 'Thu Duc city, Hồ Chí Minh (Sài Gòn)', 'active', NULL);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `website_info`
+--
+
+CREATE TABLE `website_info` (
+  `aboutID` int(11) NOT NULL,
+  `about` longtext DEFAULT NULL,
+  `about_original` longtext DEFAULT NULL,
+  `phone_number` varchar(255) DEFAULT NULL,
+  `address` varchar(500) DEFAULT NULL,
+  `email` varchar(255) DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `website_info`
+--
+
+INSERT INTO `website_info` (`aboutID`, `about`, `about_original`, `phone_number`, `address`, `email`) VALUES
+(1, '<div class=\"max-w-4xl flex flex-col justify-center items-center\"><h2 class=\"text-lg font-bold mb-2\">Welcome to Furniro – Crafting Comfort, One Piece at a Time</h2>\n<p class=\"text-base text-black\">At Furniro, we believe that furniture is more than just a collection of wood, fabric, and metal—it\'s an expression of your lifestyle, your values, and your personality. For over 10 years, we have been dedicated to creating timeless pieces that combine style, functionality, and unparalleled craftsmanship.</p>\n\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733808487/wxscpedp1425kojpyxyl.jpg\" alt=\"about-1\" width=\"700\" height=\"500\" class=\"rounded-lg\" /></div>\n\n<h2 class=\"text-lg font-bold mb-2\">Our Mission</h2>\n<p class=\"text-base text-black\">Our mission is simple: to transform spaces into homes with furniture that reflects individuality, ensures comfort, and stands the test of time. We strive to bridge the gap between luxury and affordability, offering designs that cater to every taste and budget.</p>\n\n<h2 class=\"text-lg font-bold mb-2\">Our Story</h2>\n<p class=\"text-base text-black\">Founded in 2010, Furniro started as a humble workshop with a passion for quality and an eye for design. Over the years, we have grown into a trusted name in the furniture industry, serving Vietnamese customers with innovative solutions and impeccable service.<br/><br/>Our journey began with a simple goal: to create furniture that doesn’t just fill spaces but enriches lives. Today, we are proud to be part of countless homes, offices, and establishments, each telling a unique story of beauty and functionality..</p>\n\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733808488/ughstw9omnle3evqryzu.jpg\" alt=\"about-2\" width=\"700\" height=\"500\" class=\"rounded-lg\" /></div>\n\n<h2 class=\"text-lg font-bold mb-2\">What Sets Us Apart</h2>\n<h2 class=\"text-lg font-bold mb-2\">Exceptional Craftsmanship</h2>\n<p class=\"text-base text-black\">Every piece of furniture we create is a labor of love. Our team of skilled artisans and designers uses only the finest materials to ensure that each product meets our exacting standards of quality and durability.</p>\n\n<h2 class=\"text-lg font-bold mb-2\">Sustainable Practices</h2>\n<p class=\"text-base text-black\">We are committed to protecting the environment for future generations. From responsibly sourced materials to eco-friendly production processes, sustainability is at the heart of everything we do.</p>\n\n<h2 class=\"text-lg font-bold mb-2\">Customization at Its Best</h2>\n<p class=\"text-base text-black\">Your home should be as unique as you are. That’s why we offer customization options that allow you to tailor our designs to your specific needs and preferences.</p>\n\n<h2 class=\"text-lg font-bold mb-2\">Customer-Centric Approach</h2>\n<p class=\"text-base text-black\">Your satisfaction is our priority. From the moment you explore our collections to the day your furniture is delivered, our dedicated team is here to make your experience seamless and enjoyable.</p>\n\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733808489/wfgjmdutx9pgcjfu2gk7.jpg\" alt=\"about-3\" width=\"700\" height=\"500\" class=\"rounded-lg\" /></div>\n\n<h2 class=\"text-lg font-bold mb-2\">Our Collections</h2>\n<p class=\"text-base text-black\">Discover a wide range of furniture designed to suit every space and style:<br/>- Living Room: Sofas, coffee tables, entertainment units, and more.<br/>- Bedroom: Beds, wardrobes, dressers, and nightstands.<br/>- Dining Room: Dining tables, chairs, bar stools, and buffets.<br/>- Office: Desks, office chairs, and storage solutions.<br/>- Outdoor: Patio furniture, garden sets, and weather-resistant designs.<br/>Each collection is thoughtfully curated to offer functionality without compromising on aesthetic appeal.</p>\n\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733808489/efnl6f59lpjrdpybtnzn.jpg\" alt=\"about-4\" width=\"700\" height=\"500\" class=\"rounded-lg\" /></div>\n\n<h2 class=\"text-lg font-bold mb-2\">Transform Your Space Today</h2>\n<p class=\"text-base text-black\">At Furniro, we don’t just make furniture—we create possibilities. Browse our collections online or visit our store to find the perfect pieces for your home or workspace. Let’s make your vision a reality.</p>\n</div>', 'SECTION<Welcome to Furniro – Crafting Comfort, One Piece at a Time>\nP<At Furniro, we believe that furniture is more than just a collection of wood, fabric, and metal—it\'s an expression of your lifestyle, your values, and your personality. For over 10 years, we have been dedicated to creating timeless pieces that combine style, functionality, and unparalleled craftsmanship.>\n\nIMG<about-1, 700, 500>\n\nSECTION<Our Mission>\nP<Our mission is simple: to transform spaces into homes with furniture that reflects individuality, ensures comfort, and stands the test of time. We strive to bridge the gap between luxury and affordability, offering designs that cater to every taste and budget.>\n\nSECTION<Our Story>\nP<Founded in 2010, Furniro started as a humble workshop with a passion for quality and an eye for design. Over the years, we have grown into a trusted name in the furniture industry, serving Vietnamese customers with innovative solutions and impeccable service.\n\nOur journey began with a simple goal: to create furniture that doesn’t just fill spaces but enriches lives. Today, we are proud to be part of countless homes, offices, and establishments, each telling a unique story of beauty and functionality..>\n\nIMG<about-2, 700, 500>\n\nSECTION<What Sets Us Apart>\nSECTION<Exceptional Craftsmanship>\nP<Every piece of furniture we create is a labor of love. Our team of skilled artisans and designers uses only the finest materials to ensure that each product meets our exacting standards of quality and durability.>\n\nSECTION<Sustainable Practices>\nP<We are committed to protecting the environment for future generations. From responsibly sourced materials to eco-friendly production processes, sustainability is at the heart of everything we do.>\n\nSECTION<Customization at Its Best>\nP<Your home should be as unique as you are. That’s why we offer customization options that allow you to tailor our designs to your specific needs and preferences.>\n\nSECTION<Customer-Centric Approach>\nP<Your satisfaction is our priority. From the moment you explore our collections to the day your furniture is delivered, our dedicated team is here to make your experience seamless and enjoyable.>\n\nIMG<about-3, 700, 500>\n\nSECTION<Our Collections>\nP<Discover a wide range of furniture designed to suit every space and style:\n- Living Room: Sofas, coffee tables, entertainment units, and more.\n- Bedroom: Beds, wardrobes, dressers, and nightstands.\n- Dining Room: Dining tables, chairs, bar stools, and buffets.\n- Office: Desks, office chairs, and storage solutions.\n- Outdoor: Patio furniture, garden sets, and weather-resistant designs.\nEach collection is thoughtfully curated to offer functionality without compromising on aesthetic appeal.>\n\nIMG<about-4, 700, 500>\n\nSECTION<Transform Your Space Today>\nP<At Furniro, we don’t just make furniture—we create possibilities. Browse our collections online or visit our store to find the perfect pieces for your home or workspace. Let’s make your vision a reality.>\n', '(+84) 546-6789', '295 5th St Avenue, New York NY10000, United States', 'contact@furniro.com');
+
 --
 -- Indexes for dumped tables
 --
@@ -371,6 +397,12 @@ ALTER TABLE `user`
   ADD PRIMARY KEY (`userId`);
 
 --
+-- Indexes for table `website_info`
+--
+ALTER TABLE `website_info`
+  ADD PRIMARY KEY (`aboutID`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -397,6 +429,12 @@ ALTER TABLE `review`
 --
 ALTER TABLE `user`
   MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `website_info`
+--
+ALTER TABLE `website_info`
+  MODIFY `aboutID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
