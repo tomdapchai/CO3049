@@ -28,10 +28,18 @@ import { set } from "date-fns";
 import { Input } from "@/components/ui/input";
 // todo: implement pagination
 
+type BlogWithThumb = BlogTrue & {
+    thumb: {
+        imageId: string;
+        src: string;
+    };
+};
+
 const MAX_BLOGS_PER_PAGE = 3;
 export default function BlogPage() {
     const [posts, setPosts] = useState<BlogTrue[]>([]);
     const [thumbs, setThumbs] = useState<BlogImageCreate[]>([]);
+    const [postsWithThumbs, setPostsWithThumbs] = useState<BlogWithThumb[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -73,14 +81,23 @@ export default function BlogPage() {
     }, [posts]);
 
     useEffect(() => {
-        console.log(thumbs);
+        // start combining the posts with the thumbs by index
+        if (posts.length > 0 && thumbs.length > 0) {
+            const combined = posts.map((post, index) => {
+                return {
+                    ...post,
+                    thumb: thumbs[index],
+                };
+            });
+            setPostsWithThumbs(combined);
+        }
     }, [thumbs]);
 
     if (loading) {
         return <div>Loading...</div>;
     }
 
-    const filteredPosts = posts.filter((post) =>
+    const filteredPosts = postsWithThumbs.filter((post) =>
         (post.title.toLowerCase() + post.tags.join(" ")).includes(
             searchTerm.toLowerCase()
         )
@@ -101,14 +118,14 @@ export default function BlogPage() {
             </header>
             <div className="flex flex-col md:flex-row gap-8">
                 <main className="flex-1 space-y-8">
-                    {posts.map((post, index) => (
+                    {paginatedPosts.map((post, index) => (
                         <Card
                             key={index}
                             className="flex flex-col overflow-hidden">
                             <div className="relative h-[300px]">
                                 <Image
-                                    src={thumbs[index].src}
-                                    alt={post.title}
+                                    src={paginatedPosts[index].thumb.src}
+                                    alt={paginatedPosts[index].title}
                                     fill
                                     className="object-cover"
                                     style={{ filter: "blur(2px)" }}

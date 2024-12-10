@@ -87,6 +87,23 @@ class ImageController {
         }
     }
 
+    public function createImage($data) {
+        $imageModel = new ImageModel($this->db);
+        $image = $imageModel->getImageById($data['imageId']);
+        if ($image) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Image with name '.$data['imageId'].' already exists']);
+            return;
+        }
+
+        if ($imageModel->createImage($data['imageId'], $data['src'])) {
+            echo json_encode(['status' => 'success', 'message' => 'Image created']);
+        } else {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to create image']);
+        }
+    }
+
     public function createProductImage($data, $slug) {
         $productModel = new ProductModel($this->db);
         $product = $productModel->getProductById($slug);

@@ -107,7 +107,9 @@ const SignIn = ({ type }: { type: string }) => {
     return (
         <Card className="w-[400px] h-fit">
             <CardHeader>
-                <CardTitle className="text-sub">Sign In</CardTitle>
+                <CardTitle className="text-sub">
+                    {type == "admin" ? "Admin " : ""}Sign In
+                </CardTitle>
                 <CardDescription>
                     Provide login credentials to sign you in
                 </CardDescription>
@@ -164,14 +166,16 @@ const SignIn = ({ type }: { type: string }) => {
                     </form>
                 </Form>
             </CardContent>
-            <CardFooter className="text-sm flex gap-2">
-                <p className="text-slate-400">Haven't had account yet?</p>
-                <Link
-                    href={"/sign-up"}
-                    className="underline text-sub hover:text-[#b88e2f]/80">
-                    Sign Up
-                </Link>
-            </CardFooter>
+            {type == "user" && (
+                <CardFooter className="text-sm flex gap-2">
+                    <p className="text-slate-400">Haven't had account yet?</p>
+                    <Link
+                        href={"/sign-up"}
+                        className="underline text-sub hover:text-[#b88e2f]/80">
+                        Sign Up
+                    </Link>
+                </CardFooter>
+            )}
         </Card>
     );
 };

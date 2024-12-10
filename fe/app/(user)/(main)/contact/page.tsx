@@ -19,8 +19,10 @@ import { contactFormSchema } from "@/lib/validation";
 import { createContact } from "@/services/ContactService";
 import { Contact } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import { useProduct } from "@/context/ProductContext";
 export default function ContactPage() {
     const { toast } = useToast();
+    const { siteInfo } = useProduct();
     const form = useForm<z.infer<typeof contactFormSchema>>({
         resolver: zodResolver(contactFormSchema),
         defaultValues: {
@@ -61,26 +63,21 @@ export default function ContactPage() {
                         <MapPin className="w-6 h-6 text-primary" />
                         <div>
                             <h2 className="text-lg font-bold">Address</h2>
-                            <p>
-                                295 5th St Avenue, New York NY10000, United
-                                States
-                            </p>
+                            <p>{siteInfo!.address}</p>
                         </div>
                     </div>
                     <div className="flex items-start space-x-4">
                         <Phone className="w-6 h-6 text-primary" />
                         <div>
                             <h2 className="text-lg font-bold">Phone</h2>
-                            <p>Mobile: (+84) 546-6789</p>
-                            <p>Hotline: (+84) 456-6789</p>
+                            <p>{siteInfo!.phoneNumber}</p>
                         </div>
                     </div>
                     <div className="flex items-start space-x-4">
                         <Mail className="w-6 h-6 text-primary" />
                         <div>
-                            <h2 className="text-lg font-bold">Working Time</h2>
-                            <p>Monday-Friday: 9:00 - 22:00</p>
-                            <p>Saturday-Sunday: 9:00 - 21:00</p>
+                            <h2 className="text-lg font-bold">Email address</h2>
+                            <p>{siteInfo!.email}</p>
                         </div>
                     </div>
                 </aside>

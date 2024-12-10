@@ -71,6 +71,11 @@ const items = [
         url: "/admin/contacts",
         icon: Calendar,
     },
+    {
+        title: "Settings",
+        url: "/admin/siteInfo",
+        icon: Settings,
+    },
 ];
 
 export function AppSidebar() {

@@ -40,6 +40,9 @@ try {
             } else if ($_GET['type'] == 'blog') {
                 $imageController->createBlogImage($input, $_GET['slug']);
             }
+            else if ($_GET['type'] == 'about') {
+                $imageController->createImage($input);
+            }
             else {
                 http_response_code(400);
                 echo json_encode([

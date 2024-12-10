@@ -168,3 +168,11 @@ export type BlogTrue = {
 export type Tag = {
     tagName: string; // primary key
 };
+
+export type siteInfo = {
+    about: string;
+    aboutOriginal: string;
+    phoneNumber: string;
+    address: string;
+    email: string;
+};

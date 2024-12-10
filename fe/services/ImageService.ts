@@ -110,6 +110,20 @@ export const createBlogImage = async (
     }
 };
 
+export const createAboutImage = async (data: ImageDetail) => {
+    try {
+        const response = await api.post(
+            `api/image/routes.php?type=about`,
+            data
+        );
+        console.log("Backend Response:", response.data);
+        return response.data;
+    } catch (error) {
+        console.log("Error creating image:", error);
+        return { error: "Error creating image" };
+    }
+};
+
 export const updateImageId = async (data: {
     imageId: string;
     newId: string;

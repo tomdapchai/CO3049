@@ -1,10 +1,12 @@
 "use client";
 import React, { useState, useEffect, useContext, createContext } from "react";
-import { ProductDetail } from "@/types";
+import { ProductDetail, siteInfo } from "@/types";
 import { getAllProduct } from "@/services/ProductService";
+import { getSiteInfo } from "@/services/SiteInfoService";
 
 interface ProductContextProps {
     products: ProductDetail[];
+    siteInfo: siteInfo | null;
 }
 
 const ProductContext = createContext<ProductContextProps | undefined>(
@@ -25,24 +27,32 @@ interface ProductProviderProps {
 
 const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
     const [products, setProducts] = useState<ProductDetail[]>([]);
+    const [siteInfo, setSiteInfo] = useState<siteInfo | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
     useEffect(() => {
-        getAllProduct().then((data) => {
-            if ("error" in data) {
-                console.error(data.error);
-            } else {
-                console.log("Products:", data);
-                setProducts(data);
-                setIsInitialized(true);
-            }
-        });
+        Promise.all([getAllProduct(), getSiteInfo()])
+            .then(([productData, siteInfoData]) => {
+                if ("error" in productData) {
+                    console.error(productData.error);
+                } else {
+                    console.log("Products:", productData);
+                    setProducts(productData);
+                }
+                if ("error" in siteInfoData) {
+                    console.error(siteInfoData.error);
+                } else {
+                    console.log("Site Info:", siteInfoData);
+                    setSiteInfo(siteInfoData);
+                }
+            })
+            .finally(() => setIsInitialized(true));
     }, []);
 
     if (!isInitialized) {
         return null; // Or a loading spinner
     }
     return (
-        <ProductContext.Provider value={{ products }}>
+        <ProductContext.Provider value={{ products, siteInfo }}>
             {children}
         </ProductContext.Provider>
     );

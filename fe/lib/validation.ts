@@ -96,3 +96,10 @@ export const contactFormSchema = z.object({
         message: "Message must be at least 10 characters.",
     }),
 });
+
+export const siteInfoSchema = z.object({
+    about: z.string(),
+    address: z.string(),
+    phoneNumber: z.string(),
+    email: z.string().email(),
+});
