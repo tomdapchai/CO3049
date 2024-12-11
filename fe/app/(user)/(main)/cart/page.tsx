@@ -67,7 +67,7 @@ const page = () => {
                                 </span>
                             </div>
                             <Button
-                                className="w-full"
+                                className="w-full bg-sub hover:bg-[#b88e2f]/90"
                                 size="lg"
                                 onClick={() => router.push("/checkout")}>
                                 Proceed to Checkout

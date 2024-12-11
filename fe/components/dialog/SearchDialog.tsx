@@ -41,7 +41,7 @@ function ProductItem({ product }: { product: ProductDetail }) {
     );
 }
 
-export function ProductSearch() {
+export function ProductSearch({ onClick }: { onClick?: () => void }) {
     const { products } = useProduct();
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
@@ -70,7 +70,7 @@ export function ProductSearch() {
                     />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-4xl">
+            <DialogContent className="md:max-w-4xl">
                 <DialogHeader>
                     <DialogTitle>Search Products</DialogTitle>
                 </DialogHeader>
@@ -92,7 +92,8 @@ export function ProductSearch() {
                             {filteredProducts.map((product) => (
                                 <CommandItem
                                     key={product.slug}
-                                    onSelect={() => setOpen(false)}>
+                                    onSelect={() => setOpen(false)}
+                                    onClick={onClick}>
                                     <ProductItem product={product} />
                                 </CommandItem>
                             ))}

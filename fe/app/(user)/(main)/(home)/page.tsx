@@ -52,7 +52,7 @@ const page = () => {
                 </div>
             </section>
 
-            <section className="flex flex-col justify-center items-center w-full gap-14">
+            <section className="flex flex-col justify-center items-center w-full gap-14 max-md:p-4">
                 <div className="flex justify-center items-center flex-col">
                     <h1 className="font-bold text-3xl">Browse The Range</h1>
                     <p className="text-gray-400">

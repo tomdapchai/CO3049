@@ -397,7 +397,7 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                 <TabsContent
                     value="description"
                     className="space-y-4 flex w-full justify-center items-center">
-                    <div className="w-[800px] flex justify-center items-center space-y-2">
+                    <div className="w-full flex justify-center items-center space-y-2">
                         {parse(product.description)}
                     </div>
                 </TabsContent>

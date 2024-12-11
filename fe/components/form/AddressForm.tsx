@@ -73,7 +73,7 @@ export default function AddressForm({
                 "province",
                 user.address
                     ? user.address.city != ""
-                        ? user.address.city.split(",")[1]
+                        ? user.address.city.split(",")[1].trim()
                         : ""
                     : ""
             );
@@ -86,7 +86,7 @@ export default function AddressForm({
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-8 w-full">
                 {!detail ? (
-                    <>
+                    <div>
                         <FormField
                             control={form.control}
                             name="name"
@@ -119,11 +119,11 @@ export default function AddressForm({
                                 </FormItem>
                             )}
                         />
-                    </>
+                    </div>
                 ) : (
                     <div className="flex flex-col justify-start items-start space-y-4">
                         <p className="text-xl font-bold">User info</p>
-                        <div className="flex w-full justify-between space-x-10">
+                        <div className="flex max-md:flex-col max-md:items-center max-md:space-y-6 w-full justify-between md:space-x-10">
                             <FormField
                                 control={form.control}
                                 name="name"
@@ -240,7 +240,9 @@ export default function AddressForm({
                         </FormItem>
                     )}
                 />
-                <Button type="submit" className="w-full">
+                <Button
+                    type="submit"
+                    className="w-full bg-sub hover:bg-[#b88e2f]/90">
                     {detail ? "Save Address" : "Order"}
                 </Button>
             </form>

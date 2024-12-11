@@ -20,7 +20,11 @@ export function Sidebar() {
                     key={item.href}
                     asChild
                     variant={pathname.includes(item.href) ? "default" : "ghost"}
-                    className="w-full justify-start">
+                    className={`${
+                        pathname.includes(item.href)
+                            ? "bg-sub hover:bg-[#b88e2f]/90 text-main"
+                            : ""
+                    } w-full justify-start`}>
                     <Link href={item.href}>{item.label}</Link>
                 </Button>
             ))}

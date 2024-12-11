@@ -7,6 +7,7 @@ import {
     Sheet,
     SheetContent,
     SheetDescription,
+    SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -44,6 +45,7 @@ const Header = () => {
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const router = useRouter();
     const [open, setOpen] = useState(false);
+    const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
     const headerIcons = [
         {
             alt: "Profile",
@@ -235,7 +237,7 @@ const Header = () => {
                     </div>
                 </>
             ) : (
-                <Sheet>
+                <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
                     <SheetTrigger>
                         <Image
                             src={"/images/icons/menu.svg"}
@@ -244,49 +246,93 @@ const Header = () => {
                             height={30}
                         />
                     </SheetTrigger>
-                    <SheetContent className="w-[250px]">
-                        <SheetHeader>
-                            <SheetTitle className="text-xl">Menu</SheetTitle>
-                        </SheetHeader>
-                        <div className="flex flex-col space-y-4">
-                            <div className="flex flex-col justify-start items-start">
-                                {links.map((link) => (
-                                    <div className="w-full" key={link.title}>
-                                        <Link href={link.url}>
-                                            <Button
-                                                variant="ghost"
-                                                className="font-bold text-md p-0 m-0">
-                                                {link.title}
-                                            </Button>
-                                        </Link>
-                                        <Separator />
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex justify-between items-center gap-2 h-[20px]">
-                                <Button size="icon" variant="ghost">
-                                    <Image
-                                        src={"/images/icons/search.svg"}
-                                        alt="Search"
-                                        width={24}
-                                        height={24}
+                    <SheetContent className="w-[250px] flex flex-col justify-between items-start ">
+                        <div className="w-full">
+                            <SheetHeader>
+                                <SheetTitle className="text-xl">
+                                    Menu
+                                </SheetTitle>
+                            </SheetHeader>
+                            <div className="flex flex-col space-y-4">
+                                <div className="flex flex-col justify-start items-start">
+                                    {links.map((link) => (
+                                        <div
+                                            className="w-full"
+                                            key={link.title}>
+                                            <Link href={link.url}>
+                                                <Button
+                                                    variant="ghost"
+                                                    className="font-bold text-md p-0 m-0">
+                                                    {link.title}
+                                                </Button>
+                                            </Link>
+                                            <Separator />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex justify-between items-center gap-2 h-[20px]">
+                                    <ProductSearch
+                                        onClick={() =>
+                                            setMobileSheetOpen(false)
+                                        }
                                     />
-                                </Button>
+                                    <div className="flex justify-start items-start space-x-2">
+                                        <Image
+                                            src={"/images/icons/cart.svg"}
+                                            alt={"Cart"}
+                                            width={20}
+                                            height={20}
+                                            className="cursor-pointer"
+                                            onClick={() => {
+                                                setMobileSheetOpen(false);
+                                                router.push("/cart");
+                                            }}
+                                        />
+                                        <span
+                                            className={`${
+                                                cart.length > 0
+                                                    ? "text-white text-sm bg-red-500 rounded-full w-5 h-5 flex justify-center items-center"
+                                                    : ""
+                                            }`}>
+                                            {cart.length}
+                                        </span>
+                                    </div>
 
-                                {headerIcons.map((icon) => (
-                                    <Link key={icon.alt} href={icon.url}>
-                                        <Button size="icon" variant="ghost">
-                                            <Image
-                                                src={icon.src}
-                                                alt={icon.alt}
-                                                width={24}
-                                                height={24}
-                                            />
-                                        </Button>
-                                    </Link>
-                                ))}
+                                    {isLoggedIn &&
+                                        headerIcons.map((icon) => (
+                                            <Link
+                                                key={icon.alt}
+                                                href={icon.url}
+                                                onClick={() => {
+                                                    setMobileSheetOpen(false);
+                                                }}>
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost">
+                                                    <Image
+                                                        src={icon.src}
+                                                        alt={icon.alt}
+                                                        width={24}
+                                                        height={24}
+                                                    />
+                                                </Button>
+                                            </Link>
+                                        ))}
+                                </div>
                             </div>
                         </div>
+
+                        <SheetFooter className="w-full">
+                            <div className="w-full flex justify-center items-center">
+                                {isLoggedIn && (
+                                    <Button
+                                        onClick={() => handleLogout()}
+                                        className="bg-sub hover:bg-[#b88e2f]/90 w-full">
+                                        Log out
+                                    </Button>
+                                )}
+                            </div>
+                        </SheetFooter>
                     </SheetContent>
                 </Sheet>
             )}

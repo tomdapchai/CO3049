@@ -60,7 +60,7 @@ const ProductCard = ({
                                 <Button
                                     variant="secondary"
                                     className="w-3/4 bg-main hover:bg-[#fff3e3]/90">
-                                    More details
+                                    <p className="text-sub">More details</p>
                                 </Button>
                             </Link>
 
@@ -78,7 +78,7 @@ const ProductCard = ({
                                         color: color,
                                     });
                                 }}>
-                                Add to cart
+                                <p className="text-white">Add to cart</p>
                             </Button>
                         </div>
                     )}

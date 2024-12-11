@@ -82,23 +82,23 @@ export default function CheckoutPage() {
                     Checkout
                 </h1>
             </div>
-            <div className="bg-white rounded px-8 pt-6 pb-8 space-y-6">
+            <div className="bg-white rounded w-full px-8 pt-6 pb-8 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="w-full px-12 py-12">
+                    <div className="w-full md:px-12 md:py-12">
                         <h2 className="text-3xl font-bold mb-6">
                             Billing details
                         </h2>
                         <AddressForm onSubmit={handleSubmit} />
                     </div>
-                    <div className="max-w-3xl w-full px-24 py-24 bg-white rounded-md">
-                        <div className="grid grid-cols-1 md:grid-cols-2">
+                    <div className="w-full px-4 sm:px-6 md:px-24 py-8 sm:py-12 md:py-24 bg-white rounded-md md:max-w-3xl">
+                        <div className="grid grid-cols-2 mb-4">
                             <div className="text-left">
-                                <h2 className="text-xl font-bold mb-4">
+                                <h2 className="text-lg sm:text-xl font-bold">
                                     Product
                                 </h2>
                             </div>
                             <div className="text-right">
-                                <h2 className="text-xl font-bold mb-4">
+                                <h2 className="text-lg sm:text-xl font-bold">
                                     Subtotal
                                 </h2>
                             </div>
@@ -106,8 +106,8 @@ export default function CheckoutPage() {
                         {cart.map((item, index) => (
                             <div
                                 key={index}
-                                className="flex justify-between mb-2">
-                                <span className="text-gray-400">
+                                className="flex flex-col sm:flex-row justify-between mb-2">
+                                <span className="text-gray-400 mb-1 sm:mb-0">
                                     {item.productName}
                                     <span className="px-2 text-sm font-normal text-gray-700">
                                         x {item.quantity}

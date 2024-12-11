@@ -47,7 +47,7 @@ export default function OrderCard({
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
                             <p>Customer: {order.name}</p>
                             <p>Phone: {order.phone_number}</p>
@@ -68,11 +68,11 @@ export default function OrderCard({
                         </div>
                     </div>
                     <ScrollArea className="min-h-[120px] max-h-[250px] w-full rounded-md border overflow-y-auto">
-                        <div className="flex flex-wrap gap-4 p-4">
+                        <div className="flex flex-wrap max-md:flex-col gap-4 p-4">
                             {order.products.map((product, index) => (
                                 <div
                                     key={index}
-                                    className="flex items-center space-x-4 bg-secondary/10 p-2 rounded-md w-[calc(50%-2rem)]">
+                                    className="flex items-center space-x-4 bg-secondary/10 p-2 rounded-md w-[calc(50%-2rem)] max-md:w-fit">
                                     <div className="relative w-[60px] h-[60px] flex-shrink-0">
                                         <Image
                                             src={product.productImage}

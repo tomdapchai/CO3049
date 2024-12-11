@@ -84,7 +84,7 @@ const page = () => {
     };
 
     return (
-        <div className="w-full flex flex-col justify-start items-start space-y-10">
+        <div className="w-full flex flex-col justify-start items-start space-y-10 max-md:space-y-6">
             <p className="text-2xl font-bold">Change credentials</p>
             <div className="w-full flex flex-col justify-start items-start space-y-6">
                 <Form {...usernameForm}>
@@ -92,7 +92,7 @@ const page = () => {
                         onSubmit={usernameForm.handleSubmit(
                             handleUsernameSubmit
                         )}
-                        className=" flex w-full justify-between items-end space-x-4">
+                        className=" flex w-full max-md:flex-col max-md:justify-start max-md:items-center max-md:space-y-4 justify-between items-end md:space-x-4">
                         <FormField
                             control={usernameForm.control}
                             name="username"
@@ -121,7 +121,11 @@ const page = () => {
                             )}
                         />
 
-                        <Button type="submit">Update Username</Button>
+                        <Button
+                            type="submit"
+                            className=" max-md:w-full bg-sub hover:bg-[#b88e2f]/90">
+                            Update Username
+                        </Button>
                     </form>
                 </Form>
 
@@ -130,7 +134,7 @@ const page = () => {
                         onSubmit={passwordForm.handleSubmit(
                             handlePasswordSubmit
                         )}
-                        className=" flex w-full justify-between items-end space-x-4">
+                        className="  flex w-full max-md:flex-col max-md:justify-start max-md:items-center max-md:space-y-4 justify-between items-end md:space-x-4">
                         <FormField
                             control={passwordForm.control}
                             name="password"
@@ -161,7 +165,11 @@ const page = () => {
                             )}
                         />
 
-                        <Button type="submit">Update password</Button>
+                        <Button
+                            type="submit"
+                            className="max-md:w-full bg-sub hover:bg-[#b88e2f]/90">
+                            Update password
+                        </Button>
                     </form>
                 </Form>
             </div>
