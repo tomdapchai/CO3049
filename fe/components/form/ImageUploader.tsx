@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check } from "lucide-react";
-import { UploadedImage } from "@/app/admin/blogs/create/page";
+import { UploadedImage } from "@/app/admin/(main)/blogs/create/page";
 /* type UploadedImage = {
     alt: string;
     src: string;

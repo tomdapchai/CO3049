@@ -35,13 +35,11 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
                 if ("error" in productData) {
                     console.error(productData.error);
                 } else {
-                    console.log("Products:", productData);
                     setProducts(productData);
                 }
                 if ("error" in siteInfoData) {
                     console.error(siteInfoData.error);
                 } else {
-                    console.log("Site Info:", siteInfoData);
                     setSiteInfo(siteInfoData);
                 }
             })

@@ -14,7 +14,7 @@ import * as z from "zod";
 import { addressFormSchema } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 export default function CheckoutPage() {
-    const { cart, clearCart } = useCart();
+    const { cart, clearCart, clearCartUser } = useCart();
     const { userId, isLoggedIn } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
@@ -61,7 +61,8 @@ export default function CheckoutPage() {
                 }
             })
             .finally(() => {
-                clearCart();
+                if (!isLoggedIn) clearCart();
+                else clearCartUser();
             });
         // Show a success message to the user
 

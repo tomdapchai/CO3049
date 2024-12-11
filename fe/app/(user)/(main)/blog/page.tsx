@@ -71,7 +71,7 @@ export default function BlogPage() {
                             const thumb = data.filter(
                                 (thumb) => thumb.isThumbnail == true
                             );
-
+                            console.log("Thumbs:", thumb);
                             setThumbs((prev) => [...prev, ...thumb]);
                         }
                     });
@@ -89,6 +89,7 @@ export default function BlogPage() {
                     thumb: thumbs[index],
                 };
             });
+            console.log("Combined:", combined);
             setPostsWithThumbs(combined);
         }
     }, [thumbs]);

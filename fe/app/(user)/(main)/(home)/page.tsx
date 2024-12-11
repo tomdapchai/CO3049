@@ -93,7 +93,16 @@ const page = () => {
                                 slug={product.slug}
                                 size={product.size[0]}
                                 color={product.color[0]}
-                                rating={5}
+                                rating={
+                                    product.reviews.length > 0
+                                        ? product.reviews.reduce(
+                                              (acc, review) => {
+                                                  return acc + review.rating;
+                                              },
+                                              0
+                                          ) / product.reviews.length
+                                        : 0
+                                }
                             />
                         ))}
                     </div>

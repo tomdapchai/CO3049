@@ -14,6 +14,7 @@ import {
 import { BlogImageCreate, BlogTrue } from "@/types";
 import { GetAllBlogs } from "@/services/BlogService";
 import { getImagesFromBlog } from "@/services/ImageService";
+import { useRouter } from "next/navigation";
 const ITEMS_PER_PAGE = 5;
 
 export default function BlogManagement() {
@@ -25,6 +26,7 @@ export default function BlogManagement() {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const [thumbs, setThumbs] = useState<BlogImageCreate[]>([]);
+    const router = useRouter();
 
     const allTags = Array.from(new Set(blogs.flatMap((blog) => blog.tags)));
 
@@ -126,6 +128,13 @@ export default function BlogManagement() {
                         <SelectItem value="asc">Oldest first</SelectItem>
                     </SelectContent>
                 </Select>
+                <Button
+                    className="bg-sub hover:bg-sub"
+                    onClick={() => {
+                        router.push("/admin/blogs/create");
+                    }}>
+                    Create new blog
+                </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">

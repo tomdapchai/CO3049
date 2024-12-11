@@ -28,9 +28,12 @@ import { createReview, ReviewCreate } from "@/services/ReviewService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { useProduct } from "@/context/ProductContext";
+import ProductCard from "@/components/card/ProductCard";
 
 const page = ({ params }: { params: Promise<{ slug: string }> }) => {
     const { addToCart } = useCart();
+    const { products } = useProduct();
     const { slug } = use(params);
     const { userId, isLoggedIn, user } = useAuth();
     const [product, setProduct] = useState<ProductDetail>();
@@ -50,7 +53,6 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
     };
 
     useEffect(() => {
-        // await getProduct(slug).then((res) => {if (res.error) {console.error(res.error);} else {setProduct(res);}});
         getProductBySlug(slug).then((res) => {
             if ("error" in res) {
                 console.log(res.error);
@@ -89,7 +91,6 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
         };
 
         addToCart(productOrderTrue);
-        // Handle form submission here (e.g., add to cart logic)
     };
 
     const handleReviewSubmit = async (data: any) => {
@@ -115,15 +116,6 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                     variant: "default",
                     duration: 5000,
                 });
-                /* setProduct((prev) => {
-                    if (!prev) {
-                        return prev;
-                    }
-                    return {
-                        ...prev,
-                        reviews: [...prev.reviews, res],
-                    };
-                }); */
             }
         });
     };
@@ -438,6 +430,72 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                     </div>
                 </TabsContent>
             </Tabs>
+
+            <Separator className="mt-10 mb-6" />
+            <div className="w-full flex flex-col justify-center items-center">
+                <h1 className="text-2xl font-bold">Related Products</h1>
+                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
+                    {products.filter((prod) => {
+                        // compare tags
+                        const intersection = prod.tags.filter((tag) =>
+                            product.tags.includes(tag)
+                        );
+                        return intersection.length > 0;
+                    }).length > 0
+                        ? products
+                              .filter((prod) => {
+                                  // compare tags
+                                  const intersection = prod.tags.filter((tag) =>
+                                      product.tags.includes(tag)
+                                  );
+                                  return intersection.length > 0;
+                              })
+                              .slice(0, 4)
+                              .map((p) => (
+                                  <ProductCard
+                                      key={p.slug}
+                                      name={p.name}
+                                      overview={p.overview}
+                                      price={p.price}
+                                      image={p.images[0].src}
+                                      slug={p.slug}
+                                      size={p.size[0]}
+                                      color={p.color[0]}
+                                      rating={
+                                          p.reviews.length > 0
+                                              ? p.reviews.reduce(
+                                                    (acc, review) => {
+                                                        return (
+                                                            acc + review.rating
+                                                        );
+                                                    },
+                                                    0
+                                                ) / p.reviews.length
+                                              : 0
+                                      }
+                                  />
+                              ))
+                        : products.slice(0, 4).map((p) => (
+                              <ProductCard
+                                  key={p.slug}
+                                  name={p.name}
+                                  overview={p.overview}
+                                  price={p.price}
+                                  image={p.images[0].src}
+                                  slug={p.slug}
+                                  size={p.size[0]}
+                                  color={p.color[0]}
+                                  rating={
+                                      p.reviews.length > 0
+                                          ? p.reviews.reduce((acc, review) => {
+                                                return acc + review.rating;
+                                            }, 0) / p.reviews.length
+                                          : 0
+                                  }
+                              />
+                          ))}
+                </div>
+            </div>
         </div>
     );
 };

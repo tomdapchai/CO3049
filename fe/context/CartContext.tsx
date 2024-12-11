@@ -61,8 +61,9 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const test = "test";
     const { toast } = useToast();
 
+    // Initial load from localStorage - only runs once on mount
     useEffect(() => {
-        if (typeof window !== "undefined") {
+        if (typeof window !== "undefined" && !isInitialized) {
             try {
                 const savedCart = localStorage.getItem(STORAGE_KEY);
                 if (savedCart) {
@@ -77,10 +78,15 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                 setIsInitialized(true);
             }
         }
-    }, []);
+    }, []); // Empty dependency array for initialization only
 
+    // Handle localStorage updates and backend sync
     useEffect(() => {
-        if (isInitialized && typeof window !== "undefined") {
+        // Strict conditions to prevent unnecessary updates
+        if (!isInitialized || typeof window === "undefined") return;
+
+        // Debounce the localStorage update
+        const timeoutId = setTimeout(() => {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
             } catch (error) {
@@ -92,63 +98,78 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                     variant: "destructive",
                 });
             }
-        }
-    }, [cart, isInitialized, toast]);
 
-    useEffect(() => {
-        if (isLoggedIn && user) {
-            const newCart = [...cart];
-
-            user.cart.forEach((item) => {
-                const existingProductIndex = newCart.findIndex(
-                    (cartItem) =>
-                        cartItem.productId === item.productId &&
-                        cartItem.color === item.color &&
-                        cartItem.size === item.size
-                );
-
-                if (existingProductIndex >= 0) {
-                    newCart[existingProductIndex] = {
-                        ...newCart[existingProductIndex],
-                        quantity:
-                            newCart[existingProductIndex].quantity +
-                            item.quantity,
-                    };
-                } else {
-                    console.log("Adding new item to cart:", item);
-                    newCart.push(item);
-                }
-            });
-
-            setCart(newCart);
-
-            // Update the user's cart in the backend
-            Promise.all([updateCart(user.userId.toString(), newCart)])
-                .then(() => {
-                    toast({
-                        title: "Cart updated",
-                        description: "Your cart has been updated successfully",
-                        variant: "default",
-                    });
-                })
-                .catch((error) => {
-                    console.error("Error updating cart:", error);
+            // Only sync with backend if user is logged in and cart has items
+            if (isLoggedIn && user?.userId && cart.length > 0) {
+                updateCart(user.userId.toString(), cart).catch((error) => {
+                    console.error("Error updating cart in backend:", error);
                     toast({
                         title: "Error updating cart",
-                        description:
-                            "An error occurred while updating your cart",
+                        description: "Failed to sync cart with server",
                         variant: "destructive",
                     });
                 });
-        }
-    }, [isLoggedIn]);
+            }
+        }, 300); // 300ms debounce
 
+        return () => clearTimeout(timeoutId);
+    }, [cart, isInitialized, isLoggedIn, user?.userId]); // Removed toast from dependencies
+
+    // Handle cart merge on login
     useEffect(() => {
-        if (isLoggedIn && user && cart.length > 0) {
-            console.log("Updating cart in backend:", cart);
-            updateCart(user.userId.toString(), cart);
-        }
-    }, [cart]);
+        const shouldMergeCart =
+            isInitialized &&
+            isLoggedIn &&
+            user?.userId &&
+            Array.isArray(user.cart) &&
+            user.cart.length > 0;
+
+        if (!shouldMergeCart) return;
+
+        setCart((currentCart) => {
+            // Create a map of existing items for faster lookup
+            const existingItems = new Map(
+                currentCart.map((item) => [
+                    `${item.productId}-${item.color}-${item.size}`,
+                    item,
+                ])
+            );
+
+            const mergedCart = [...currentCart];
+            let hasChanges = false;
+
+            user.cart.forEach((serverItem) => {
+                const itemKey = `${serverItem.productId}-${serverItem.color}-${serverItem.size}`;
+                const existingItem = existingItems.get(itemKey);
+
+                if (existingItem) {
+                    // Update existing item only if quantities are different
+                    if (existingItem.quantity !== serverItem.quantity) {
+                        const index = mergedCart.findIndex(
+                            (item) =>
+                                item.productId === serverItem.productId &&
+                                item.color === serverItem.color &&
+                                item.size === serverItem.size
+                        );
+                        if (index !== -1) {
+                            mergedCart[index] = {
+                                ...existingItem,
+                                quantity:
+                                    existingItem.quantity + serverItem.quantity,
+                            };
+                            hasChanges = true;
+                        }
+                    }
+                } else {
+                    // Add new item
+                    mergedCart.push(serverItem);
+                    hasChanges = true;
+                }
+            });
+
+            return hasChanges ? mergedCart : currentCart;
+        });
+    }, [isInitialized, isLoggedIn, user?.userId, user?.cart]); // Strict dependencies
 
     const addToCart = (data: Partial<productOrderTrue>) => {
         try {
