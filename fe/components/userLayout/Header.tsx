@@ -28,10 +28,18 @@ import ProductCartCard from "../card/ProductCartCard";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ProductSearch } from "../dialog/SearchDialog";
+import { updateCart } from "@/services/UserService";
 const Header = () => {
     // const {userId} = useAuth();
-    const { isLoggedIn, logoutUser, userId } = useAuth();
-    const { cart, test, removeFromCart, updateQuantity, clearCart } = useCart();
+    const { isLoggedIn, logoutUser, userId, user } = useAuth();
+    const {
+        cart,
+        test,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        clearCartUser,
+    } = useCart();
     console.log(test);
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const router = useRouter();
@@ -57,7 +65,7 @@ const Header = () => {
         await logoutUser()
             .then(() => {
                 router.push("/");
-                console.log("Logged out");
+                clearCart();
             })
             .catch((err) => {
                 console.log(err);
@@ -146,7 +154,11 @@ const Header = () => {
                                                 </Button>
                                             </Link>
                                             <Button
-                                                onClick={clearCart}
+                                                onClick={
+                                                    isLoggedIn
+                                                        ? clearCartUser
+                                                        : clearCart
+                                                }
                                                 className="bg-red-500 hover:bg-red-500/90">
                                                 <p className="text-white">
                                                     Clear Cart

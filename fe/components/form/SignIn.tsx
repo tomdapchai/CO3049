@@ -28,7 +28,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
 const SignIn = ({ type }: { type: string }) => {
-    const { isLoggedIn, loginUser, loginAdmin } = useAuth();
+    const { isLoggedIn, loginUser, loginAdmin, user } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();

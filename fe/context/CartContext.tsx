@@ -1,8 +1,16 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    use,
+} from "react";
 import { productOrderTrue } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-
+import { useAuth } from "./AuthContext";
+import { updateCart } from "@/services/UserService";
+import { clear } from "console";
 interface CartContextProps {
     test: string;
     cart: productOrderTrue[];
@@ -14,6 +22,7 @@ interface CartContextProps {
         updates: Partial<productOrderTrue>
     ) => void;
     clearCart: () => void;
+    clearCartUser: () => void;
     getCartTotal: () => number;
 }
 
@@ -46,6 +55,7 @@ interface CartProviderProps {
 const STORAGE_KEY = "cart";
 
 const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+    const { isLoggedIn, user } = useAuth();
     const [cart, setCart] = useState<productOrderTrue[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
     const test = "test";
@@ -84,6 +94,61 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
             }
         }
     }, [cart, isInitialized, toast]);
+
+    useEffect(() => {
+        if (isLoggedIn && user) {
+            const newCart = [...cart];
+
+            user.cart.forEach((item) => {
+                const existingProductIndex = newCart.findIndex(
+                    (cartItem) =>
+                        cartItem.productId === item.productId &&
+                        cartItem.color === item.color &&
+                        cartItem.size === item.size
+                );
+
+                if (existingProductIndex >= 0) {
+                    newCart[existingProductIndex] = {
+                        ...newCart[existingProductIndex],
+                        quantity:
+                            newCart[existingProductIndex].quantity +
+                            item.quantity,
+                    };
+                } else {
+                    console.log("Adding new item to cart:", item);
+                    newCart.push(item);
+                }
+            });
+
+            setCart(newCart);
+
+            // Update the user's cart in the backend
+            Promise.all([updateCart(user.userId.toString(), newCart)])
+                .then(() => {
+                    toast({
+                        title: "Cart updated",
+                        description: "Your cart has been updated successfully",
+                        variant: "default",
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error updating cart:", error);
+                    toast({
+                        title: "Error updating cart",
+                        description:
+                            "An error occurred while updating your cart",
+                        variant: "destructive",
+                    });
+                });
+        }
+    }, [isLoggedIn]);
+
+    useEffect(() => {
+        if (isLoggedIn && user && cart.length > 0) {
+            console.log("Updating cart in backend:", cart);
+            updateCart(user.userId.toString(), cart);
+        }
+    }, [cart]);
 
     const addToCart = (data: Partial<productOrderTrue>) => {
         try {
@@ -203,6 +268,20 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         }
     };
 
+    const clearCartUser = () => {
+        try {
+            setCart([]);
+            if (typeof window !== "undefined") {
+                localStorage.removeItem(STORAGE_KEY);
+            }
+            if (isLoggedIn && user) {
+                updateCart(user.userId.toString(), []);
+            }
+        } catch (error) {
+            console.error("Error clearing cart:", error);
+        }
+    };
+
     const getCartTotal = () => {
         return cart.reduce((total, item) => total + item.quantity, 0);
     };
@@ -222,6 +301,7 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                 updateQuantity,
                 updateOrderDetails,
                 clearCart,
+                clearCartUser,
                 getCartTotal,
             }}>
             {children}
