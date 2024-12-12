@@ -38,6 +38,7 @@ import { createProductImage } from "@/services/ImageService";
 import { productSchema } from "@/lib/validation";
 import { sizeOptions, colorOptions } from "@/lib/constants";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 type ProductFormValues = z.infer<typeof productSchema>;
 
 export default function CreateProductPage() {
@@ -513,9 +514,35 @@ export default function CreateProductPage() {
                             name="fullDescription"
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel>Full Description</FormLabel>
+                                    <FormLabel className="w-full flex justify-between items-center">
+                                        <p>Full description</p>
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <p className="hover:underline">
+                                                    Help
+                                                </p>
+                                            </DialogTrigger>
+                                            <DialogContent className="max-w-4xl max-h-[80vh]">
+                                                <DialogHeader>
+                                                    <DialogTitle>
+                                                        Image Description
+                                                        guideline Guideline
+                                                    </DialogTitle>
+                                                </DialogHeader>
+                                                <Image
+                                                    src={"/images/guidline.png"}
+                                                    alt="guidline"
+                                                    width={800}
+                                                    height={600}
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
+                                    </FormLabel>
                                     <FormControl>
-                                        <Textarea {...field} />
+                                        <Textarea
+                                            {...field}
+                                            className="min-h-[300px]"
+                                        />
                                     </FormControl>
                                     <FormDescription>
                                         Enter a detailed description of the

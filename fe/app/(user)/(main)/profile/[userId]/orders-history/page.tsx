@@ -86,7 +86,10 @@ const page = () => {
         setCurrentPage(1);
     }, [orders, statusFilter, sortBy, sortOrder, searchTerm]);
 
-    const totalAmount = orders.reduce((sum, order) => sum + order.total, 0);
+    const totalAmount = orders.reduce(
+        (sum, order) => sum + (order.status == "completed" ? order.total : 0),
+        0
+    );
     const totalOrders = orders.length;
     const completedOrders = orders.filter(
         (order) => order.status === "completed"

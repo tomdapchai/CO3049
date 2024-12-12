@@ -76,13 +76,17 @@ export default function BlogPage() {
                         }
                     });
                 })
-            ).then(() => setLoading(false));
+            );
         }
     }, [posts]);
 
     useEffect(() => {
         // start combining the posts with the thumbs by index
-        if (posts.length > 0 && thumbs.length > 0) {
+        if (
+            posts.length > 0 &&
+            thumbs.length > 0 &&
+            posts.length === thumbs.length
+        ) {
             const combined = posts.map((post, index) => {
                 return {
                     ...post,
@@ -91,6 +95,7 @@ export default function BlogPage() {
             });
             console.log("Combined:", combined);
             setPostsWithThumbs(combined);
+            setLoading(false);
         }
     }, [thumbs]);
 

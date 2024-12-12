@@ -359,7 +359,32 @@ export default function BlogCreator() {
                                 name="content"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Content</FormLabel>
+                                        <FormLabel className="flex w-full justify-between items-center">
+                                            <p>Content</p>
+                                            <Dialog>
+                                                <DialogTrigger>
+                                                    <p className="hover:underline">
+                                                        Help
+                                                    </p>
+                                                </DialogTrigger>
+                                                <DialogContent className="max-w-4xl max-h-[80vh]">
+                                                    <DialogHeader>
+                                                        <DialogTitle>
+                                                            Blog Content
+                                                            Guideline
+                                                        </DialogTitle>
+                                                    </DialogHeader>
+                                                    <Image
+                                                        src={
+                                                            "/images/guidline.png"
+                                                        }
+                                                        alt="guidline"
+                                                        width={800}
+                                                        height={600}
+                                                    />
+                                                </DialogContent>
+                                            </Dialog>
+                                        </FormLabel>
                                         <FormControl>
                                             <Textarea
                                                 placeholder="Write your blog content here..."

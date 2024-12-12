@@ -47,6 +47,8 @@ import { sizeOptions, colorOptions } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { getReviewsByProductId } from "@/services/ReviewService";
 import { ReviewSection } from "@/components/ReviewSection";
+import Image from "next/image";
+
 export default function ProductDetailPage() {
     const params = useParams();
     const { slug } = params;
@@ -628,11 +630,34 @@ export default function ProductDetailPage() {
                             name="fullDescription"
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel>Full Description</FormLabel>
+                                    <FormLabel className="w-full flex justify-between items-center">
+                                        <p>Full description</p>
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <p className="hover:underline">
+                                                    Help
+                                                </p>
+                                            </DialogTrigger>
+                                            <DialogContent className="max-w-4xl max-h-[80vh]">
+                                                <DialogHeader>
+                                                    <DialogTitle>
+                                                        Blog Content Guideline
+                                                    </DialogTitle>
+                                                </DialogHeader>
+                                                <Image
+                                                    src={"/images/guidline.png"}
+                                                    alt="guidline"
+                                                    width={800}
+                                                    height={600}
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
+                                    </FormLabel>
                                     <FormControl>
                                         <Textarea
                                             {...field}
                                             disabled={!isEditing}
+                                            className="min-h-[300px]"
                                         />
                                     </FormControl>
                                     <FormDescription>

@@ -115,7 +115,7 @@ export function AppSidebar() {
                     <Button
                         className="text-main w-3/4 bg-sub hover:bg-[#b88e2f]/90 "
                         onClick={() => handleLogout()}>
-                        Đăng xuất
+                        Log out
                     </Button>
                 </SidebarFooter>
             </SidebarContent>
