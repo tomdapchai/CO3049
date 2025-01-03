@@ -1,5 +1,5 @@
 # CO3049
-Company website for CO3049 - Web Development assignment
+Company website for CO3049 - Web Development assignment - Got 9.5
 
 # Instruction
 Go to FE folder, ```npm i -f``` everytime pull this repo.
