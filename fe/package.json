@@ -29,7 +29,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "cmdk": "^1.0.0",
-        "date-fns": "^4.1.0",
+        "date-fns": "^3.6.0",
         "embla-carousel-autoplay": "^8.4.0",
         "embla-carousel-react": "^8.4.0",
         "html-react-parser": "^5.1.18",
@@ -59,6 +59,7 @@
         "typescript": "^5"
     },
     "overrides": {
-        "react-is": "^19.0.0-rc-66855b96-20241106"
+        "react-is": "^19.0.0-rc-66855b96-20241106",
+        "date-fns": "^3.6.0"
     }
 }
