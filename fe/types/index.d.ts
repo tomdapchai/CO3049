@@ -176,3 +176,30 @@ export type siteInfo = {
     address: string;
     email: string;
 };
+
+export type subcriber = {
+    email: string;
+};
+
+export type extension = {
+    name: string;
+    description?: string;
+    installed: boolean;
+    enabled: boolean;
+};
+
+export type socialMedia = {
+    id: string;
+    name: string;
+    info: string;
+};
+
+export type advertisement = {
+    image: string;
+    link: string;
+};
+
+export type navMenu = {
+    title: string;
+    url: string;
+};

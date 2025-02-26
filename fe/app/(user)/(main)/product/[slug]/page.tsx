@@ -280,9 +280,7 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                                                             style={{
                                                                 backgroundColor:
                                                                     // @ts-ignore
-                                                                    colorMapping[
-                                                                        color
-                                                                    ],
+                                                                    color,
                                                             }}
                                                             aria-label={`Select ${color} color`}
                                                         />

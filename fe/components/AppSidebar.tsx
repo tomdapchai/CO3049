@@ -24,6 +24,7 @@ import {
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import { title } from "process";
 // Menu items.
 const items = [
     {
@@ -35,6 +36,11 @@ const items = [
         title: "Orders",
         url: "/admin/orders",
         icon: PrinterCheck,
+    },
+    {
+        title: "Categories",
+        url: "/admin/category",
+        icon: Calendar,
     },
     {
         title: "Products",
@@ -72,8 +78,23 @@ const items = [
         icon: Calendar,
     },
     {
+        title: "Subscribers",
+        url: "/admin/subscriber",
+        icon: Calendar,
+    },
+    {
+        title: "Social media",
+        url: "/admin/social-media",
+        icon: Calendar,
+    },
+    {
         title: "Settings",
         url: "/admin/siteInfo",
+        icon: Settings,
+    },
+    {
+        title: "Extensions",
+        url: "/admin/extension",
         icon: Settings,
     },
 ];

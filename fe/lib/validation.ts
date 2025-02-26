@@ -1,3 +1,5 @@
+import { info } from "console";
+import { link } from "fs";
 import * as z from "zod";
 
 export const SignInSchema = z.object({
@@ -102,4 +104,31 @@ export const siteInfoSchema = z.object({
     address: z.string(),
     phoneNumber: z.string(),
     email: z.string().email(),
+});
+
+export const categorySchema = z.object({
+    categoryId: z.string().min(1, "Category ID is required"),
+    name: z.string().min(1, "Name is required"),
+    image: z.string().min(1, "Image is required"),
+});
+
+export const subcriberSchema = z.object({
+    email: z.string().email(),
+});
+
+export const socialSchema = z.object({
+    id: z.string().min(1, "ID is required"),
+    name: z.string().min(1, "Name is required"),
+    info: z.string().min(1, "Info is required"),
+});
+
+export const extensionSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    installed: z.boolean(),
+    enabled: z.boolean(),
+});
+
+export const advertisementSchema = z.object({
+    image: z.string().min(1, "Image is required"),
+    link: z.string().optional(),
 });
