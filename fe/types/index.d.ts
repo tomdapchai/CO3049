@@ -178,6 +178,7 @@ export type siteInfo = {
 };
 
 export type subcriber = {
+    id: string;
     email: string;
 };
 
@@ -192,6 +193,7 @@ export type socialMedia = {
     id: string;
     name: string;
     info: string;
+    image: string;
 };
 
 export type advertisement = {

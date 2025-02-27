@@ -120,6 +120,7 @@ export const socialSchema = z.object({
     id: z.string().min(1, "ID is required"),
     name: z.string().min(1, "Name is required"),
     info: z.string().min(1, "Info is required"),
+    image: z.string().min(1, "Image is required"),
 });
 
 export const extensionSchema = z.object({

@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ProductSearch } from "../dialog/SearchDialog";
 import { updateCart } from "@/services/UserService";
+import { useProduct } from "@/context/ProductContext";
 import { category } from "@/types";
 import ProductCategoriesMenu from "../ProductCategoriesMenu";
 
@@ -89,6 +90,7 @@ const fake_categories: category[] = [
 const Header = () => {
     // const {userId} = useAuth();
     const { isLoggedIn, logoutUser, userId, user } = useAuth();
+    const { categories } = useProduct();
     const {
         cart,
         test,
@@ -109,7 +111,6 @@ const Header = () => {
             url: `/profile/${userId}/detail`,
         },
     ];
-    const [categories, setCategories] = useState<category[]>(fake_categories);
 
     useEffect(() => {
         const checkScreenSize = () => {

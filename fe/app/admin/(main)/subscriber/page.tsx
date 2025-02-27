@@ -12,13 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-} from "@/components/ui/dialog";
-import {
     Pagination,
     PaginationContent,
     PaginationEllipsis,
@@ -27,27 +20,27 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Contact } from "@/types";
-import { getAllContacts } from "@/services/ContactService";
+import { subcriber } from "@/types";
+import {
+    getAllSubscribers,
+    deleteSubscriber,
+} from "@/services/SubscribeService";
 
-const CONTACTS_PER_PAGE = 20;
+const SUBSCRIBERS_PER_PAGE = 20;
 
-export default function ContactPage() {
-    const [contacts, setContacts] = useState<Contact[]>([]);
+const page = () => {
+    const [subcribers, setSubcribers] = useState<subcriber[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedContact, setSelectedContact] = useState<Contact | null>(
-        null
-    );
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        getAllContacts().then((data) => {
+        getAllSubscribers().then((data) => {
             if ("error" in data) {
                 console.error(data.error);
             } else {
-                console.log("Contacts", data);
-                setContacts(data);
+                console.log("Subcribers", data);
+                setSubcribers(data);
                 setIsLoading(false);
             }
         });
@@ -57,28 +50,36 @@ export default function ContactPage() {
         return <div>Loading...</div>;
     }
 
-    const filteredContacts = contacts.filter((contact) =>
-        (
-            contact.name.toLowerCase() +
-            contact.email +
-            contact.message +
-            contact.phoneNumber +
-            contact.subject
-        ).includes(searchQuery.toLowerCase())
+    const filteredSubcribers = subcribers.filter((subcriber) =>
+        subcriber.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const paginatedContacts = filteredContacts.slice(
-        (currentPage - 1) * CONTACTS_PER_PAGE,
-        currentPage * CONTACTS_PER_PAGE
+    const paginatedContacts = filteredSubcribers.slice(
+        (currentPage - 1) * SUBSCRIBERS_PER_PAGE,
+        currentPage * SUBSCRIBERS_PER_PAGE
     );
 
-    const totalPages = Math.ceil(filteredContacts.length / CONTACTS_PER_PAGE);
+    const totalPages = Math.ceil(
+        filteredSubcribers.length / SUBSCRIBERS_PER_PAGE
+    );
+
+    const handleDelete = async (id: string) => {
+        const response = await deleteSubscriber(id);
+        if ("error" in response) {
+            console.error(response.error);
+        } else {
+            console.log(response.message);
+            setSubcribers(
+                subcribers.filter((subcriber) => subcriber.id !== id)
+            );
+        }
+    };
 
     return (
         <div className="container mx-auto py-10">
-            <h1 className="text-2xl font-bold mb-5">Contact Management</h1>
+            <h1 className="text-2xl font-bold mb-5">Subcribers Mangement</h1>
             <Input
-                placeholder="Search contacts"
+                placeholder="Search subcribers"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="mb-4"
@@ -88,26 +89,21 @@ export default function ContactPage() {
                     <TableHeader>
                         <TableRow>
                             <TableHead>ID</TableHead>
-                            <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
-                            <TableHead>Subject</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginatedContacts.map((contact) => (
-                            <TableRow key={contact.contactId}>
-                                <TableCell>{contact.contactId}</TableCell>
-                                <TableCell>{contact.name}</TableCell>
-                                <TableCell>{contact.email}</TableCell>
-                                <TableCell>{contact.subject}</TableCell>
+                        {paginatedContacts.map((subcriber) => (
+                            <TableRow key={subcriber.id}>
+                                <TableCell>{subcriber.id}</TableCell>
+                                <TableCell>{subcriber.email}</TableCell>
                                 <TableCell>
                                     <Button
-                                        variant="outline"
                                         onClick={() =>
-                                            setSelectedContact(contact)
+                                            handleDelete(subcriber.id)
                                         }>
-                                        View Details
+                                        Delete
                                     </Button>
                                 </TableCell>
                             </TableRow>
@@ -159,42 +155,8 @@ export default function ContactPage() {
                     </Pagination>
                 </div>
             </div>
-            <Dialog
-                open={!!selectedContact}
-                onOpenChange={() => setSelectedContact(null)}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Contact Details</DialogTitle>
-                        <DialogDescription>
-                            Full information about the selected contact.
-                        </DialogDescription>
-                    </DialogHeader>
-                    {selectedContact && (
-                        <div className="grid gap-4 py-4">
-                            <div>
-                                <h3 className="font-semibold">Name</h3>
-                                <p>{selectedContact.name}</p>
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">Email</h3>
-                                <p>{selectedContact.email}</p>
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">Phone Number</h3>
-                                <p>{selectedContact.phoneNumber || "N/A"}</p>
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">Subject</h3>
-                                <p>{selectedContact.subject || "N/A"}</p>
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">Message</h3>
-                                <p>{selectedContact.message}</p>
-                            </div>
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
         </div>
     );
-}
+};
+
+export default page;

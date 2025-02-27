@@ -9,7 +9,12 @@ const nextConfig: NextConfig = {
                 hostname: "**",
             },
         ],
-        domains: ["res.cloudinary.com"],
+        domains: [
+            "res.cloudinary.com",
+            "images.unsplash.com",
+            "icons8.com",
+            "cdn.freebiesupply.com",
+        ],
     },
     eslint: {
         ignoreDuringBuilds: true,

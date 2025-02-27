@@ -10,9 +10,14 @@ import { useRouter } from "next/navigation";
 import { getAllProduct } from "@/services/ProductService";
 import { Product, ProductDetail, ProductView } from "@/types";
 import { useProduct } from "@/context/ProductContext";
+import { AdvertisementPopup } from "@/components/userLayout/AdvertisePop";
+import { Input } from "@/components/ui/input";
+import { SubscribeForm } from "@/components/form/SubscribeForm";
+
 const page = () => {
     const { products } = useProduct();
     const [productImages, setProductImages] = useState<ProductDetail[]>([]);
+    const [isAd, setIsAd] = useState(false);
     useEffect(() => {
         /* getAllProduct().then((data) => {
             if ("error" in data) {
@@ -25,10 +30,14 @@ const page = () => {
         }); */
         console.log("Products in home:", products);
         setProductImages(products.slice(0, 8));
+
+        // if isAd from useProduct is true, show the advertisement
+        setIsAd(true);
     }, []);
     const router = useRouter();
     return (
         <div className="w-full h-full flex flex-col gap-10 pb-8">
+            {isAd && <AdvertisementPopup />}
             <section className="bg-[url('/images/banner.jpg')] bg-cover bg-bottom bg-no-repeat h-screen flex justify-end items-center max-md:justify-center">
                 <div className="flex flex-col bg-main space-y-8 w-[600px] max-md:w-[400px] max-sm:w-[300px] rounded-lg md:mr-40 p-10">
                     <div className="flex flex-col gap-4">
@@ -116,6 +125,7 @@ const page = () => {
                 </div>
             </section>
 
+            {/* Would be an extension later */}
             <section className="flex flex-col justify-center items-center w-full gap-8 bg-main px-4 py-6">
                 <div className="flex flex-col justify-center items-center space-y-4">
                     <p className="font-bold text-gray-400 text-lg">
@@ -126,6 +136,10 @@ const page = () => {
                 <div className="w-full flex justify-center items-center">
                     <Slideshow />
                 </div>
+            </section>
+
+            <section className="flex flex-col justify-center items-center w-full bg-white">
+                <SubscribeForm />
             </section>
         </div>
     );
