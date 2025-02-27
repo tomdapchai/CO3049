@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check } from "lucide-react";
 import { UploadedImage } from "@/app/admin/(main)/blogs/create/page";
+import imagemin from "imagemin";
+
 /* type UploadedImage = {
     alt: string;
     src: string;

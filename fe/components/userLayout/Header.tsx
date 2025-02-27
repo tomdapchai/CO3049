@@ -30,6 +30,62 @@ import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ProductSearch } from "../dialog/SearchDialog";
 import { updateCart } from "@/services/UserService";
+import { category } from "@/types";
+import ProductCategoriesMenu from "../ProductCategoriesMenu";
+
+const fake_categories: category[] = [
+    {
+        categoryId: "mattresses",
+        name: "Mattresses and toppers",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "outdoor",
+        name: "Outdoor",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "lightning",
+        name: "Lighting and electronics",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "bed",
+        name: "Beds",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "bedding",
+        name: "Bedding",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "wardrobe",
+        name: "Wardrobes",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "sofa",
+        name: "Sofas, armchairs and foot stools",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "living-room",
+        name: "Living room furniture",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "dining",
+        name: "Dining chairs & tables",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+    {
+        categoryId: "bathroom",
+        name: "Bathroom furniture",
+        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
+    },
+];
+
 const Header = () => {
     // const {userId} = useAuth();
     const { isLoggedIn, logoutUser, userId, user } = useAuth();
@@ -53,6 +109,7 @@ const Header = () => {
             url: `/profile/${userId}/detail`,
         },
     ];
+    const [categories, setCategories] = useState<category[]>(fake_categories);
 
     useEffect(() => {
         const checkScreenSize = () => {
@@ -91,13 +148,22 @@ const Header = () => {
             {isLargeScreen ? (
                 <>
                     <div className="flex justify-between items-center gap-10">
-                        {links.map((link) => (
-                            <Link key={link.title} href={link.url}>
-                                <Button variant="link" className="font-bold">
-                                    {link.title}
-                                </Button>
-                            </Link>
-                        ))}
+                        {links.map((link) =>
+                            link.title !== "Products" ? (
+                                <Link key={link.title} href={link.url}>
+                                    <Button
+                                        variant="link"
+                                        className="font-bold">
+                                        {link.title}
+                                    </Button>
+                                </Link>
+                            ) : (
+                                <ProductCategoriesMenu
+                                    key={link.title}
+                                    categories={categories}
+                                />
+                            )
+                        )}
                     </div>
 
                     <div className="flex justify-between items-center gap-4">

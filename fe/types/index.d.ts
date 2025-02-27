@@ -203,3 +203,9 @@ export type navMenu = {
     title: string;
     url: string;
 };
+
+export type category = {
+    categoryId: string;
+    name: string;
+    image: string;
+};
