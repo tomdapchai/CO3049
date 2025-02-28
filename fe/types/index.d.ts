@@ -198,7 +198,7 @@ export type socialMedia = {
 
 export type advertisement = {
     image: string;
-    link: string;
+    link?: string;
 };
 
 export type navMenu = {
