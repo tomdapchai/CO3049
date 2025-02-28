@@ -5,12 +5,15 @@ import { getAllProduct } from "@/services/ProductService";
 import { getSiteInfo } from "@/services/SiteInfoService";
 import { getAllCategories } from "@/services/CategoryService";
 import { getAllSocialMedia } from "@/services/SocialService";
-import { category, socialMedia } from "@/types";
+import { getAdvertisement } from "@/services/AdService";
+import { category, socialMedia, advertisement } from "@/types";
+
 interface ProductContextProps {
     products: ProductDetail[];
     siteInfo: siteInfo | null;
     categories: category[];
     socials: socialMedia[];
+    advertisement: advertisement;
 }
 
 const ProductContext = createContext<ProductContextProps | undefined>(
@@ -34,6 +37,7 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
     const [siteInfo, setSiteInfo] = useState<siteInfo | null>(null);
     const [categories, setCategories] = useState<category[]>([]);
     const [socials, setSocials] = useState<socialMedia[]>([]);
+    const [advertisement, setAdvertisement] = useState<advertisement>();
     const [isInitialized, setIsInitialized] = useState(false);
     useEffect(() => {
         Promise.all([
@@ -41,38 +45,52 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
             getSiteInfo(),
             getAllCategories(),
             getAllSocialMedia(),
+            getAdvertisement(),
         ])
-            .then(([productData, siteInfoData, categoryData, socialData]) => {
-                if ("error" in productData) {
-                    console.error(productData.error);
-                } else {
-                    setProducts(productData);
+            .then(
+                ([
+                    productData,
+                    siteInfoData,
+                    categoryData,
+                    socialData,
+                    adData,
+                ]) => {
+                    if ("error" in productData) {
+                        console.error(productData.error);
+                    } else {
+                        setProducts(productData);
+                    }
+                    if ("error" in siteInfoData) {
+                        console.error(siteInfoData.error);
+                    } else {
+                        setSiteInfo(siteInfoData);
+                    }
+                    if ("error" in categoryData) {
+                        console.error(categoryData.error);
+                    } else {
+                        setCategories(categoryData);
+                    }
+                    if ("error" in socialData) {
+                        console.error(socialData.error);
+                    } else {
+                        setSocials(socialData);
+                    }
+                    if ("error" in adData) {
+                        console.error(adData.error);
+                    } else {
+                        setAdvertisement(adData);
+                    }
                 }
-                if ("error" in siteInfoData) {
-                    console.error(siteInfoData.error);
-                } else {
-                    setSiteInfo(siteInfoData);
-                }
-                if ("error" in categoryData) {
-                    console.error(categoryData.error);
-                } else {
-                    setCategories(categoryData);
-                }
-                if ("error" in socialData) {
-                    console.error(socialData.error);
-                } else {
-                    setSocials(socialData);
-                }
-            })
+            )
             .finally(() => setIsInitialized(true));
     }, []);
 
-    if (!isInitialized) {
+    if (!isInitialized || !advertisement) {
         return null; // Or a loading spinner
     }
     return (
         <ProductContext.Provider
-            value={{ products, siteInfo, categories, socials }}>
+            value={{ products, siteInfo, categories, socials, advertisement }}>
             {children}
         </ProductContext.Provider>
     );

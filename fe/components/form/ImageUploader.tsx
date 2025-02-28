@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check } from "lucide-react";
 import { UploadedImage } from "@/app/admin/(main)/blogs/create/page";
+import { Copy } from "lucide-react";
 import imagemin from "imagemin";
 
 /* type UploadedImage = {
@@ -19,6 +20,7 @@ type ImageUploaderProps = {
     onUpdateAlt: (oldAlt: string, newAlt: string) => void;
     isMultiple?: boolean;
     isEditing?: boolean;
+    isCopied?: boolean;
 };
 
 export default function ImageUploader({
@@ -28,6 +30,7 @@ export default function ImageUploader({
     onUpdateAlt,
     isMultiple = true,
     isEditing = false,
+    isCopied = false,
 }: ImageUploaderProps) {
     const [editingAlt, setEditingAlt] = useState<string | null>(null);
     const [newAlt, setNewAlt] = useState<string>("");
@@ -99,6 +102,20 @@ export default function ImageUploader({
                                 }}>
                                 Delete
                             </Button>
+                        )}
+
+                        {/* create me a button click to copy the src of the image */}
+                        {isCopied ? (
+                            <Button
+                                size="icon"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    navigator.clipboard.writeText(image.src);
+                                }}>
+                                <Copy className="h-4 w-4" />
+                            </Button>
+                        ) : (
+                            ""
                         )}
                     </div>
                 ))}

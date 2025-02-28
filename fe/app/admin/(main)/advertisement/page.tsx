@@ -21,109 +21,151 @@ import { uploadToCDN } from "@/lib/utils";
 import { advertisementSchema } from "@/lib/validation";
 import { UploadedImage } from "../blogs/create/page";
 import { advertisement } from "@/types";
+import Image from "next/image";
+import { getAdvertisement, updateAdvertisement } from "@/services/AdService";
+import { Switch } from "@/components/ui/switch";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const page = () => {
     const { toast } = useToast();
-    const [ad, setAd] = useState<advertisement | null>();
+    const [ad, setAd] = useState<advertisement>();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [isEdit, setIsEdit] = useState<advertisement | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isEdit, setIsEdit] = useState<advertisement>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         // Fetch ad data.
-    });
-
-    const handleAddAd = async (data: advertisement) => {
-        setAd(data);
-    };
+        setIsLoading(true);
+        getAdvertisement().then((data) => {
+            if ("error" in data) {
+                console.error(data.error);
+            } else {
+                setAd(data);
+            }
+            setIsLoading(false);
+        });
+    }, []);
 
     const handleEditAd = async (data: advertisement) => {
-        setAd(data);
-        setIsDialogOpen(false);
-    };
-
-    const handleDeleteAd = async () => {
-        setAd(null);
+        console.log("Updating ad:", data);
+        await updateAdvertisement(data).then((res) => {
+            setAd(data);
+            setIsDialogOpen(false);
+        });
     };
 
     const openEditAd = (data: advertisement) => {
-        setIsEdit(data);
+        setAd(data);
         setIsDialogOpen(true);
     };
 
+    if (isLoading || !ad) {
+        return <p>Loading...</p>;
+    }
+
     return (
         <div className="container mx-auto py-10">
-            <Card>
+            <Card className="w-full">
                 <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Advertisment Banner Management</CardTitle>
+                    <CardTitle className="text-xl">
+                        Advertisment Banner Management
+                    </CardTitle>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger asChild>
+                        {/* <DialogTrigger asChild>
                             <Button
                                 onClick={() => setIsEdit(null)}
                                 className="flex items-center gap-1">
                                 <Plus className="h-4 w-4" /> Add new
                                 advertisement
                             </Button>
-                        </DialogTrigger>
+                        </DialogTrigger> */}
                         <DialogContent className="sm:max-w-[500px]">
                             <DialogHeader>
                                 <DialogTitle>
-                                    {isEdit
-                                        ? "Edit social"
-                                        : "Add New social media"}
+                                    {"Edit Advertisement"}
                                 </DialogTitle>
                             </DialogHeader>
-                            <AdForm
-                                onSubmit={isEdit ? handleEditAd : handleAddAd}
-                                initialData={isEdit}
-                            />
+                            <AdForm onSubmit={handleEditAd} initialData={ad} />
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
-                <CardContent className="overflow-x-auto no-scrollbar">
-                    <table className="w-full">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Link</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {ad ? (
-                                <tr>
-                                    <td>
-                                        <img
-                                            src={ad.image}
-                                            alt="ad"
-                                            className="w-20 h-20 object-cover rounded-md"
+                <CardContent className="p-6">
+                    <div className="grid gap-6 md:grid-cols-[1fr_auto]">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-xl font-semibold leading-none tracking-tight">
+                                        {ad.title}
+                                    </h3>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm text-muted-foreground">
+                                            Active
+                                        </span>
+                                        <Switch
+                                            checked={ad.enable}
+                                            onCheckedChange={async () => {
+                                                await handleEditAd({
+                                                    ...ad,
+                                                    enable: !ad.enable,
+                                                });
+                                            }}
                                         />
-                                    </td>
-                                    <td>{ad.link}</td>
-                                    <td>
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={() => openEditAd(ad)}>
-                                            <Pencil />
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={handleDeleteAd}>
-                                            <Trash2 />
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ) : (
-                                <tr>
-                                    <td colSpan={3} className="text-center">
-                                        No data
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center text-sm text-muted-foreground">
+                                    <a
+                                        href={ad.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center hover:underline">
+                                        {ad.link
+                                            ? ad.link.length > 40
+                                                ? `${ad.link.substring(
+                                                      0,
+                                                      40
+                                                  )}...`
+                                                : ad.link
+                                            : "No link"}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div className="relative aspect-video w-[800px] overflow-hidden rounded-md">
+                                <Image
+                                    src={ad.image || "/placeholder.svg"}
+                                    alt={ad.title}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
+
+                            <div className="flex justify-end">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                onClick={() => openEditAd(ad)}
+                                                variant="outline"
+                                                size="sm"
+                                                className="flex items-center gap-1">
+                                                <Pencil className="h-4 w-4" />{" "}
+                                                Edit Advertisement
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Edit advertisement details</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
         </div>
@@ -138,6 +180,8 @@ interface AdvertisementFormProps {
 }
 
 function AdForm({ onSubmit, initialData }: AdvertisementFormProps) {
+    console.log(initialData);
+
     const {
         register,
         handleSubmit,
@@ -147,10 +191,14 @@ function AdForm({ onSubmit, initialData }: AdvertisementFormProps) {
     } = useForm<z.infer<typeof advertisementSchema>>({
         resolver: zodResolver(advertisementSchema),
         defaultValues: initialData || {
+            title: "",
             image: "",
             link: "",
+            enable: true,
         },
     });
+
+    console.log(watch());
 
     const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>(
         initialData?.image
@@ -198,6 +246,16 @@ function AdForm({ onSubmit, initialData }: AdvertisementFormProps) {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input id="title" {...register("title")} />
+                {errors.title && (
+                    <p className="text-sm text-destructive">
+                        {errors.title.message}
+                    </p>
+                )}
+            </div>
+
+            <div className="space-y-2">
                 <Label htmlFor="link">Link to product/blog</Label>
                 <Input id="link" {...register("link")} />
                 {errors.link && (
@@ -208,7 +266,7 @@ function AdForm({ onSubmit, initialData }: AdvertisementFormProps) {
             </div>
 
             <div className="space-y-2">
-                <Label>Social Logo</Label>
+                <Label>Advertisement Banner</Label>
                 <ImageUploader
                     uploadedImages={uploadedImages}
                     onUpload={handleImageUpload}
@@ -227,11 +285,7 @@ function AdForm({ onSubmit, initialData }: AdvertisementFormProps) {
 
             <div className="flex justify-end gap-2 pt-4">
                 <Button type="submit" disabled={isUploading}>
-                    {isUploading
-                        ? "Uploading..."
-                        : initialData
-                        ? "Update social media"
-                        : "Add social media"}
+                    {isUploading ? "Uploading..." : "Update ad banner"}
                 </Button>
             </div>
         </form>

@@ -90,7 +90,7 @@ const fake_categories: category[] = [
 const Header = () => {
     // const {userId} = useAuth();
     const { isLoggedIn, logoutUser, userId, user } = useAuth();
-    const { categories } = useProduct();
+    const { categories, siteInfo } = useProduct();
     const {
         cart,
         test,
@@ -137,7 +137,7 @@ const Header = () => {
             <div className="flex justify-between items-center gap-2">
                 <Link href="/">
                     <Image
-                        src={"/images/logo.png"}
+                        src={siteInfo?.logo || "/images/logo.png"}
                         alt="logo"
                         width={50}
                         height={50}

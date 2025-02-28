@@ -175,6 +175,9 @@ export type siteInfo = {
     phoneNumber: string;
     address: string;
     email: string;
+    logo: string;
+    homeBanner: string;
+    themeColor: string;
 };
 
 export type subcriber = {
@@ -197,8 +200,10 @@ export type socialMedia = {
 };
 
 export type advertisement = {
+    title: string;
     image: string;
     link?: string;
+    enable: boolean;
 };
 
 export type navMenu = {

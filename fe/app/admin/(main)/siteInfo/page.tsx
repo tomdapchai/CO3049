@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,6 +35,10 @@ import { getSiteInfo, updateSiteInfo } from "@/services/SiteInfoService";
 import { siteInfo } from "@/types";
 import { siteInfoSchema } from "@/lib/validation";
 import { createAboutImage, getAllImages } from "@/services/ImageService";
+import { Label } from "@/components/ui/label";
+import { ColorPicker } from "antd";
+import { Editor } from "@tinymce/tinymce-react";
+
 export type UploadedImage = {
     alt: string;
     src: string;
@@ -44,9 +48,23 @@ export type UploadedImage = {
 export default function SiteInfo() {
     const [siteInfo, setSiteInfo] = useState<siteInfo>();
     const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+    const [uploadedLogo, setUploadedLogo] = useState<UploadedImage[]>([]);
+    const [uploadedHomeBanner, setUploadedHomeBanner] = useState<
+        UploadedImage[]
+    >([]);
+
     const [previewContent, setPreviewContent] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
+
+    const editorRef = useRef<any>(null);
+
+    const logEditor = () => {
+        if (editorRef.current) {
+            console.log(editorRef.current.getContent());
+        }
+    };
+
     const form = useForm<z.infer<typeof siteInfoSchema>>({
         resolver: zodResolver(siteInfoSchema),
         defaultValues: {
@@ -54,6 +72,9 @@ export default function SiteInfo() {
             address: "",
             email: "",
             phoneNumber: "",
+            logo: "",
+            homeBanner: "",
+            themeColor: "#FFFFFF",
         },
     });
 
@@ -72,11 +93,22 @@ export default function SiteInfo() {
                     address: res.address,
                     email: res.email,
                     phoneNumber: res.phoneNumber,
+                    logo: res.logo,
+                    homeBanner: res.homeBanner,
+                    themeColor: res.themeColor,
                 });
+                setUploadedLogo([{ alt: "logo", src: res.logo, file: null }]);
+                setUploadedHomeBanner([
+                    {
+                        alt: "homeBanner",
+                        src: res.homeBanner,
+                        file: null,
+                    },
+                ]);
             }
         });
 
-        getAllImages().then((res) => {
+        /* getAllImages().then((res) => {
             if ("error" in res) {
                 toast({
                     title: "Error",
@@ -94,14 +126,86 @@ export default function SiteInfo() {
                         }))
                 );
             }
-        });
+        }); */
     }, []);
 
-    const handleImageUpload = (file: File) => {
-        const blobURL = URL.createObjectURL(file);
+    const handleLogoUpload = async (file: File) => {
+        const url = await uploadToCDN(file);
+        if (typeof url === "string") {
+            setUploadedLogo([{ alt: file.name, src: url, file }]);
+            form.setValue("logo", url);
+        } else {
+            toast({
+                title: "Error",
+                description: "Failed to upload image",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleLogoDelete = (src: string) => {
+        setUploadedLogo([]);
+        form.setValue("logo", "");
+    };
+
+    const handleLogoUpdateAlt = (oldAlt: string, newAlt: string) => {
+        setUploadedLogo((prev) =>
+            prev.map((img) =>
+                img.alt === oldAlt ? { ...img, alt: newAlt } : img
+            )
+        );
+    };
+
+    const handleHomeBannerUpload = async (file: File) => {
+        const url = await uploadToCDN(file);
+        if (typeof url === "string") {
+            setUploadedHomeBanner([{ alt: file.name, src: url, file }]);
+            form.setValue("homeBanner", url);
+        } else {
+            toast({
+                title: "Error",
+                description: "Failed to upload image",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleHomeBannerDelete = (src: string) => {
+        setUploadedHomeBanner([]);
+        form.setValue("homeBanner", "");
+    };
+
+    const handleHomeBannerUpdateAlt = (oldAlt: string, newAlt: string) => {
+        setUploadedHomeBanner((prev) =>
+            prev.map((img) =>
+                img.alt === oldAlt ? { ...img, alt: newAlt } : img
+            )
+        );
+    };
+
+    const handleImageUpload = async (file: File) => {
+        /* const blobURL = URL.createObjectURL(file);
         // take the file name and remove the extension, there would be file with . in the middle so to be saft, split at the last dot
         const alt = file.name.split(".").slice(0, -1).join(".");
-        setUploadedImages((prev) => [...prev, { alt, src: blobURL, file }]);
+        setUploadedImages((prev) => [...prev, { alt, src: blobURL, file }]); */
+        // upload image to cdn
+        const url = await uploadToCDN(file);
+        if (typeof url === "string") {
+            setUploadedImages((prev) => [
+                ...prev,
+                {
+                    alt: file.name.split(".").slice(0, -1).join("."),
+                    src: url,
+                    file,
+                },
+            ]);
+        } else {
+            toast({
+                title: "Error",
+                description: "Failed to upload image",
+                variant: "destructive",
+            });
+        }
     };
 
     const deleteImage = (srcToDelete: string) => {
@@ -150,8 +254,9 @@ export default function SiteInfo() {
     const onSubmit = async (values: z.infer<typeof siteInfoSchema>) => {
         try {
             setIsSubmitting(true);
+            console.log("values", values);
             // Wait for all images to be uploaded
-            const neededUploadImages = uploadedImages.filter((img) =>
+            /* const neededUploadImages = uploadedImages.filter((img) =>
                 img.src.startsWith("blob")
             );
 
@@ -228,13 +333,17 @@ export default function SiteInfo() {
                 }
             );
 
-            const convertedAbout = convertToReact(processedAbout);
+            const convertedAbout = convertToReact(processedAbout); */
+            console.log("value", values.about);
             await updateSiteInfo({
-                about: convertedAbout,
+                about: values.about,
                 aboutOriginal: values.about,
                 address: values.address,
                 email: values.email,
                 phoneNumber: values.phoneNumber,
+                logo: values.logo,
+                homeBanner: values.homeBanner,
+                themeColor: values.themeColor,
             })
                 .then((res) => {
                     if ("error" in res) {
@@ -254,9 +363,9 @@ export default function SiteInfo() {
                         });
                     }
                 })
-                .then(() => {
+                /* .then(() => {
                     // create blog images
-                    neededUploadImages.forEach(async (image) => {
+                    uploadedImages.forEach(async (image) => {
                         await createAboutImage({
                             src: image.src,
                             imageId: image.alt,
@@ -271,7 +380,7 @@ export default function SiteInfo() {
                             }
                         });
                     });
-                })
+                }) */
                 .finally(() => {
                     setIsSubmitting(false);
                 });
@@ -344,6 +453,7 @@ export default function SiteInfo() {
                                     )}
                                 />
                             </div>
+
                             <FormField
                                 control={form.control}
                                 name="about"
@@ -351,16 +461,125 @@ export default function SiteInfo() {
                                     <FormItem>
                                         <FormLabel>About</FormLabel>
                                         <FormControl>
-                                            <Textarea
-                                                placeholder="Write your company introduction here"
-                                                className="min-h-[300px]"
-                                                {...field}
+                                            <Editor
+                                                apiKey={
+                                                    process.env
+                                                        .NEXT_PUBLIC_TINYMCE_API_KEY
+                                                }
+                                                onInit={(
+                                                    _evt: any,
+                                                    editor: any
+                                                ) =>
+                                                    (editorRef.current = editor)
+                                                }
+                                                intialValue={field.value}
+                                                value={field.value}
+                                                init={{
+                                                    height: 500,
+                                                    menubar: true,
+                                                    plugins: [
+                                                        "advlist",
+                                                        "autolink",
+                                                        "lists",
+                                                        "link",
+                                                        "image",
+                                                        "charmap",
+                                                        "preview",
+                                                        "anchor",
+                                                        "searchreplace",
+                                                        "visualblocks",
+                                                        "code",
+                                                        "fullscreen",
+                                                        "insertdatetime",
+                                                        "media",
+                                                        "table",
+
+                                                        "help",
+                                                        "wordcount",
+                                                        "pagebreak",
+                                                        "nonbreaking",
+                                                    ],
+                                                    toolbar:
+                                                        "undo redo | formatselect | bold italic backcolor | " +
+                                                        "alignleft aligncenter alignright alignjustify | " +
+                                                        "bullist numlist outdent indent | removeformat | help" +
+                                                        "blocks | link image",
+                                                    content_style:
+                                                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                                }}
+                                                onEditorChange={(
+                                                    content: string
+                                                ) => {
+                                                    field.onChange(content);
+                                                }}
+                                                onBlur={field.onBlur}
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+                            <div className="flex items-start gap-4">
+                                <div className="space-y-2">
+                                    <Label>Logo</Label>
+                                    <ImageUploader
+                                        uploadedImages={uploadedLogo}
+                                        onUpload={handleLogoUpload}
+                                        onDelete={handleLogoDelete}
+                                        onUpdateAlt={handleLogoUpdateAlt}
+                                        isMultiple={false}
+                                        isEditing={true}
+                                    />
+                                    <input
+                                        type="hidden"
+                                        {...form.register("logo")}
+                                    />
+                                    {form.formState.errors.logo && (
+                                        <p className="text-sm text-destructive">
+                                            {form.formState.errors.logo.message}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Home Banner</Label>
+                                    <ImageUploader
+                                        uploadedImages={uploadedHomeBanner}
+                                        onUpload={handleHomeBannerUpload}
+                                        onDelete={handleHomeBannerDelete}
+                                        onUpdateAlt={handleHomeBannerUpdateAlt}
+                                        isMultiple={false}
+                                        isEditing={true}
+                                    />
+                                    <input
+                                        type="hidden"
+                                        {...form.register("homeBanner")}
+                                    />
+                                    {form.formState.errors.homeBanner && (
+                                        <p className="text-sm text-destructive">
+                                            {
+                                                form.formState.errors.homeBanner
+                                                    .message
+                                            }
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-x-2">
+                                    <Label>Theme Color</Label>
+                                    <ColorPicker
+                                        defaultValue={form.getValues(
+                                            "themeColor"
+                                        )}
+                                        onChange={(color) => {
+                                            form.setValue(
+                                                "themeColor",
+                                                color.toHexString()
+                                            );
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div className="w-1/4 space-y-4">
                             <p className="text-lg font-bold">
@@ -372,8 +591,9 @@ export default function SiteInfo() {
                                 onDelete={deleteImage}
                                 onUpdateAlt={updateImageAlt}
                                 isEditing
+                                isCopied
                             />
-                            <Dialog>
+                            {/* <Dialog>
                                 <DialogTrigger asChild>
                                     <Button
                                         onClick={handlePreview}
@@ -383,13 +603,13 @@ export default function SiteInfo() {
                                 </DialogTrigger>
                                 <DialogContent className="max-w-4xl max-h-[80vh]">
                                     <DialogHeader>
-                                        <DialogTitle>Blog Preview</DialogTitle>
+                                        <DialogTitle>About Preview</DialogTitle>
                                     </DialogHeader>
                                     <ScrollArea className="h-full max-h-[calc(80vh-4rem)]">
                                         <BlogPreview content={previewContent} />
                                     </ScrollArea>
                                 </DialogContent>
-                            </Dialog>
+                            </Dialog> */}
                             <Button
                                 type="submit"
                                 className={`${

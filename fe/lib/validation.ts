@@ -1,5 +1,6 @@
 import { info } from "console";
 import { link } from "fs";
+import { title } from "process";
 import * as z from "zod";
 
 export const SignInSchema = z.object({
@@ -104,6 +105,9 @@ export const siteInfoSchema = z.object({
     address: z.string(),
     phoneNumber: z.string(),
     email: z.string().email(),
+    logo: z.string(),
+    homeBanner: z.string(),
+    themeColor: z.string(),
 });
 
 export const categorySchema = z.object({
@@ -130,6 +134,8 @@ export const extensionSchema = z.object({
 });
 
 export const advertisementSchema = z.object({
+    title: z.string().min(1, "Title is required"),
     image: z.string().min(1, "Image is required"),
     link: z.string().optional(),
+    enable: z.boolean(),
 });

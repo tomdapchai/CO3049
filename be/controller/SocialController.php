@@ -18,7 +18,7 @@ class SocialController {
         echo json_encode(['status' => 'success', 'data' => $response]);
     }
 
-    public function getSocialById($socialId = null) {
+    public function getSocialById($socialId) {
         $socialModel = new SocialModel($this->db);
         $social = $socialModel->getSocialById($socialId);
         if (!$social) {
@@ -46,15 +46,15 @@ class SocialController {
         }
     }
 
-    public function updateSocial($socialId, $data) {
+    public function updateSocial($data) {
         $socialModel = new SocialModel($this->db);
-        if (!$socialModel->getSocialById($socialId)) {
+        if (!$socialModel->getSocialById($data['id'])) {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Social media not found']);
             return;
         }
 
-        if ($socialModel->updateSocial($socialId, $data)) {
+        if ($socialModel->updateSocial($data)) {
             http_response_code(200);
             echo json_encode(['status' => 'success', 'message
             ' => 'Social media updated']);

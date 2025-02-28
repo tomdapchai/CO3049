@@ -34,14 +34,14 @@ class CategoryModel {
         ]);
     }
 
-    public function updateCategory($categoryId, $data) {
+    public function updateCategory($data) {
         $query = "UPDATE $this->table SET name = ?, image = ? 
                   WHERE category_id = ?";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['name'],
             $data['image'],
-            $categoryId
+            $data['categoryId']
         ]);
     }
 

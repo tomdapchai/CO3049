@@ -65,9 +65,15 @@ export const SubscribeForm = () => {
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col space-y-4 justify-center items-center p-8">
-                <h1 className="text-3xl font-bold">
-                    Subscribe to our newsletter
-                </h1>
+                <div className="flex flex-col space-y-2 justify-center items-center">
+                    <h1 className="text-3xl font-bold">
+                        Subscribe to our newsletter
+                    </h1>
+                    <p className="text-sm text-slate-500">
+                        Sign up to be the first hearing our latest news
+                    </p>
+                </div>
+
                 <FormField
                     control={form.control}
                     name="email"
@@ -76,13 +82,14 @@ export const SubscribeForm = () => {
                             id="email"
                             type="email"
                             placeholder="Enter your email here"
+                            className="p-4"
                             {...field}
                         />
                     )}></FormField>
                 <FormMessage />
                 <Button
                     type="submit"
-                    className="w-[800px] bg-sub p-2 hover:bg-[#b88e2f]/90">
+                    className="w-[400px] bg-sub p-4 hover:bg-[#b88e2f]/90">
                     Subscribe
                 </Button>
             </form>

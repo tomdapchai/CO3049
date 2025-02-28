@@ -35,7 +35,7 @@ class SocialModel {
         ]);
     }
 
-    public function updateSocial($socialId, $data) {
+    public function updateSocial($data) {
         $query = "UPDATE $this->table SET name = ?, image = ?, info = ? 
                   WHERE id = ?";
         $stmt = $this->db->prepare($query);
@@ -43,7 +43,7 @@ class SocialModel {
             $data['name'],
             $data['image'],
             $data['info'],
-            $socialId
+            $data['id']
         ]);
     }
 

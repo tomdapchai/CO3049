@@ -30,7 +30,7 @@ try {
             $socialController->createSocial($input);
             break;
         case 'PUT':
-            if (!isset($_GET['socialId']) || !isset($input)) {
+            if (!isset($input)) {
                 http_response_code(400);
                 echo json_encode([
                     'status' => 'error',
@@ -38,7 +38,7 @@ try {
                 ]);
                 exit();
             }
-            $socialController->updateSocial($_GET['socialId'], $input);
+            $socialController->updateSocial($input);
             break;
         case 'DELETE':
             if (!isset($_GET['socialId'])) {

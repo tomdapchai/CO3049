@@ -15,30 +15,28 @@ import { Input } from "@/components/ui/input";
 import { SubscribeForm } from "@/components/form/SubscribeForm";
 
 const page = () => {
-    const { products } = useProduct();
+    const { products, advertisement, siteInfo } = useProduct();
     const [productImages, setProductImages] = useState<ProductDetail[]>([]);
-    const [isAd, setIsAd] = useState(false);
     useEffect(() => {
-        /* getAllProduct().then((data) => {
-            if ("error" in data) {
-                console.error(data.error);
-            } else {
-                console.log("Products:", data);
-                data.slice(0, 8);
-                setProductImages(data);
-            }
-        }); */
-        console.log("Products in home:", products);
         setProductImages(products.slice(0, 8));
-
-        // if isAd from useProduct is true, show the advertisement
-        setIsAd(true);
     }, []);
     const router = useRouter();
     return (
-        <div className="w-full h-full flex flex-col gap-10 pb-8">
-            {isAd && <AdvertisementPopup />}
-            <section className="bg-[url('/images/banner.jpg')] bg-cover bg-bottom bg-no-repeat h-screen flex justify-end items-center max-md:justify-center">
+        <div
+            style={{
+                background: siteInfo?.themeColor || "#ffffff",
+            }}
+            className="w-full h-full flex flex-col gap-10 pb-8">
+            {advertisement.enable && (
+                <AdvertisementPopup advertisement={advertisement} />
+            )}
+            <section
+                style={{
+                    backgroundImage: `url(${
+                        siteInfo?.homeBanner || "/images/banner.jpg"
+                    })`,
+                }}
+                className="bg-cover bg-bottom bg-no-repeat h-screen flex justify-end items-center max-md:justify-center">
                 <div className="flex flex-col bg-main space-y-8 w-[600px] max-md:w-[400px] max-sm:w-[300px] rounded-lg md:mr-40 p-10">
                     <div className="flex flex-col gap-4">
                         <p className="text-black font-bold text-lg">

@@ -17,7 +17,7 @@ class SiteInfoModel {
     }
 
     public function updateSiteInfo($data) {
-        $query = "UPDATE $this->table SET about = ?, about_original = ?, phone_number = ?, address = ?, email = ?
+        $query = "UPDATE $this->table SET about = ?, about_original = ?, phone_number = ?, address = ?, email = ?, logo = ?, home_banner = ?, theme_color = ?
                   WHERE aboutID = 1";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
@@ -25,7 +25,10 @@ class SiteInfoModel {
             $data['aboutOriginal'],
             $data['phoneNumber'],
             $data['address'],
-            $data['email']
+            $data['email'],
+            $data['logo'],
+            $data['homeBanner'],
+            $data['themeColor']
         ]);
     }
 }

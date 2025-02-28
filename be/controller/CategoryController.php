@@ -46,17 +46,17 @@ class CategoryController {
         }
     }
 
-    public function updateCategory($categoryId, $data) {
+    public function updateCategory($data) {
         $categoryModel = new CategoryModel($this->db);
         // check if category exists
-        if (!$categoryModel->getCategoryById($categoryId
+        if (!$categoryModel->getCategoryById($data['categoryId']
         )) {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Category not found']);
             return;
         }
 
-        if ($categoryModel->updateCategory($categoryId, $data)) {
+        if ($categoryModel->updateCategory($data)) {
             http_response_code(200);
             echo json_encode(['status' => 'success', 'message' => 'Category updated']);
         } else {

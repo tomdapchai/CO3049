@@ -30,7 +30,7 @@ try{
             $categoryController->createCategory($input);
             break;
         case 'PUT':
-            if(!isset($_GET['categoryId']) || !isset($input)){
+            if(!isset($input)){
                 http_response_code(400);
                 echo json_encode([
                     'status' => 'error',
@@ -38,7 +38,7 @@ try{
                 ]);
                 exit();
             }
-            $categoryController->updateCategory($_GET['categoryId'], $input);
+            $categoryController->updateCategory($input);
             break;
         case 'DELETE':
             if(!isset($_GET['categoryId'])){
