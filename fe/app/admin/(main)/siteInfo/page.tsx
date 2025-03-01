@@ -5,14 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -44,6 +36,160 @@ export type UploadedImage = {
     src: string;
     file: File | null;
 };
+
+const initialContent = `
+<div id="template">
+      <section>
+        <main className="editable">
+          <h1>Welcome</h1>
+          <p>Welcome to our company! We are delighted to have you here and excited to share our journey with you.</p>
+          <p>This is where you can introduce your company and make a strong first impression on your visitors.</p>
+        </main>
+        <footer>
+          <p>
+            <small>Confidential</small>
+          </p>
+        </footer>
+      </section>
+
+      <section>
+        <main className="editable">
+          <h1>Our Mission</h1>
+          <p>Our company is dedicated to providing exceptional solutions that address the following key areas:</p>
+          <ul>
+            <li>Mission point 1</li>
+            <li>Mission point 2</li>
+            <li>Mission point 3</li>
+          </ul>
+          <p>
+            We are committed to excellence in everything we do, ensuring that our clients receive the highest quality
+            service and support.
+          </p>
+          <p>*{mission.statement}*</p>
+        </main>
+      </section>
+
+      <section>
+        <main className="editable">
+          <h1>Our Story</h1>
+          <p>
+            Our journey began with a vision to create something meaningful that would make a difference by *
+            {founding.date}*.
+          </p>
+          <p>We've grown from our humble beginnings to become a trusted name in our industry.</p>
+          <p>Here's how our story unfolded:</p>
+
+          <h2>Chapter 1: The Beginning</h2>
+          <p>Our founders came together with a shared vision and determined:</p>
+          <ul>
+            <li>what problems needed solving; and</li>
+            <li>how we could provide unique solutions.</li>
+          </ul>
+          <p>This led to the creation of our company and its core values.</p>
+
+          <h2>Chapter 2: Growth and Development</h2>
+          <p>As we expanded, we refined our approach and built a team of dedicated professionals.</p>
+          <p>This allowed us to develop innovative solutions tailored to our clients' specific needs.</p>
+
+          <h2>Chapter 3: Where We Are Today</h2>
+          <p>Today, we continue to evolve and adapt to meet the changing demands of the market.</p>
+          <p>Our commitment to quality and customer satisfaction remains at the heart of everything we do.</p>
+        </main>
+      </section>
+
+      <section>
+        <main className="editable">
+          <h1>Our Product</h1>
+          <p>Our flagship product is designed to solve real-world problems with innovative features including:</p>
+          <ul>
+            <li>Feature 1: Description of how this feature benefits users</li>
+            <li>Feature 2: Explanation of what makes this feature unique</li>
+            <li>Feature 3: Details about how this feature addresses specific needs</li>
+          </ul>
+          <p>We continuously improve our product based on customer feedback and emerging technologies.</p>
+          <p>*{product.launch.date}*</p>
+        </main>
+      </section>
+
+      <section className="end">
+        <main className="editable">
+          <p>
+            <span style="font-size: 20px;">Example Text Section</span>
+          </p>
+          <p>&nbsp;</p>
+          <p>
+            <span style="font-size: 20px;">
+              This is an example section where you can add your own content. Feel free to modify this text to suit your
+              specific needs.
+            </span>
+          </p>
+          <p>&nbsp;</p>
+          <p>
+            You can include information about your team, testimonials, or any other content that would be valuable to
+            your audience.
+          </p>
+          <p>&nbsp;</p>
+          <p>Contact Information:</p>
+          <p>
+            Name: [Your Name]
+            <br />
+            Phone: [Your Phone Number]
+            <br />
+            <a href="mailto:example@example.com">example@example.com</a>
+          </p>
+          <p>&nbsp;</p>
+          <p>Additional Contact:</p>
+          <p>
+            Name: [Another Name]
+            <br />
+            Phone: [Another Phone Number]
+            <br />
+            <a href="mailto:another@example.com">another@example.com</a>
+          </p>
+        </main>
+      </section>
+    </div>
+  `;
+
+const content_style = `
+    body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    line-height: 1.4;
+    margin: 0;
+}
+.editable {
+    padding: 10px;
+    margin: 10px 0;
+}
+section {
+    margin-bottom: 30px;
+    padding: 20px;
+    position: relative;
+}
+section:not(:last-child)::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -15px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #6f6f6f;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: large;
+    font-weight: 600;
+    margin: 0;
+}
+
+`;
 
 export default function SiteInfo() {
     const [siteInfo, setSiteInfo] = useState<siteInfo>();
@@ -477,35 +623,14 @@ export default function SiteInfo() {
                                                 init={{
                                                     height: 500,
                                                     menubar: true,
-                                                    plugins: [
-                                                        "advlist",
-                                                        "autolink",
-                                                        "lists",
-                                                        "link",
-                                                        "image",
-                                                        "charmap",
-                                                        "preview",
-                                                        "anchor",
-                                                        "searchreplace",
-                                                        "visualblocks",
-                                                        "code",
-                                                        "fullscreen",
-                                                        "insertdatetime",
-                                                        "media",
-                                                        "table",
-
-                                                        "help",
-                                                        "wordcount",
-                                                        "pagebreak",
-                                                        "nonbreaking",
-                                                    ],
+                                                    editable_root: true,
+                                                    editable_class: "editable",
+                                                    content_style,
+                                                    elementpath: false,
+                                                    plugins:
+                                                        "preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion",
                                                     toolbar:
-                                                        "undo redo | formatselect | bold italic backcolor | " +
-                                                        "alignleft aligncenter alignright alignjustify | " +
-                                                        "bullist numlist outdent indent | removeformat | help" +
-                                                        "blocks | link image",
-                                                    content_style:
-                                                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                                        "undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | pagebreak anchor codesample | ltr rtl",
                                                 }}
                                                 onEditorChange={(
                                                     content: string
@@ -593,23 +718,6 @@ export default function SiteInfo() {
                                 isEditing
                                 isCopied
                             />
-                            {/* <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button
-                                        onClick={handlePreview}
-                                        className="w-full">
-                                        Preview
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-4xl max-h-[80vh]">
-                                    <DialogHeader>
-                                        <DialogTitle>About Preview</DialogTitle>
-                                    </DialogHeader>
-                                    <ScrollArea className="h-full max-h-[calc(80vh-4rem)]">
-                                        <BlogPreview content={previewContent} />
-                                    </ScrollArea>
-                                </DialogContent>
-                            </Dialog> */}
                             <Button
                                 type="submit"
                                 className={`${

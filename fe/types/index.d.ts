@@ -186,6 +186,7 @@ export type subcriber = {
 };
 
 export type extension = {
+    id: string;
     name: string;
     description?: string;
     installed: boolean;

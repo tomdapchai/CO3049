@@ -1,42 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
 import { socialMedia } from "@/types";
 import { useProduct } from "@/context/ProductContext";
 import Image from "next/image";
-
+import ChatWindow from "../chatbot/ChatWindow";
 interface Props {
     socialMedia: socialMedia[];
 }
 
-const fake_socialMedia: socialMedia[] = [
-    {
-        id: "1",
-        name: "Facebook",
-        info: "https://www.facebook.com",
-        image: "https://cdn.freebiesupply.com/logos/large/2x/facebook-logo-2019.png",
-    },
-    {
-        id: "2",
-        name: "Instagram",
-        info: "https://www.instagram.com",
-        image: "https://cdn.freebiesupply.com/logos/large/2x/facebook-logo-2019.png",
-    },
-    {
-        id: "3",
-        name: "Twitter",
-        info: "https://www.twitter.com",
-        image: "https://cdn.freebiesupply.com/logos/large/2x/facebook-logo-2019.png",
-    },
-    {
-        id: "4",
-        name: "LinkedIn",
-        info: "https://www.linkedin.com",
-        image: "https://cdn.freebiesupply.com/logos/large/2x/facebook-logo-2019.png",
-    },
-];
-
-const SocialMedia = () => {
+const SocialMediaAndBot = () => {
     const { socials } = useProduct();
 
     return (
@@ -60,9 +31,10 @@ const SocialMedia = () => {
                         </a>
                     );
                 })}
+                <ChatWindow />
             </div>
         </div>
     );
 };
 
-export default SocialMedia;
+export default SocialMediaAndBot;

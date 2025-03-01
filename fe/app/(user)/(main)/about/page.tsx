@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import "./styles.css";
 import { useProduct } from "@/context/ProductContext";
 import { siteInfo } from "@/types";
 import parser from "html-react-parser";
