@@ -76,14 +76,6 @@ const page = () => {
                         Advertisment Banner Management
                     </CardTitle>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        {/* <DialogTrigger asChild>
-                            <Button
-                                onClick={() => setIsEdit(null)}
-                                className="flex items-center gap-1">
-                                <Plus className="h-4 w-4" /> Add new
-                                advertisement
-                            </Button>
-                        </DialogTrigger> */}
                         <DialogContent className="sm:max-w-[500px]">
                             <DialogHeader>
                                 <DialogTitle>

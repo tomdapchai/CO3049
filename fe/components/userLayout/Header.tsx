@@ -143,7 +143,7 @@ const Header = () => {
                         height={50}
                     />
                 </Link>
-                <h1 className="font-bold text-xl">Furniro</h1>
+                <h1 className="font-bold text-xl">Furnora</h1>
             </div>
 
             {isLargeScreen ? (

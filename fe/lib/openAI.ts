@@ -6,7 +6,7 @@ if (!openAIApiKey) throw new Error("OpenAI API Key not found.");
 
 export const llm = new ChatOpenAI({
     openAIApiKey,
-    modelName: "gpt-3.5-turbo",
+    modelName: "gpt-4o-mini",
     temperature: 0.9,
 });
 

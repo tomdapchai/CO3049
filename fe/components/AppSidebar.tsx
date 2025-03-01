@@ -92,11 +92,11 @@ const items = [
         url: "/admin/siteInfo",
         icon: Settings,
     },
-    {
+    /* {
         title: "Advertisement",
         url: "/admin/advertisement",
         icon: Settings,
-    },
+    }, */
     {
         title: "Extensions",
         url: "/admin/extension",

@@ -15,7 +15,7 @@ interface ExtensionCardProps {
     extension: extension;
     onInstall: (id: string) => void;
     onToggle: (id: string, enabled: boolean) => void;
-    onConfigure: (extension: extension) => void;
+    onConfigure?: (extension: extension) => void;
 }
 
 export function ExtensionCard({
@@ -50,13 +50,15 @@ export function ExtensionCard({
                                 {enabled ? "Enabled" : "Disabled"}
                             </label>
                         </div>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => onConfigure(extension)}
-                            title="Configure">
-                            <Settings className="h-4 w-4" />
-                        </Button>
+                        {onConfigure && (
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => onConfigure(extension)}
+                                title="Configure">
+                                <Settings className="h-4 w-4" />
+                            </Button>
+                        )}
                     </div>
                 ) : (
                     <Button onClick={() => onInstall(id)}>Install</Button>

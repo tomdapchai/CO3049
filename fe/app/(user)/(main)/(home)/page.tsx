@@ -13,6 +13,8 @@ import { useProduct } from "@/context/ProductContext";
 import { AdvertisementPopup } from "@/components/userLayout/AdvertisePop";
 import { Input } from "@/components/ui/input";
 import { SubscribeForm } from "@/components/form/SubscribeForm";
+import ForYou from "@/components/decoration/ForYou";
+import ProductReviewCarousel from "@/components/decoration/FeedbackCarousel";
 
 const page = () => {
     const { products, advertisement, siteInfo } = useProduct();
@@ -57,6 +59,11 @@ const page = () => {
                         <p className="text-xl">Shop Now</p>
                     </Button>
                 </div>
+            </section>
+
+            {/* For you */}
+            <section className="flex flex-col justify-center items-center w-full gap-14 max-md:p-4">
+                <ForYou products={products} />
             </section>
 
             <section className="flex flex-col justify-center items-center w-full gap-14 max-md:p-4">
@@ -134,6 +141,10 @@ const page = () => {
                 <div className="w-full flex justify-center items-center">
                     <Slideshow />
                 </div>
+            </section>
+
+            <section className="flex flex-col justify-center items-center w-full gap-8">
+                <ProductReviewCarousel products={products} />
             </section>
 
             <section className="flex flex-col justify-center items-center w-full bg-white">

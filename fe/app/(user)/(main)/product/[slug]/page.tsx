@@ -30,6 +30,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useProduct } from "@/context/ProductContext";
 import ProductCard from "@/components/card/ProductCard";
+import ProductComparison from "@/components/decoration/ProductComparison";
 
 const page = ({ params }: { params: Promise<{ slug: string }> }) => {
     const { addToCart } = useCart();
@@ -383,6 +384,9 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                     <TabsTrigger value="reviews">
                         Reviews ({product.reviews.length})
                     </TabsTrigger>
+                    <TabsTrigger value="comparision">
+                        Price Comparision
+                    </TabsTrigger>
                 </TabsList>
                 <TabsContent
                     value="description"
@@ -426,6 +430,12 @@ const page = ({ params }: { params: Promise<{ slug: string }> }) => {
                             )}
                         </div>
                     </div>
+                </TabsContent>
+                <TabsContent value="comparision" className="space-y-4 w-full">
+                    <ProductComparison
+                        currentProduct={product}
+                        products={products}
+                    />
                 </TabsContent>
             </Tabs>
 

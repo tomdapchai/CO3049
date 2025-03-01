@@ -89,7 +89,14 @@ export default function Extensions() {
                         extension={extension}
                         onInstall={handleInstall}
                         onToggle={handleToggle}
-                        onConfigure={openConfigDialog}
+                        // if extension id is price-comparison, no onConfigure
+                        onConfigure={
+                            extension.id === "price-comparison" ||
+                            extension.id === "products-for-you" ||
+                            extension.id === "image-gallery"
+                                ? undefined
+                                : openConfigDialog
+                        }
                     />
                 ))}
             </div>

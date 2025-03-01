@@ -12,12 +12,28 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { extension } from "@/types";
+import { advertisement, extension } from "@/types";
 
 import { IFile, fetchFiles, deleteFile } from "@/utils/file";
 import FileUploader from "../chatbot/FileUploader";
 import { Separator } from "@radix-ui/react-separator";
 import { X } from "lucide-react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { advertisementSchema } from "@/lib/validation";
+import ImageUploader from "@/components/form/ImageUploader";
+import { uploadToCDN } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
+import { getAdvertisement, updateAdvertisement } from "@/services/AdService";
+
+// Interface for uploaded image
+interface UploadedImage {
+    alt: string;
+    src: string;
+    file: File | null;
+}
+
 interface ConfigDialogProps {
     isOpen: boolean;
     extension: extension | null;
@@ -30,6 +46,11 @@ export function ConfigDialog({
     onClose,
 }: ConfigDialogProps) {
     const [files, setFiles] = useState<IFile[]>([]);
+    const [adData, setAdData] = useState<advertisement | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [initialAdData, setInitialAdData] = useState<advertisement | null>(
+        null
+    );
 
     const [isDeleting, setIsDeleting] = useState<number | null>(null);
 
@@ -62,7 +83,39 @@ export function ConfigDialog({
                 }
             })();
         }
+
+        if (extension?.id === "advertisement") {
+            setIsLoading(true);
+            getAdvertisement().then((data) => {
+                if ("error" in data) {
+                    console.error(data.error);
+                } else {
+                    setAdData(data);
+                    setInitialAdData(data);
+                }
+                setIsLoading(false);
+            });
+        }
     }, [extension]);
+
+    const handleSave = async () => {
+        if (extension?.id === "advertisement" && adData) {
+            // Check if there are changes by comparing with initial data
+            const hasChanges =
+                JSON.stringify(adData) !== JSON.stringify(initialAdData);
+
+            if (hasChanges) {
+                try {
+                    await updateAdvertisement(adData);
+                    setInitialAdData(adData); // Update initial data after successful save
+                } catch (error) {
+                    console.error("Error updating advertisement:", error);
+                    alert("Failed to update advertisement");
+                }
+            }
+        }
+        onClose();
+    };
 
     if (!extension) return null;
 
@@ -71,32 +124,8 @@ export function ConfigDialog({
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Configure {extension.name}</DialogTitle>
-                    <DialogDescription>
-                        Adjust the settings for this extension. Click save when
-                        you're done.
-                    </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
-                            Name
-                        </Label>
-                        <Input
-                            id="name"
-                            defaultValue={extension.name}
-                            className="col-span-3"
-                        />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="description" className="text-right">
-                            Description
-                        </Label>
-                        <Textarea
-                            id="description"
-                            defaultValue={extension.description}
-                            className="col-span-3 min-h-[150px]"
-                        />
-                    </div>
                     {extension.id === "chatbot" && (
                         <div className="flex flex-col items-start w-full justify-start">
                             <FileUploader onSave={onSaveFile} />
@@ -167,13 +196,154 @@ export function ConfigDialog({
                             />
                         </div>
                     )}
+                    {extension.id === "advertisement" && adData && (
+                        <div className="space-y-4 mt-2">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="ad-enable">
+                                    Enable Advertisement
+                                </Label>
+                                <Switch
+                                    id="ad-enable"
+                                    checked={adData.enable}
+                                    onCheckedChange={(checked) => {
+                                        setAdData((prev) =>
+                                            prev
+                                                ? { ...prev, enable: checked }
+                                                : prev
+                                        );
+                                    }}
+                                />
+                            </div>
+                            <Separator className="my-4" />
+                            <AdForm
+                                initialData={adData}
+                                onSubmit={(data) => setAdData(data)}
+                            />
+                        </div>
+                    )}
                 </div>
                 <DialogFooter>
-                    <Button type="submit" onClick={onClose}>
+                    <Button type="submit" onClick={handleSave}>
                         Save changes
                     </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+    );
+}
+
+interface AdvertisementFormProps {
+    onSubmit: (data: advertisement) => void;
+    initialData: advertisement;
+}
+
+function AdForm({ onSubmit, initialData }: AdvertisementFormProps) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue,
+        watch,
+    } = useForm<z.infer<typeof advertisementSchema>>({
+        resolver: zodResolver(advertisementSchema),
+        defaultValues: initialData || {
+            title: "",
+            image: "",
+            link: "",
+            enable: true,
+        },
+    });
+
+    const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>(
+        initialData?.image
+            ? [{ alt: "ad", src: initialData.image, file: null }]
+            : []
+    );
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleImageUpload = async (file: File) => {
+        setIsUploading(true);
+        try {
+            const result = await uploadToCDN(file);
+
+            if (typeof result === "string") {
+                const newImage = {
+                    alt: file.name,
+                    src: result,
+                    file: file,
+                };
+                setUploadedImages([newImage]);
+                setValue("image", result);
+            } else {
+                console.error("Upload failed:", result.error);
+            }
+        } catch (error) {
+            console.error("Error uploading image:", error);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const handleImageDelete = (src: string) => {
+        setUploadedImages([]);
+        setValue("image", "");
+    };
+
+    const handleUpdateAlt = (oldAlt: string, newAlt: string) => {
+        setUploadedImages(
+            uploadedImages.map((img) =>
+                img.alt === oldAlt ? { ...img, alt: newAlt } : img
+            )
+        );
+    };
+
+    const handleFormSubmit = (data: z.infer<typeof advertisementSchema>) => {
+        // Pass enable state from parent component
+        onSubmit({
+            ...data,
+            enable: initialData.enable,
+        });
+    };
+
+    return (
+        <form onChange={handleSubmit(handleFormSubmit)} className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input id="title" {...register("title")} />
+                {errors.title && (
+                    <p className="text-sm text-destructive">
+                        {errors.title.message}
+                    </p>
+                )}
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="link">Link to product/blog</Label>
+                <Input id="link" {...register("link")} />
+                {errors.link && (
+                    <p className="text-sm text-destructive">
+                        {errors.link.message}
+                    </p>
+                )}
+            </div>
+
+            <div className="space-y-2">
+                <Label>Advertisement Banner</Label>
+                <ImageUploader
+                    uploadedImages={uploadedImages}
+                    onUpload={handleImageUpload}
+                    onDelete={handleImageDelete}
+                    onUpdateAlt={handleUpdateAlt}
+                    isMultiple={false}
+                    isEditing={true}
+                />
+                <input type="hidden" {...register("image")} />
+                {errors.image && (
+                    <p className="text-sm text-destructive">
+                        {errors.image.message}
+                    </p>
+                )}
+            </div>
+        </form>
     );
 }
