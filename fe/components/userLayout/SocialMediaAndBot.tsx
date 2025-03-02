@@ -31,7 +31,6 @@ const SocialMediaAndBot = () => {
                         </a>
                     );
                 })}
-                <ChatWindow />
             </div>
         </div>
     );

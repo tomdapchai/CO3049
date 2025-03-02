@@ -154,6 +154,7 @@ export type Blog = {
     content: string;
     tags?: string[]; // JSON array referencing TAG.tagName
     contentOriginal?: string;
+    overview?: string;
 };
 
 export type BlogTrue = {
@@ -163,6 +164,7 @@ export type BlogTrue = {
     tags: string[];
     posted: string;
     contentOriginal?: string;
+    overview?: string;
 };
 
 export type Tag = {
@@ -217,3 +219,14 @@ export type category = {
     name: string;
     image: string;
 };
+
+export type room = {
+    roomId: string;
+    name: string;
+    image: string;
+};
+
+export type navLink = {
+    url: string;
+    title: string;
+}

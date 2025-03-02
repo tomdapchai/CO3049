@@ -1,71 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExtensionCard } from "@/components/card/ExtensionCard";
 import { ConfigDialog } from "@/components/form/ExtensionConfig";
 import { extension } from "@/types";
-
-const initialExtensions: extension[] = [
-    {
-        id: "chatbot",
-        name: "Chatbot",
-        description:
-            "Add an AI-powered chatbot to assist your customers with inquiries and support.",
-        installed: true,
-        enabled: true,
-    },
-    {
-        id: "products-for-you",
-        name: "Products For You",
-        description:
-            "Personalized product recommendations based on user browsing history and preferences.",
-        installed: true,
-        enabled: true,
-    },
-    {
-        id: "image-gallery",
-        name: "Image Gallery",
-        description:
-            "Beautiful, responsive image galleries to showcase your products or portfolio.",
-        installed: false,
-        enabled: false,
-    },
-    {
-        id: "price-comparison",
-        name: "Price Comparison",
-        description:
-            "Compare prices with competitors to help customers make informed decisions.",
-        installed: true,
-        enabled: false,
-    },
-    {
-        id: "advertisement",
-        name: "Advertisement",
-        description:
-            "Monetize your website by displaying ads from partners and sponsors.",
-        installed: true,
-        enabled: true,
-    },
-];
+import {
+    getAllExtensions,
+    updateExtensionStatus,
+    getExtensionById,
+} from "@/services/ExtensionService";
 
 export default function Extensions() {
-    const [extensions, setExtensions] =
-        useState<extension[]>(initialExtensions);
+    const [extensions, setExtensions] = useState<extension[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedExtension, setSelectedExtension] =
         useState<extension | null>(null);
+    const [installingIds, setInstallingIds] = useState<string[]>([]);
+    const [uninstallingIds, setUninstallingIds] = useState<string[]>([]);
 
-    const handleInstall = (id: string) => {
-        setExtensions(
-            extensions.map((ext) =>
-                ext.id === id ? { ...ext, installed: true, enabled: true } : ext
-            )
-        );
+    useEffect(() => {
+        getAllExtensions().then((data) => {
+            if ("error" in data) {
+                console.log("Error fetching extensions:", data.error);
+            } else {
+                setExtensions(data);
+            }
+        });
+    }, []);
+
+    const handleInstall = async (id: string) => {
+        setInstallingIds((prev) => [...prev, id]);
+        await setTimeout(async () => {
+            setExtensions(
+                extensions.map((ext) =>
+                    ext.id === id
+                        ? { ...ext, installed: true, enabled: false }
+                        : ext
+                )
+            );
+            await updateExtensionStatus({
+                id,
+                installed: true,
+                enabled: false,
+            });
+            setInstallingIds((prev) => prev.filter((item) => item !== id));
+        }, 5000);
     };
 
-    const handleToggle = (id: string, enabled: boolean) => {
-        setExtensions(
-            extensions.map((ext) => (ext.id === id ? { ...ext, enabled } : ext))
+    const handleUninstall = async (id: string) => {
+        setUninstallingIds((prev) => [...prev, id]);
+        await setTimeout(async () => {
+            await updateExtensionStatus({
+                id,
+                installed: false,
+                enabled: false,
+            })
+                .then(() => {
+                    setExtensions(
+                        extensions.map((ext) =>
+                            ext.id === id
+                                ? { ...ext, installed: false, enabled: false }
+                                : ext
+                        )
+                    );
+                })
+                .finally(() => {
+                    setUninstallingIds((prev) =>
+                        prev.filter((item) => item !== id)
+                    );
+                });
+        }, 3000);
+    };
+
+    const handleToggle = async (id: string, enabled: boolean) => {
+        await updateExtensionStatus({ id, enabled, installed: true }).then(
+            () => {
+                setExtensions(
+                    extensions.map((ext) =>
+                        ext.id === id ? { ...ext, enabled } : ext
+                    )
+                );
+            }
         );
     };
 
@@ -89,11 +104,14 @@ export default function Extensions() {
                         extension={extension}
                         onInstall={handleInstall}
                         onToggle={handleToggle}
-                        // if extension id is price-comparison, no onConfigure
+                        onUninstall={handleUninstall}
+                        isInstalling={installingIds.includes(extension.id)}
+                        isUninstalling={uninstallingIds.includes(extension.id)}
                         onConfigure={
                             extension.id === "price-comparison" ||
                             extension.id === "products-for-you" ||
-                            extension.id === "image-gallery"
+                            extension.id === "image-gallery" ||
+                            extension.id === "feedback-carousel"
                                 ? undefined
                                 : openConfigDialog
                         }

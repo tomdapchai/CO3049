@@ -15,9 +15,12 @@ import { Input } from "@/components/ui/input";
 import { SubscribeForm } from "@/components/form/SubscribeForm";
 import ForYou from "@/components/decoration/ForYou";
 import ProductReviewCarousel from "@/components/decoration/FeedbackCarousel";
+import { Separator } from "@radix-ui/react-separator";
+import ServiceFeatures from "@/components/userLayout/ServiceFeatures";
 
 const page = () => {
-    const { products, advertisement, siteInfo } = useProduct();
+    const { products, advertisement, siteInfo, isAdShown, extensions } =
+        useProduct();
     const [productImages, setProductImages] = useState<ProductDetail[]>([]);
     useEffect(() => {
         setProductImages(products.slice(0, 8));
@@ -29,9 +32,11 @@ const page = () => {
                 background: siteInfo?.themeColor || "#ffffff",
             }}
             className="w-full h-full flex flex-col gap-10 pb-8">
-            {advertisement.enable && (
-                <AdvertisementPopup advertisement={advertisement} />
-            )}
+            {advertisement.enable &&
+                extensions.find((ex) => ex.id == "advertisement")?.enabled &&
+                !isAdShown && (
+                    <AdvertisementPopup advertisement={advertisement} />
+                )}
             <section
                 style={{
                     backgroundImage: `url(${
@@ -62,9 +67,11 @@ const page = () => {
             </section>
 
             {/* For you */}
-            <section className="flex flex-col justify-center items-center w-full gap-14 max-md:p-4">
-                <ForYou products={products} />
-            </section>
+            {extensions.find((ex) => ex.id == "products-for-you")?.enabled && (
+                <section className="flex flex-col justify-center items-center w-full gap-14 max-md:p-4">
+                    <ForYou products={products} />
+                </section>
+            )}
 
             <section className="flex flex-col justify-center items-center w-full gap-14 max-md:p-4">
                 <div className="flex justify-center items-center flex-col">
@@ -130,23 +137,29 @@ const page = () => {
                 </div>
             </section>
 
-            {/* Would be an extension later */}
-            <section className="flex flex-col justify-center items-center w-full gap-8 bg-main px-4 py-6">
-                <div className="flex flex-col justify-center items-center space-y-4">
-                    <p className="font-bold text-gray-400 text-lg">
-                        Share your setup with
-                    </p>
-                    <h1 className="font-bold text-3xl">#FuniroFurniture</h1>
-                </div>
-                <div className="w-full flex justify-center items-center">
-                    <Slideshow />
-                </div>
-            </section>
+            {extensions.find((ex) => ex.id == "image-gallery")?.enabled && (
+                <section className="flex flex-col justify-center items-center w-full gap-8 bg-main px-4 py-6">
+                    <div className="flex flex-col justify-center items-center space-y-4">
+                        <p className="font-bold text-gray-400 text-lg">
+                            Share your setup with
+                        </p>
+                        <h1 className="font-bold text-3xl">
+                            #FurnoraFurniture
+                        </h1>
+                    </div>
+                    <div className="w-full flex justify-center items-center">
+                        <Slideshow />
+                    </div>
+                </section>
+            )}
 
-            <section className="flex flex-col justify-center items-center w-full gap-8">
-                <ProductReviewCarousel products={products} />
-            </section>
+            {extensions.find((ex) => ex.id == "feedback-carousel")?.enabled && (
+                <section className="flex flex-col justify-center items-center w-full ">
+                    <ProductReviewCarousel products={products} />
+                </section>
+            )}
 
+            <Separator className="border-b-2" />
             <section className="flex flex-col justify-center items-center w-full bg-white">
                 <SubscribeForm />
             </section>

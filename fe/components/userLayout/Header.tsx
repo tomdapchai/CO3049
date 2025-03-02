@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
-import { links } from "@/lib/constants";
 import { Separator } from "../ui/separator";
 import ProductCartCard from "../card/ProductCartCard";
 import { useRouter } from "next/navigation";
@@ -33,64 +32,12 @@ import { updateCart } from "@/services/UserService";
 import { useProduct } from "@/context/ProductContext";
 import { category } from "@/types";
 import ProductCategoriesMenu from "../ProductCategoriesMenu";
-
-const fake_categories: category[] = [
-    {
-        categoryId: "mattresses",
-        name: "Mattresses and toppers",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "outdoor",
-        name: "Outdoor",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "lightning",
-        name: "Lighting and electronics",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "bed",
-        name: "Beds",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "bedding",
-        name: "Bedding",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "wardrobe",
-        name: "Wardrobes",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "sofa",
-        name: "Sofas, armchairs and foot stools",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "living-room",
-        name: "Living room furniture",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "dining",
-        name: "Dining chairs & tables",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-    {
-        categoryId: "bathroom",
-        name: "Bathroom furniture",
-        image: "https://res.cloudinary.com/dgwujcdba/image/upload/v1733934045/ouuqyci7ua3jgqtwu8xo.png",
-    },
-];
+import ProductRoomsMenu from "../ProductRoomMenu";
 
 const Header = () => {
     // const {userId} = useAuth();
     const { isLoggedIn, logoutUser, userId, user } = useAuth();
-    const { categories, siteInfo } = useProduct();
+    const { categories, siteInfo, rooms, navLinks } = useProduct();
     const {
         cart,
         test,
@@ -149,8 +96,9 @@ const Header = () => {
             {isLargeScreen ? (
                 <>
                     <div className="flex justify-between items-center gap-10">
-                        {links.map((link) =>
-                            link.title !== "Products" ? (
+                        {navLinks.map((link) =>
+                            link.title !== "Products" &&
+                            link.title !== "Rooms" ? (
                                 <Link key={link.title} href={link.url}>
                                     <Button
                                         variant="link"
@@ -158,10 +106,15 @@ const Header = () => {
                                         {link.title}
                                     </Button>
                                 </Link>
-                            ) : (
+                            ) : link.title === "Products" ? (
                                 <ProductCategoriesMenu
                                     key={link.title}
                                     categories={categories}
+                                />
+                            ) : (
+                                <ProductRoomsMenu
+                                    key={link.title}
+                                    rooms={rooms}
                                 />
                             )
                         )}
@@ -322,7 +275,7 @@ const Header = () => {
                             </SheetHeader>
                             <div className="flex flex-col space-y-4">
                                 <div className="flex flex-col justify-start items-start">
-                                    {links.map((link) => (
+                                    {navLinks.map((link) => (
                                         <div
                                             className="w-full"
                                             key={link.title}>

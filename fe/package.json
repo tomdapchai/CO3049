@@ -9,6 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@hello-pangea/dnd": "^18.0.1",
         "@hookform/resolvers": "^3.9.1",
         "@langchain/community": "^0.3.33",
         "@langchain/core": "^0.3.42",

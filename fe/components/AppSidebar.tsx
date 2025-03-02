@@ -38,14 +38,19 @@ const items = [
         icon: PrinterCheck,
     },
     {
+        title: "Products",
+        url: "/admin/products",
+        icon: NotebookText,
+    },
+    {
         title: "Categories",
         url: "/admin/category",
         icon: Calendar,
     },
     {
-        title: "Products",
-        url: "/admin/products",
-        icon: NotebookText,
+        title: "Rooms",
+        url: "/admin/room",
+        icon: Printer,
     },
     {
         title: "Blogs",
@@ -85,6 +90,11 @@ const items = [
     {
         title: "Social media",
         url: "/admin/social-media",
+        icon: Calendar,
+    },
+    {
+        title: "Nav Menu",
+        url: "/admin/nav",
         icon: Calendar,
     },
     {

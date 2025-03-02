@@ -72,6 +72,7 @@ export const blogSchema = z.object({
             "Blog ID must contain only lowercase letters, numbers, and hyphens"
         ),
     content: z.string().min(1, "Content is required"),
+    overview: z.string().optional(),
     tags: z.array(z.string()),
 });
 
@@ -116,6 +117,12 @@ export const categorySchema = z.object({
     image: z.string().min(1, "Image is required"),
 });
 
+export const roomSchema = z.object({
+    roomId: z.string().min(1, "Room ID is required"),
+    name: z.string().min(1, "Name is required"),
+    image: z.string().min(1, "Image is required"),
+});
+
 export const subcriberSchema = z.object({
     email: z.string().email(),
 });
@@ -138,4 +145,9 @@ export const advertisementSchema = z.object({
     image: z.string().min(1, "Image is required"),
     link: z.string().optional(),
     enable: z.boolean(),
+});
+
+export const navLinkSchema = z.object({
+    title: z.string().min(1, "Title is required"),
+    url: z.string().min(1, "URL is required"),
 });

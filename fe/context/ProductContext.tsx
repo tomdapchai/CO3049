@@ -4,9 +4,19 @@ import { ProductDetail, siteInfo } from "@/types";
 import { getAllProduct } from "@/services/ProductService";
 import { getSiteInfo } from "@/services/SiteInfoService";
 import { getAllCategories } from "@/services/CategoryService";
+import { getAllRooms } from "@/services/RoomService";
 import { getAllSocialMedia } from "@/services/SocialService";
 import { getAdvertisement } from "@/services/AdService";
-import { category, socialMedia, advertisement } from "@/types";
+import {
+    category,
+    socialMedia,
+    advertisement,
+    extension,
+    room,
+    navLink,
+} from "@/types";
+import { getAllExtensions } from "@/services/ExtensionService";
+import { getAllNavLinks, navLinkWithId } from "@/services/NavService";
 
 interface ProductContextProps {
     products: ProductDetail[];
@@ -14,6 +24,11 @@ interface ProductContextProps {
     categories: category[];
     socials: socialMedia[];
     advertisement: advertisement;
+    isAdShown: boolean;
+    setIsAdShown: React.Dispatch<React.SetStateAction<boolean>>;
+    extensions: extension[];
+    rooms: room[];
+    navLinks: navLinkWithId[];
 }
 
 const ProductContext = createContext<ProductContextProps | undefined>(
@@ -38,7 +53,11 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
     const [categories, setCategories] = useState<category[]>([]);
     const [socials, setSocials] = useState<socialMedia[]>([]);
     const [advertisement, setAdvertisement] = useState<advertisement>();
+    const [isAdShown, setIsAdShown] = useState<boolean>(false);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [extensions, setExtensions] = useState<extension[]>([]);
+    const [rooms, setRooms] = useState<room[]>([]);
+    const [navLinks, setNavLinks] = useState<navLinkWithId[]>([]);
     useEffect(() => {
         Promise.all([
             getAllProduct(),
@@ -46,6 +65,9 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
             getAllCategories(),
             getAllSocialMedia(),
             getAdvertisement(),
+            getAllExtensions(),
+            getAllRooms(),
+            getAllNavLinks(),
         ])
             .then(
                 ([
@@ -54,6 +76,9 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
                     categoryData,
                     socialData,
                     adData,
+                    extensionData,
+                    roomData,
+                    navLinkData,
                 ]) => {
                     if ("error" in productData) {
                         console.error(productData.error);
@@ -80,6 +105,21 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
                     } else {
                         setAdvertisement(adData);
                     }
+                    if ("error" in extensionData) {
+                        console.error(extensionData.error);
+                    } else {
+                        setExtensions(extensionData);
+                    }
+                    if ("error" in roomData) {
+                        console.error(roomData.error);
+                    } else {
+                        setRooms(roomData);
+                    }
+                    if ("error" in navLinkData) {
+                        console.error(navLinkData.error);
+                    } else {
+                        setNavLinks(navLinkData);
+                    }
                 }
             )
             .finally(() => setIsInitialized(true));
@@ -90,7 +130,18 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
     }
     return (
         <ProductContext.Provider
-            value={{ products, siteInfo, categories, socials, advertisement }}>
+            value={{
+                products,
+                siteInfo,
+                categories,
+                socials,
+                advertisement,
+                isAdShown,
+                setIsAdShown,
+                extensions,
+                rooms,
+                navLinks,
+            }}>
             {children}
         </ProductContext.Provider>
     );

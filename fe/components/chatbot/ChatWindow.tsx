@@ -8,7 +8,7 @@ const ChatWindow = () => {
     >([]);
 
     return (
-        <div id="chat-window" className="relative">
+        <div id="chat-window" className="fixed right-6 bottom-6 z-50">
             <ChatRoom messages={chatMessages} setMessages={setChatMessages} />
         </div>
     );

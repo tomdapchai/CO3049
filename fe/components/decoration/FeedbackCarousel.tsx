@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProductDetail, Review } from "@/types";
 import { ReviewStar } from "./ReviewStar";
+import { useRouter } from "next/navigation";
 
 type Image = {
     url: string;
@@ -143,10 +144,26 @@ export default function ProductReviewCarousel({
         ProductDetail[]
     >([]);
     const carouselRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     useEffect(() => {
         setProductsWithReviews(
-            products.filter((product) => product.reviews.length > 0).slice(0, 5)
+            products
+                .filter((product) => product.reviews.length > 0)
+                .sort((a, b) => {
+                    const aRating =
+                        a.reviews.reduce(
+                            (acc, review) => acc + review.rating,
+                            0
+                        ) / a.reviews.length;
+                    const bRating =
+                        b.reviews.reduce(
+                            (acc, review) => acc + review.rating,
+                            0
+                        ) / b.reviews.length;
+                    return bRating - aRating;
+                })
+                .slice(0, 5)
         );
     }, [products]);
 
@@ -174,10 +191,8 @@ export default function ProductReviewCarousel({
 
     const handleCardClick = (index: number) => {
         if (index === activeIndex) {
-            // Navigate to product page when clicking the active card
-            window.location.href = `/product/${carouselItems[index].product.slug}`;
+            router.push(`/product/${carouselItems[index].product.slug}`);
         } else {
-            // Make the clicked card active
             setActiveIndex(index);
         }
     };
@@ -214,7 +229,7 @@ export default function ProductReviewCarousel({
     }
 
     return (
-        <div className="relative w-full py-16 overflow-hidden bg-main">
+        <div className="select-none relative w-full py-16 overflow-hidden bg-white">
             <div className="max-w-6xl mx-auto px-4">
                 <h1 className="text-3xl font-bold text-center mb-8">
                     Customer Reviews

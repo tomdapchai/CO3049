@@ -3,17 +3,17 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { category } from "@/types";
+import { room } from "@/types";
 import { Button } from "./ui/button";
 import { set } from "date-fns";
 
-// Sample categories data - replace with your actual data
+// Sample rooms data - replace with your actual data
 
 interface Props {
-    categories: category[];
+    rooms: room[];
 }
 
-export default function ProductCategoriesMenu({ categories }: Props) {
+export default function ProductRoomsMenu({ rooms }: Props) {
     const [isClicked, setIsClicked] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -43,14 +43,14 @@ export default function ProductCategoriesMenu({ categories }: Props) {
             setIsClicked(false);
             router.push("/shop");
         } else {
-            // If closed, open the categories menu
+            // If closed, open the rooms menu
             setIsClicked(true);
         }
     };
 
     // Handle category click
-    const handleCategoryClick = (categoryId: string) => {
-        router.push(`/shop?query=${categoryId}`);
+    const handleCategoryClick = (roomId: string) => {
+        router.push(`/shop?query=${roomId}`);
         setIsClicked(false);
     };
 
@@ -89,37 +89,35 @@ export default function ProductCategoriesMenu({ categories }: Props) {
                 className={`font-bold rounded-none ${
                     isClicked ? "border-b-2 border-amber-500" : ""
                 }`}>
-                Products
+                Rooms
             </Button>
 
             {/* Categories dropdown */}
             {isClicked && (
                 <div className="absolute left-0 w-screen bg-white shadow-lg z-50 border-t border-gray-200">
                     <div className="w-full flex flex-col justify-start items-start px-4 ">
-                        <p className="font-bold text-base">Categories</p>
+                        <p className="font-bold text-base">Rooms</p>
                         <div
                             className="overflow-x-auto pb-4 no-scrollbar"
                             ref={scrollContainerRef}>
                             <div className="flex space-x-6 min-w-max">
-                                {categories.map((category) => (
+                                {rooms.map((room) => (
                                     <div
-                                        key={category.categoryId}
+                                        key={room.roomId}
                                         className="flex flex-col items-center cursor-pointer w-fit space-y-2"
                                         onClick={() =>
-                                            handleCategoryClick(
-                                                category.categoryId
-                                            )
+                                            handleCategoryClick(room.roomId)
                                         }>
                                         <div className="w-[100px] h-[60px] relative">
                                             <Image
-                                                src={category.image}
-                                                alt={category.name}
+                                                src={room.image}
+                                                alt={room.name}
                                                 fill
                                                 className="object-contain"
                                             />
                                         </div>
                                         <span className="text-center text-sm no-wrap">
-                                            {category.name}
+                                            {room.name}
                                         </span>
                                     </div>
                                 ))}
