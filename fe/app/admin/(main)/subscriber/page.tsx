@@ -24,12 +24,13 @@ import { subcriber } from "@/types";
 import {
     getAllSubscribers,
     deleteSubscriber,
+    subcribeReceive,
 } from "@/services/SubscribeService";
 
 const SUBSCRIBERS_PER_PAGE = 20;
 
 const page = () => {
-    const [subcribers, setSubcribers] = useState<subcriber[]>([]);
+    const [subcribers, setSubcribers] = useState<subcribeReceive[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
@@ -90,6 +91,7 @@ const page = () => {
                         <TableRow>
                             <TableHead>ID</TableHead>
                             <TableHead>Email</TableHead>
+                            <TableHead>Timestamp</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -98,6 +100,11 @@ const page = () => {
                             <TableRow key={subcriber.id}>
                                 <TableCell>{subcriber.id}</TableCell>
                                 <TableCell>{subcriber.email}</TableCell>
+                                <TableCell>
+                                    {new Date(
+                                        subcriber.sendAt
+                                    ).toLocaleString()}
+                                </TableCell>
                                 <TableCell>
                                     <Button
                                         onClick={() =>

@@ -229,4 +229,4 @@ export type room = {
 export type navLink = {
     url: string;
     title: string;
-}
+};

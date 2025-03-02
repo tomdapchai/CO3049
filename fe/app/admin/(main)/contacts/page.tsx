@@ -28,17 +28,16 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Contact } from "@/types";
-import { getAllContacts } from "@/services/ContactService";
+import { getAllContacts, ContactReceive } from "@/services/ContactService";
 
 const CONTACTS_PER_PAGE = 20;
 
 export default function ContactPage() {
-    const [contacts, setContacts] = useState<Contact[]>([]);
+    const [contacts, setContacts] = useState<ContactReceive[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedContact, setSelectedContact] = useState<Contact | null>(
-        null
-    );
+    const [selectedContact, setSelectedContact] =
+        useState<ContactReceive | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -91,6 +90,7 @@ export default function ContactPage() {
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Subject</TableHead>
+                            <TableHead>Timestamp</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -101,6 +101,9 @@ export default function ContactPage() {
                                 <TableCell>{contact.name}</TableCell>
                                 <TableCell>{contact.email}</TableCell>
                                 <TableCell>{contact.subject}</TableCell>
+                                <TableCell>
+                                    {new Date(contact.sendAt).toLocaleString()}
+                                </TableCell>
                                 <TableCell>
                                     <Button
                                         variant="outline"
@@ -171,6 +174,14 @@ export default function ContactPage() {
                     </DialogHeader>
                     {selectedContact && (
                         <div className="grid gap-4 py-4">
+                            <div>
+                                <h3 className="font-semibold">Sended At</h3>
+                                <p>
+                                    {new Date(
+                                        selectedContact.sendAt
+                                    ).toLocaleString()}
+                                </p>
+                            </div>
                             <div>
                                 <h3 className="font-semibold">Name</h3>
                                 <p>{selectedContact.name}</p>
