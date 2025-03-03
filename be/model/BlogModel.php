@@ -13,7 +13,7 @@ class BlogModel {
         $query = "SELECT * FROM $this->table";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
-        return $stmt->rowCount() > 0 ? $stmt : false;
+        return $stmt;
     }
 
     public function getBlogById($blogId) {
