@@ -49,8 +49,7 @@ class RoomController {
     public function updateRoom($data) {
         $roomModel = new RoomModel($this->db);
         // check if room exists
-        if (!$roomModel->getRoomById($data['roomId']
-        )) {
+        if (!$roomModel->getRoomById($data['roomId'])) {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Room not found']);
             return;
@@ -63,18 +62,34 @@ class RoomController {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Failed to update room']);
         }
-
     }
 
     public function deleteRoom($roomId) {
         $roomModel = new RoomModel($this->db);
         // check if room exists
-        if (!$roomModel->getRoomById($roomId
-        )) {
+        if (!$roomModel->getRoomById($roomId)) {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Room not found']);
             return;
-        }   
+        }
+        
+        if ($roomModel->deleteRoom($roomId)) {
+            http_response_code(200);
+            echo json_encode(['status' => 'success', 'message' => 'Room deleted']);
+        } else {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to delete room']);
+        }
     }
-
+    
+    public function updateRoomOrder($rooms) {
+        $roomModel = new RoomModel($this->db);
+        if ($roomModel->updateRoomOrder($rooms)) {
+            http_response_code(200);
+            echo json_encode(['status' => 'success', 'message' => 'Room order updated']);
+        } else {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to update room order']);
+        }
+    }
 }

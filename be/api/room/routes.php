@@ -27,7 +27,13 @@ try{
                 ]);
                 exit();
             }
-            $roomController->createRoom($input);
+            
+            // Handle order updates
+            if(isset($_GET['action']) && $_GET['action'] == 'reorder') {
+                $roomController->updateRoomOrder($input);
+            } else {
+                $roomController->createRoom($input);
+            }
             break;
         case 'PUT':
             if(!isset($input)){

@@ -24,8 +24,8 @@ class BlogModel {
     }
 
     public function createBlog($data) {
-        $query = "INSERT INTO $this->table (blogId, title, content, content_original, overview, tags) 
-                  VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO $this->table (blogId, title, content, content_original, overview, thumbnail, tags) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             $data['blogId'],
@@ -33,12 +33,13 @@ class BlogModel {
             $data['content'],
             $data['contentOriginal'],
             $data['overview'],
+            $data['thumbnail'],
             json_encode($data['tags'])
         ]);
     }
 
     public function updateBlog($blogId, $data) {
-        $query = "UPDATE $this->table SET title = ?, content = ?, tags = ?, content_original = ?, overview = ? 
+        $query = "UPDATE $this->table SET title = ?, content = ?, tags = ?, content_original = ?, overview = ?, thumbnail = ? 
                   WHERE blogId = ?";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
@@ -47,6 +48,7 @@ class BlogModel {
             json_encode($data['tags']),
             $data['contentOriginal'],
             $data['overview'],
+            $data['thumbnail'],
             $blogId
         ]);
     }

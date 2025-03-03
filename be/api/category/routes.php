@@ -27,7 +27,13 @@ try{
                 ]);
                 exit();
             }
-            $categoryController->createCategory($input);
+            
+            // Handle order updates
+            if(isset($_GET['action']) && $_GET['action'] == 'reorder') {
+                $categoryController->updateCategoryOrder($input);
+            } else {
+                $categoryController->createCategory($input);
+            }
             break;
         case 'PUT':
             if(!isset($input)){

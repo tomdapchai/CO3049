@@ -49,8 +49,7 @@ class CategoryController {
     public function updateCategory($data) {
         $categoryModel = new CategoryModel($this->db);
         // check if category exists
-        if (!$categoryModel->getCategoryById($data['categoryId']
-        )) {
+        if (!$categoryModel->getCategoryById($data['categoryId'])) {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Category not found']);
             return;
@@ -69,12 +68,29 @@ class CategoryController {
     public function deleteCategory($categoryId) {
         $categoryModel = new CategoryModel($this->db);
         // check if category exists
-        if (!$categoryModel->getCategoryById($categoryId
-        )) {
+        if (!$categoryModel->getCategoryById($categoryId)) {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Category not found']);
             return;
-        }   
+        }
+        
+        if ($categoryModel->deleteCategory($categoryId)) {
+            http_response_code(200);
+            echo json_encode(['status' => 'success', 'message' => 'Category deleted']);
+        } else {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to delete category']);
+        }
     }
-
+    
+    public function updateCategoryOrder($categories) {
+        $categoryModel = new CategoryModel($this->db);
+        if ($categoryModel->updateCategoryOrder($categories)) {
+            http_response_code(200);
+            echo json_encode(['status' => 'success', 'message' => 'Category order updated']);
+        } else {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to update category order']);
+        }
+    }
 }
