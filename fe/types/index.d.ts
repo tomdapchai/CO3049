@@ -218,6 +218,7 @@ export type category = {
     categoryId: string;
     name: string;
     image: string;
+    // Add this property
 };
 
 export type room = {

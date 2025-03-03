@@ -32,7 +32,7 @@ import { getAllContacts, ContactReceive } from "@/services/ContactService";
 
 const CONTACTS_PER_PAGE = 20;
 
-type SortKey = "sendAt";
+type SortKey = "sendAt" | "contactId";
 
 export default function ContactPage() {
     const [contacts, setContacts] = useState<ContactReceive[]>([]);
@@ -115,11 +115,15 @@ export default function ContactPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
+                            <TableHead>
+                                ID <SortButton column="contactId" />
+                            </TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Subject</TableHead>
-                            <TableHead>Timestamp</TableHead>
+                            <TableHead>
+                                Timestamp <SortButton column="sendAt" />
+                            </TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
