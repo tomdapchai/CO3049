@@ -64,6 +64,7 @@ const page = () => {
             content: "",
             overview: "",
             tags: [],
+            thumbnail: "/images/banner.jpg",
         },
     });
 
@@ -224,7 +225,7 @@ const page = () => {
         setPreviewContent(convertToReact(processedContent));
     };
 
-    const hanldeSave = async (data: z.infer<typeof blogSchema>) => {
+    const handleSave = async (data: z.infer<typeof blogSchema>) => {
         try {
             setIsSaving(true);
             if (uploadedImages.length === 0) {
@@ -304,6 +305,8 @@ const page = () => {
 
             // do the same but uploadThumbnail is one image only
 
+            var tmpThumbSrc = ""
+
             const neededUploadThumbnail = uploadedThumbnail.src.startsWith(
                 "blob"
             )
@@ -313,6 +316,7 @@ const page = () => {
             if (neededUploadThumbnail) {
                 const url = await uploadToCDN(neededUploadThumbnail.file!);
                 if (typeof url === "string") {
+                    tmpThumbSrc = url
                     setUploadedThumbnail({
                         src: url,
                         alt: uploadedThumbnail.alt,
@@ -366,6 +370,7 @@ const page = () => {
                 content: convertedContent,
                 contentOriginal: data.content,
                 overview: data.overview,
+                thumbnail: tmpThumbSrc !== "" ? tmpThumbSrc : uploadedThumbnail.src,
             })
                 .then((res) => {
                     if ("error" in res) {
@@ -442,7 +447,7 @@ const page = () => {
         <div className="w-full ">
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(hanldeSave)}
+                    onSubmit={form.handleSubmit(handleSave)}
                     className="space-y-8 p-4">
                     <div className="flex space-x-10">
                         <div className="w-3/4 space-y-4">

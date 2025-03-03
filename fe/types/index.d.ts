@@ -155,6 +155,7 @@ export type Blog = {
     tags?: string[]; // JSON array referencing TAG.tagName
     contentOriginal?: string;
     overview?: string;
+    thumbnail: string;
 };
 
 export type BlogTrue = {
@@ -165,6 +166,7 @@ export type BlogTrue = {
     posted: string;
     contentOriginal?: string;
     overview?: string;
+    thumbnail: string;
 };
 
 export type Tag = {

@@ -74,6 +74,7 @@ export const blogSchema = z.object({
     content: z.string().min(1, "Content is required"),
     overview: z.string().optional(),
     tags: z.array(z.string()),
+    thumbnail: z.string().min(1, "Thumbnail is required"),
 });
 
 export const productSchema = z.object({
