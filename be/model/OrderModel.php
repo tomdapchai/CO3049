@@ -31,8 +31,8 @@ class OrderModel {
     }
 
     public function createOrder($data) {
-        $query = "INSERT INTO $this->table (userId, products, phone_number, email, address, total, name) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO $this->table (userId, products, phone_number, email, address, total, name, discount) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         $stmt->execute([
             $data['userId'],
@@ -42,6 +42,7 @@ class OrderModel {
             $data['address'],
             $data['total'],
             $data['name'],
+            $data['discount']
         ]);
         // get insertId
         $orderId = $this->db->lastInsertId();

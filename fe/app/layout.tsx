@@ -5,6 +5,12 @@ import ProductProvider from "@/context/ProductContext";
 export const metadata: Metadata = {
     title: "FURNORA",
     description: "Best furniture store in VN",
+    icons: {
+        icon: {
+            url: "/images/furnora_favicon.png",
+            href: "/images/furnora_favicon.png",
+        },
+    },
 };
 import { Toaster } from "@/components/ui/toaster";
 

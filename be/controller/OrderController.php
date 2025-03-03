@@ -28,7 +28,8 @@ class OrderController {
                     'createdAt' => $createdAt,
                     'completedAt' => $completedAt,
                     'total' => $total,
-                    'name' => $name
+                    'name' => $name,
+                    'discount' => $discount
                 );
                 array_push($orders_arr, $order_item);
             }
@@ -53,7 +54,8 @@ class OrderController {
                 'createdAt' => $createdAt,
                 'completedAt' => $completedAt,
                 'total' => $total,
-                'name' => $name
+                'name' => $name,
+                'discount' => $discount
             );
             echo json_encode($order_item);
         } else {
@@ -77,7 +79,8 @@ class OrderController {
                     'createdAt' => $createdAt,
                     'completedAt' => $completedAt,
                     'total' => $total,
-                    'name' => $name
+                    'name' => $name,
+                    'discount' => $discount
                 );
                 array_push($order_arr, $order_item);
             }

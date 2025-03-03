@@ -152,3 +152,8 @@ export const navLinkSchema = z.object({
     title: z.string().min(1, "Title is required"),
     url: z.string().min(1, "URL is required"),
 });
+
+export const couponSchema = z.object({
+    code: z.string().min(1, "Code is required"),
+    discount: z.number().min(0, "Discount must be a positive number"),
+});

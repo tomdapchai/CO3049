@@ -84,6 +84,7 @@ export type Order = {
     status: string;
     createdAt: string;
     completedAt: string | null;
+    discount?: number;
     total: number;
 };
 
@@ -110,6 +111,7 @@ export type OrderCreate = {
     address: string;
     total: number;
     name: string;
+    discount?: number;
 };
 
 type Address = {
@@ -232,4 +234,9 @@ export type room = {
 export type navLink = {
     url: string;
     title: string;
+};
+
+export type coupon = {
+    code: string;
+    discount: number;
 };
