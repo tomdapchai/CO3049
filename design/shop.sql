@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 02, 2025 at 11:34 AM
+-- Generation Time: Mar 03, 2025 at 03:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -55,16 +55,17 @@ CREATE TABLE `blog` (
   `content_original` longtext NOT NULL,
   `overview` text DEFAULT NULL,
   `posted` datetime NOT NULL DEFAULT current_timestamp(),
-  `tags` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`tags`))
+  `tags` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`tags`)),
+  `thumbnail` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `blog`
 --
 
-INSERT INTO `blog` (`blogId`, `title`, `content`, `content_original`, `overview`, `posted`, `tags`) VALUES
-('blog-sunday', 'Blog for a beautiful sunday evening', '<div class=\"w-full flex flex-col justify-center items-start\"><h1 class=\"text-2xl font-bold mb-4\">What is Lorem Ipsum?</h1>\n<h2 class=\"text-lg font-bold mb-2\">From its medieval origins to the digital era, learn everything there is to know about the ubiquitous lorem ipsum passage.</h2>\n<p class=\"text-base text-black\">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book. It usually begins with:<br/><br/>“Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.”<br/><br/>The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn\'t distract from the layout. A practice not without controversy, laying out pages with meaningless filler text can be very useful when the focus is meant to be on design, not content.</p>\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733649446/cqjtgjvir0jmzoac4ogy.jpg\" alt=\"blog-sunday-1\" width=\"600\" height=\"300\" class=\"rounded-lg\" /></div>\n<p class=\"text-base text-black\">Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text. “It’s not Latin, though it looks like it, and it actually says nothing,” Before & After magazine answered a curious reader, “Its ‘words’ loosely approximate the frequency with which letters occur in English, which is why at a glance it looks pretty real.”<br/><br/>As Cicero would put it, “Um, not so fast.”<br/><br/>The placeholder text, beginning with the line “Lorem ipsum dolor sit amet, consectetur adipiscing elit”, looks like Latin because in its youth, centuries ago, it was Latin.</p>\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733649447/fkasycdvthtzjogam5ek.png\" alt=\"blog-sunday-2\" width=\"500\" height=\"300\" class=\"rounded-lg\" /></div>\n<h2 class=\"text-lg font-bold mb-2\">Hedonist Roots</h2>\n<p class=\"text-base text-black\">Richard McClintock, a Latin scholar from Hampden-Sydney College, is credited with discovering the source behind the ubiquitous filler text. In seeing a sample of lorem ipsum, his interest was piqued by consectetur—a genuine, albeit rare, Latin word. Consulting a Latin dictionary led McClintock to a passage from De Finibus Bonorum et Malorum (“On the Extremes of Good and Evil”), a first-century B.C. text from the Roman philosopher Cicero.<br/><br/>In particular, the garbled words of lorem ipsum bear an unmistakable resemblance to sections 1.10.32–33 of Cicero’s work, with the most notable passage excerpted below:</p>\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733674065/ydauu7tcbdxubpaxcwnp.png\" alt=\"blog-sunday-3\" width=\"600\" height=\"400\" class=\"rounded-lg\" /></div>\n<p class=\"text-base text-black\">McClintock’s eye for detail certainly helped narrow the whereabouts of lorem ipsum’s origin, however, the “how and when” still remain something of a mystery, with competing theories and timelines.</p></div>', 'HEADLINE<What is Lorem Ipsum?>\nSECTION<From its medieval origins to the digital era, learn everything there is to know about the ubiquitous lorem ipsum passage.>\nP<Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book. It usually begins with:\n\n    “Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.”\n\nThe purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn\'t distract from the layout. A practice not without controversy, laying out pages with meaningless filler text can be very useful when the focus is meant to be on design, not content.>\nIMG<blog-sunday-1, 600, 300>\nP<Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text. “It’s not Latin, though it looks like it, and it actually says nothing,” Before & After magazine answered a curious reader, “Its ‘words’ loosely approximate the frequency with which letters occur in English, which is why at a glance it looks pretty real.”\n\nAs Cicero would put it, “Um, not so fast.”\n\nThe placeholder text, beginning with the line “Lorem ipsum dolor sit amet, consectetur adipiscing elit”, looks like Latin because in its youth, centuries ago, it was Latin.>\nIMG<blog-sunday-2, 500, 300>\nSECTION<Hedonist Roots>\nP<Richard McClintock, a Latin scholar from Hampden-Sydney College, is credited with discovering the source behind the ubiquitous filler text. In seeing a sample of lorem ipsum, his interest was piqued by consectetur—a genuine, albeit rare, Latin word. Consulting a Latin dictionary led McClintock to a passage from De Finibus Bonorum et Malorum (“On the Extremes of Good and Evil”), a first-century B.C. text from the Roman philosopher Cicero.\n\nIn particular, the garbled words of lorem ipsum bear an unmistakable resemblance to sections 1.10.32–33 of Cicero’s work, with the most notable passage excerpted below:>\nIMG<blog-sunday-3, 600, 400>\nP<McClintock’s eye for detail certainly helped narrow the whereabouts of lorem ipsum’s origin, however, the “how and when” still remain something of a mystery, with competing theories and timelines.>', 'The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn\'t distract from the layout. A practice not without controversy, laying out pages with meaningless filler text can be very useful when the focus is meant to be on design, not content.', '2024-12-08 16:17:32', '[\"blog\",\"sunday\"]'),
-('blog-thursday', 'Thursday blog', '<div class=\"w-full flex flex-col justify-center items-start\"><h2 class=\"text-lg font-bold mb-2\">What is Lorem Ipsum?</h2>\n<p class=\"text-base text-black\">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like<br/><br/>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like</p>\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733935654/nacwvtwrwz8yvckvzaug.png\" alt=\"blog-thursday-1\" width=\"600\" height=\"400\" class=\"rounded-lg\" /></div>\n<h2 class=\"text-lg font-bold mb-2\">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h2>\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like</div>', 'SECTION<What is Lorem Ipsum?>\nP<Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like\n\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like>\nIMG<blog-thursday-1, 600, 400>\nSECTION<Lorem Ipsum is simply dummy text of the printing and typesetting industry>\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like', NULL, '2024-12-11 23:47:36', '[\"blog\"]');
+INSERT INTO `blog` (`blogId`, `title`, `content`, `content_original`, `overview`, `posted`, `tags`, `thumbnail`) VALUES
+('blog-sunday', 'Blog for a beautiful sunday evening', '<div class=\"w-full flex flex-col justify-center items-start\"><h1 class=\"text-2xl font-bold mb-4\">What is Lorem Ipsum?</h1>\n<h2 class=\"text-lg font-bold mb-2\">From its medieval origins to the digital era, learn everything there is to know about the ubiquitous lorem ipsum passage.</h2>\n<p class=\"text-base text-black\">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book. It usually begins with:<br/><br/>“Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.”<br/><br/>The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn\'t distract from the layout. A practice not without controversy, laying out pages with meaningless filler text can be very useful when the focus is meant to be on design, not content.</p>\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733649446/cqjtgjvir0jmzoac4ogy.jpg\" alt=\"blog-sunday-1\" width=\"600\" height=\"300\" class=\"rounded-lg\" /></div>\n<p class=\"text-base text-black\">Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text. “It’s not Latin, though it looks like it, and it actually says nothing,” Before & After magazine answered a curious reader, “Its ‘words’ loosely approximate the frequency with which letters occur in English, which is why at a glance it looks pretty real.”<br/><br/>As Cicero would put it, “Um, not so fast.”<br/><br/>The placeholder text, beginning with the line “Lorem ipsum dolor sit amet, consectetur adipiscing elit”, looks like Latin because in its youth, centuries ago, it was Latin.</p>\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733649447/fkasycdvthtzjogam5ek.png\" alt=\"blog-sunday-2\" width=\"500\" height=\"300\" class=\"rounded-lg\" /></div>\n<h2 class=\"text-lg font-bold mb-2\">Hedonist Roots</h2>\n<p class=\"text-base text-black\">Richard McClintock, a Latin scholar from Hampden-Sydney College, is credited with discovering the source behind the ubiquitous filler text. In seeing a sample of lorem ipsum, his interest was piqued by consectetur—a genuine, albeit rare, Latin word. Consulting a Latin dictionary led McClintock to a passage from De Finibus Bonorum et Malorum (“On the Extremes of Good and Evil”), a first-century B.C. text from the Roman philosopher Cicero.<br/><br/>In particular, the garbled words of lorem ipsum bear an unmistakable resemblance to sections 1.10.32–33 of Cicero’s work, with the most notable passage excerpted below:</p>\n<div class=\"w-full flex justify-center items-center\">\n            <Image src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1733674065/ydauu7tcbdxubpaxcwnp.png\" alt=\"blog-sunday-3\" width=\"600\" height=\"400\" class=\"rounded-lg\" /></div>\n<p class=\"text-base text-black\">McClintock’s eye for detail certainly helped narrow the whereabouts of lorem ipsum’s origin, however, the “how and when” still remain something of a mystery, with competing theories and timelines.</p></div>', 'HEADLINE<What is Lorem Ipsum?>\nSECTION<From its medieval origins to the digital era, learn everything there is to know about the ubiquitous lorem ipsum passage.>\nP<Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book. It usually begins with:\n\n    “Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.”\n\nThe purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn\'t distract from the layout. A practice not without controversy, laying out pages with meaningless filler text can be very useful when the focus is meant to be on design, not content.>\nIMG<blog-sunday-1, 600, 300>\nP<Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text. “It’s not Latin, though it looks like it, and it actually says nothing,” Before & After magazine answered a curious reader, “Its ‘words’ loosely approximate the frequency with which letters occur in English, which is why at a glance it looks pretty real.”\n\nAs Cicero would put it, “Um, not so fast.”\n\nThe placeholder text, beginning with the line “Lorem ipsum dolor sit amet, consectetur adipiscing elit”, looks like Latin because in its youth, centuries ago, it was Latin.>\nIMG<blog-sunday-2, 500, 300>\nSECTION<Hedonist Roots>\nP<Richard McClintock, a Latin scholar from Hampden-Sydney College, is credited with discovering the source behind the ubiquitous filler text. In seeing a sample of lorem ipsum, his interest was piqued by consectetur—a genuine, albeit rare, Latin word. Consulting a Latin dictionary led McClintock to a passage from De Finibus Bonorum et Malorum (“On the Extremes of Good and Evil”), a first-century B.C. text from the Roman philosopher Cicero.\n\nIn particular, the garbled words of lorem ipsum bear an unmistakable resemblance to sections 1.10.32–33 of Cicero’s work, with the most notable passage excerpted below:>\nIMG<blog-sunday-3, 600, 400>\nP<McClintock’s eye for detail certainly helped narrow the whereabouts of lorem ipsum’s origin, however, the “how and when” still remain something of a mystery, with competing theories and timelines.>', 'The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn\'t distract from the layout. A practice not without controversy, laying out pages with meaningless filler text can be very useful when the focus is meant to be on design, not content.', '2024-12-08 16:17:32', '[\"blog\",\"sunday\"]', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733674109/zfuffpp6aztfmeu0nt8w.png'),
+('blog-test-thumb', 'Blog test thumb', '<div class=\"w-full flex flex-col justify-center items-start\">Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb </div>', 'Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb ', 'Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb Blog test thumb', '2025-03-03 21:32:40', '[\"test\"]', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1741012360/hrmqiuxggnox21t7zjnc.jpg');
 
 -- --------------------------------------------------------
 
@@ -87,8 +88,7 @@ INSERT INTO `blog_image` (`imageId`, `blogId`, `isThumbnail`) VALUES
 ('blog-sunday-2', 'blog-sunday', 0),
 ('blog-sunday-3', 'blog-sunday', 0),
 ('blog-sunday-thumb', 'blog-sunday', 1),
-('blog-thursday-1', 'blog-thursday', 0),
-('blog-thursday-thumb', 'blog-thursday', 1);
+('blog-test-thumb-hange', 'blog-test-thumb', 1);
 
 -- --------------------------------------------------------
 
@@ -99,15 +99,17 @@ INSERT INTO `blog_image` (`imageId`, `blogId`, `isThumbnail`) VALUES
 CREATE TABLE `category` (
   `category_id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `image` text DEFAULT NULL
+  `image` text DEFAULT NULL,
+  `display_order` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `category`
 --
 
-INSERT INTO `category` (`category_id`, `name`, `image`) VALUES
-('bed', 'Beds hehe', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740665869/q0ic5mketfqgcroeuhxo.jpg');
+INSERT INTO `category` (`category_id`, `name`, `image`, `display_order`) VALUES
+('bed', 'Beds hehe', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740665869/q0ic5mketfqgcroeuhxo.jpg', 1),
+('chair', 'Chair', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740920415/c9sz9cadjrtabfzwlixb.png', 2);
 
 -- --------------------------------------------------------
 
@@ -121,17 +123,19 @@ CREATE TABLE `contact` (
   `email` varchar(255) NOT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
   `subject` mediumtext DEFAULT NULL,
-  `message` longtext NOT NULL
+  `message` longtext NOT NULL,
+  `sendAt` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `contact`
 --
 
-INSERT INTO `contact` (`contactId`, `name`, `email`, `phone_number`, `subject`, `message`) VALUES
-(1, 'Tam', 'vothanhtam2407@gmail.com', '0935671005', 'Test contact', 'HI I\'d talk about something wrong with your shop'),
-(2, 'Test', 'sadasd@gmail.com', '', '', 'Hi I\'d like to complain something'),
-(3, 'Tam', 'example@gmail.com', '', '', 'Hi asdasdasdasdasdsdfsdff');
+INSERT INTO `contact` (`contactId`, `name`, `email`, `phone_number`, `subject`, `message`, `sendAt`) VALUES
+(1, 'Tam', 'vothanhtam2407@gmail.com', '0935671005', 'Test contact', 'HI I\'d talk about something wrong with your shop', '2025-03-02 21:41:14'),
+(2, 'Test', 'sadasd@gmail.com', '', '', 'Hi I\'d like to complain something', '2025-03-02 21:41:14'),
+(3, 'Tam', 'example@gmail.com', '', '', 'Hi asdasdasdasdasdsdfsdff', '2025-03-02 21:41:14'),
+(4, 'aaaaaaaaa', 'contact@furniro.com', '', '', 'adadsdasdasda For more information about our products & services, please feel free to drop us an email. Our staff always be there to help you out. Do not hesitate!', '2025-03-03 08:29:07');
 
 -- --------------------------------------------------------
 
@@ -199,8 +203,13 @@ INSERT INTO `image` (`imageId`, `src`) VALUES
 ('blog-sunday-2', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733649447/fkasycdvthtzjogam5ek.png'),
 ('blog-sunday-3', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733674065/ydauu7tcbdxubpaxcwnp.png'),
 ('blog-sunday-thumb', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733674109/zfuffpp6aztfmeu0nt8w.png'),
+('blog-test-thumb-hange', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1741012360/hrmqiuxggnox21t7zjnc.jpg'),
 ('blog-thursday-1', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733935654/nacwvtwrwz8yvckvzaug.png'),
 ('blog-thursday-thumb', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733935655/txblkv8s1gtas8gkiqoz.png'),
+('demo-furnora-1', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740920207/qb2itqdkpx1etyni9tba.png'),
+('demo-furnora-2', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740920206/ze1m42t0jhcupgjf3ubt.png'),
+('demo-furnora-3', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740920208/ax3bifzaoya2rfdfmsgt.jpg'),
+('demo-furnora-description-1', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740920221/pvglzbx2uxtepyq4eakj.jpg'),
 ('giuong-go-1', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733931813/pacj8kdo7qzesb59azwi.jpg'),
 ('giuong-go-2', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733931812/uz1uh251ajqqzjqlrr4c.jpg'),
 ('giuong-go-3', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1733931813/ptzbzi0jpgvwzefs90iz.png'),
@@ -257,7 +266,9 @@ INSERT INTO `nav_links` (`id`, `title`, `url`, `display_order`) VALUES
 (3, 'Rooms', '/shop', 3),
 (4, 'About', '/about', 4),
 (5, 'Contact', '/contact', 5),
-(6, 'Blog', '/blog', 6);
+(6, 'Blog', '/blog', 6),
+(8, 'tesst', '/test', 7),
+(9, 'Ngan', '/ngan', 8);
 
 -- --------------------------------------------------------
 
@@ -433,15 +444,17 @@ INSERT INTO `review` (`reviewId`, `productId`, `content`, `rating`, `userId`, `r
 CREATE TABLE `room` (
   `room_id` varchar(255) NOT NULL,
   `name` text NOT NULL,
-  `image` text NOT NULL
+  `image` text NOT NULL,
+  `display_order` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `room`
 --
 
-INSERT INTO `room` (`room_id`, `name`, `image`) VALUES
-('bedroom', 'Bedroom', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740903571/rcedrrfgxatrmk3d1h2m.png');
+INSERT INTO `room` (`room_id`, `name`, `image`, `display_order`) VALUES
+('bedroom', 'Bedroom', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740903571/rcedrrfgxatrmk3d1h2m.png', 1),
+('livingroom', 'Living Room', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740968525/eghsuu1f18bkuzoahdk8.png', 2);
 
 -- --------------------------------------------------------
 
@@ -472,15 +485,19 @@ INSERT INTO `social_media` (`id`, `name`, `info`, `image`) VALUES
 
 CREATE TABLE `subcriber` (
   `email` varchar(255) NOT NULL,
-  `subcribe_id` int(11) NOT NULL
+  `subcribe_id` int(11) NOT NULL,
+  `sendAt` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `subcriber`
 --
 
-INSERT INTO `subcriber` (`email`, `subcribe_id`) VALUES
-('vothanhtam2407@gmail.com', 1);
+INSERT INTO `subcriber` (`email`, `subcribe_id`, `sendAt`) VALUES
+('vothanhtam2407@gmail.com', 1, '2025-03-02 21:42:41'),
+('abc@aa.com', 2, '2025-03-02 21:42:41'),
+('asdasdasddas@gmail.com', 3, '2025-03-02 21:42:41'),
+('asdasdasddas@gmail.com', 4, '2025-03-03 08:37:30');
 
 -- --------------------------------------------------------
 
@@ -498,6 +515,7 @@ CREATE TABLE `tag` (
 
 INSERT INTO `tag` (`tag_name`) VALUES
 ('bed'),
+('bedroom'),
 ('blog'),
 ('chair'),
 ('coffee'),
@@ -516,6 +534,8 @@ INSERT INTO `tag` (`tag_name`) VALUES
 ('tag1'),
 ('tag2'),
 ('tag3'),
+('test'),
+('thumb'),
 ('wardrobe'),
 ('wood');
 
@@ -571,7 +591,7 @@ CREATE TABLE `website_info` (
 --
 
 INSERT INTO `website_info` (`aboutID`, `about`, `about_original`, `phone_number`, `address`, `email`, `logo`, `home_banner`, `theme_color`) VALUES
-(1, '<div id=\"template\">\n<section><main>\n<h1>Welcome</h1>\n<p>Welcome to our company! We are delighted to have you here and excited to share our journey with you.</p>\n<p>This is where you can introduce your company and make a strong first impression on your visitors.</p>\n</main><footer>\n<p><small>Confidential</small></p>\n</footer></section>\n<section><main>\n<h1>Our Mission</h1>\n<p>Our company is dedicated to providing exceptional solutions that address the following key areas:</p>\n<ul>\n<li>Mission point 1</li>\n<li>Mission point 2</li>\n<li>Mission point 3</li>\n</ul>\n<p>We are committed to excellence in everything we do, ensuring that our clients receive the highest quality service and support.</p>\n<p>*{mission.statement}*</p>\n</main></section>\n<section><main>\n<h1>Our Story</h1>\n<p>Our journey began with a vision to create something meaningful that would make a difference by * {founding.date}*.</p>\n<p>We\'ve grown from our humble beginnings to become a trusted name in our industry.</p>\n<p>Here\'s how our story unfolded:</p>\n<h2>Chapter 1: The Beginning</h2>\n<p>Our founders came together with a shared vision and determined:</p>\n<ul>\n<li>what problems needed solving; and</li>\n<li>how we could provide unique solutions.</li>\n</ul>\n<p>This led to the creation of our company and its core values.</p>\n<h2>Chapter 2: Growth and Development</h2>\n<p>As we expanded, we refined our approach and built a team of dedicated professionals.</p>\n<p>This allowed us to develop innovative solutions tailored to our clients\' specific needs.</p>\n<h2>Chapter 3: Where We Are Today</h2>\n<p>Today, we continue to evolve and adapt to meet the changing demands of the market.</p>\n<p>Our commitment to quality and customer satisfaction remains at the heart of everything we do.</p>\n</main></section>\n<section><main>\n<h1>Our Product</h1>\n<p>Our flagship product is designed to solve real-world problems with innovative features including:</p>\n<ul>\n<li>Feature 1: Description of how this feature benefits users</li>\n<li>Feature 2: Explanation of what makes this feature unique</li>\n<li>Feature 3: Details about how this feature addresses specific needs</li>\n</ul>\n<p>We continuously improve our product based on customer feedback and emerging technologies.</p>\n<p>*{product.launch.date}*</p>\n</main></section>\n<section><main>\n<p><span style=\"font-size: 20px;\">Example Text Section</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-size: 20px;\"> This is an example section where you can add your own content. Feel free to modify this text to suit your specific needs. </span></p>\n<p>&nbsp;</p>\n<p>You can include information about your team, testimonials, or any other content that would be valuable to your audience.</p>\n<p>&nbsp;</p>\n<p>Contact Information:</p>\n<p>Name: [Your Name] <br>Phone: [Your Phone Number] <br><a href=\"mailto:example@example.com\">example@example.com</a></p>\n<p>&nbsp;</p>\n<p>Additional Contact:</p>\n<p>Name: [Another Name] <br>Phone: [Another Phone Number] <br><a href=\"mailto:another@example.com\">another@example.com</a></p>\n</main></section>\n</div>', '<div id=\"template\">\n<section><main>\n<h1>Welcome</h1>\n<p>Welcome to our company! We are delighted to have you here and excited to share our journey with you.</p>\n<p>This is where you can introduce your company and make a strong first impression on your visitors.</p>\n</main><footer>\n<p><small>Confidential</small></p>\n</footer></section>\n<section><main>\n<h1>Our Mission</h1>\n<p>Our company is dedicated to providing exceptional solutions that address the following key areas:</p>\n<ul>\n<li>Mission point 1</li>\n<li>Mission point 2</li>\n<li>Mission point 3</li>\n</ul>\n<p>We are committed to excellence in everything we do, ensuring that our clients receive the highest quality service and support.</p>\n<p>*{mission.statement}*</p>\n</main></section>\n<section><main>\n<h1>Our Story</h1>\n<p>Our journey began with a vision to create something meaningful that would make a difference by * {founding.date}*.</p>\n<p>We\'ve grown from our humble beginnings to become a trusted name in our industry.</p>\n<p>Here\'s how our story unfolded:</p>\n<h2>Chapter 1: The Beginning</h2>\n<p>Our founders came together with a shared vision and determined:</p>\n<ul>\n<li>what problems needed solving; and</li>\n<li>how we could provide unique solutions.</li>\n</ul>\n<p>This led to the creation of our company and its core values.</p>\n<h2>Chapter 2: Growth and Development</h2>\n<p>As we expanded, we refined our approach and built a team of dedicated professionals.</p>\n<p>This allowed us to develop innovative solutions tailored to our clients\' specific needs.</p>\n<h2>Chapter 3: Where We Are Today</h2>\n<p>Today, we continue to evolve and adapt to meet the changing demands of the market.</p>\n<p>Our commitment to quality and customer satisfaction remains at the heart of everything we do.</p>\n</main></section>\n<section><main>\n<h1>Our Product</h1>\n<p>Our flagship product is designed to solve real-world problems with innovative features including:</p>\n<ul>\n<li>Feature 1: Description of how this feature benefits users</li>\n<li>Feature 2: Explanation of what makes this feature unique</li>\n<li>Feature 3: Details about how this feature addresses specific needs</li>\n</ul>\n<p>We continuously improve our product based on customer feedback and emerging technologies.</p>\n<p>*{product.launch.date}*</p>\n</main></section>\n<section><main>\n<p><span style=\"font-size: 20px;\">Example Text Section</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-size: 20px;\"> This is an example section where you can add your own content. Feel free to modify this text to suit your specific needs. </span></p>\n<p>&nbsp;</p>\n<p>You can include information about your team, testimonials, or any other content that would be valuable to your audience.</p>\n<p>&nbsp;</p>\n<p>Contact Information:</p>\n<p>Name: [Your Name] <br>Phone: [Your Phone Number] <br><a href=\"mailto:example@example.com\">example@example.com</a></p>\n<p>&nbsp;</p>\n<p>Additional Contact:</p>\n<p>Name: [Another Name] <br>Phone: [Another Phone Number] <br><a href=\"mailto:another@example.com\">another@example.com</a></p>\n</main></section>\n</div>', '(+84) 546-6789', '295 5th St Avenue, New York NY10000, United States', 'contact@furniro.com', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740753805/qqaezszboopd8pe3lrwb.jpg', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740754799/vr83entjd8id9cyg4gpw.jpg', '#ffffff');
+(1, '<div id=\"template\">\n<section><main>\n<h1 style=\"text-align: center;\"><span style=\"font-size: 24pt;\">Welcome</span></h1>\n<p>Welcome to our company! We are delighted to have you here and excited to share our journey with you.</p>\n<p>This is where you can int<em>roduce your company and make </em>a strong first impr<strong>ession on your visitors.</strong></p>\n</main><footer>\n<p><small>Confidential</small></p>\n<p><img style=\"display: block; margin-left: auto; margin-right: auto;\" src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1740921253/sx7esflp0gdfar2howv8.jpg\" alt=\"chair\" width=\"541\" height=\"406\"></p>\n</footer></section>\n<section><main>\n<h1 style=\"text-align: center;\">Our Mission</h1>\n<p style=\"text-align: center;\">Our company is dedicated to providing exceptional solutions that address the following key areas:</p>\n<ul>\n<li>Mission point 1</li>\n<li>Mission point 2</li>\n<li>Mission point 3</li>\n</ul>\n<p>We are committed to excellence in everything we do, ensuring that our clients receive the highest quality service and support.</p>\n<table style=\"border-collapse: collapse; width: 100%; height: 108.6px;\" border=\"1\"><colgroup><col style=\"width: 19.964%;\"><col style=\"width: 19.964%;\"><col style=\"width: 19.964%;\"><col style=\"width: 19.964%;\"><col style=\"width: 19.964%;\"></colgroup>\n<tbody>\n<tr style=\"height: 36.2px;\">\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n</tr>\n<tr style=\"height: 36.2px;\">\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n</tr>\n<tr style=\"height: 36.2px;\">\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n</tr>\n</tbody>\n</table>\n<p>*{mission.statement}*</p>\n</main></section>\n<section><main>\n<h1>Our Story</h1>\n<p>Our journey began with a vision to create something meaningful that would make a difference by * {founding.date}*.</p>\n<p>We\'ve grown from our humble beginnings to become a trusted name in our industry.</p>\n<p>Here\'s how our story unfolded:</p>\n<h2>Chapter 1: The Beginning</h2>\n<p>Our founders came together with a shared vision and determined:</p>\n<ul>\n<li>what problems needed solving; and</li>\n<li>how we could provide unique solutions.</li>\n</ul>\n<p>This led to the creation of our company and its core values.</p>\n<h2>Chapter 2: Growth and Development</h2>\n<p>As we expanded, we refined our approach and built a team of dedicated professionals.</p>\n<p>This allowed us to develop innovative solutions tailored to our clients\' specific needs.</p>\n<h2>Chapter 3: Where We Are Today</h2>\n<p>Today, we continue to evolve and adapt to meet the changing demands of the market.</p>\n<p>Our commitment to quality and customer satisfaction remains at the heart of everything we do.</p>\n</main></section>\n<section><main>\n<h1>Our Product</h1>\n<p>Our flagship product is designed to solve real-world problems with innovative features including:</p>\n<ul>\n<li>Feature 1: Description of how this feature benefits users</li>\n<li>Feature 2: Explanation of what makes this feature unique</li>\n<li>Feature 3: Details about how this feature addresses specific needs</li>\n</ul>\n<p>We continuously improve our product based on customer feedback and emerging technologies.</p>\n<p>*{product.launch.date}*</p>\n</main></section>\n<section><main>\n<p><span style=\"font-size: 20px;\">Example Text Section</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-size: 20px;\"> This is an example section where you can add your own content. Feel free to modify this text to suit your specific needs. </span></p>\n<p>&nbsp;</p>\n<p>You can include information about your team, testimonials, or any other content that would be valuable to your audience.</p>\n<p>&nbsp;</p>\n<p>Contact Information:</p>\n<p>Name: [Your Name] <br>Phone: [Your Phone Number] <br><a href=\"mailto:example@example.com\">example@example.com</a></p>\n<p>&nbsp;</p>\n<p>Additional Contact:</p>\n<p>Name: [Another Name] <br>Phone: [Another Phone Number] <br><a href=\"mailto:another@example.com\">another@example.com</a></p>\n</main></section>\n</div>', '<div id=\"template\">\n<section><main>\n<h1 style=\"text-align: center;\"><span style=\"font-size: 24pt;\">Welcome</span></h1>\n<p>Welcome to our company! We are delighted to have you here and excited to share our journey with you.</p>\n<p>This is where you can int<em>roduce your company and make </em>a strong first impr<strong>ession on your visitors.</strong></p>\n</main><footer>\n<p><small>Confidential</small></p>\n<p><img style=\"display: block; margin-left: auto; margin-right: auto;\" src=\"https://res.cloudinary.com/dgwujcdba/image/upload/v1740921253/sx7esflp0gdfar2howv8.jpg\" alt=\"chair\" width=\"541\" height=\"406\"></p>\n</footer></section>\n<section><main>\n<h1 style=\"text-align: center;\">Our Mission</h1>\n<p style=\"text-align: center;\">Our company is dedicated to providing exceptional solutions that address the following key areas:</p>\n<ul>\n<li>Mission point 1</li>\n<li>Mission point 2</li>\n<li>Mission point 3</li>\n</ul>\n<p>We are committed to excellence in everything we do, ensuring that our clients receive the highest quality service and support.</p>\n<table style=\"border-collapse: collapse; width: 100%; height: 108.6px;\" border=\"1\"><colgroup><col style=\"width: 19.964%;\"><col style=\"width: 19.964%;\"><col style=\"width: 19.964%;\"><col style=\"width: 19.964%;\"><col style=\"width: 19.964%;\"></colgroup>\n<tbody>\n<tr style=\"height: 36.2px;\">\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n</tr>\n<tr style=\"height: 36.2px;\">\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n</tr>\n<tr style=\"height: 36.2px;\">\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n<td>&nbsp;</td>\n</tr>\n</tbody>\n</table>\n<p>*{mission.statement}*</p>\n</main></section>\n<section><main>\n<h1>Our Story</h1>\n<p>Our journey began with a vision to create something meaningful that would make a difference by * {founding.date}*.</p>\n<p>We\'ve grown from our humble beginnings to become a trusted name in our industry.</p>\n<p>Here\'s how our story unfolded:</p>\n<h2>Chapter 1: The Beginning</h2>\n<p>Our founders came together with a shared vision and determined:</p>\n<ul>\n<li>what problems needed solving; and</li>\n<li>how we could provide unique solutions.</li>\n</ul>\n<p>This led to the creation of our company and its core values.</p>\n<h2>Chapter 2: Growth and Development</h2>\n<p>As we expanded, we refined our approach and built a team of dedicated professionals.</p>\n<p>This allowed us to develop innovative solutions tailored to our clients\' specific needs.</p>\n<h2>Chapter 3: Where We Are Today</h2>\n<p>Today, we continue to evolve and adapt to meet the changing demands of the market.</p>\n<p>Our commitment to quality and customer satisfaction remains at the heart of everything we do.</p>\n</main></section>\n<section><main>\n<h1>Our Product</h1>\n<p>Our flagship product is designed to solve real-world problems with innovative features including:</p>\n<ul>\n<li>Feature 1: Description of how this feature benefits users</li>\n<li>Feature 2: Explanation of what makes this feature unique</li>\n<li>Feature 3: Details about how this feature addresses specific needs</li>\n</ul>\n<p>We continuously improve our product based on customer feedback and emerging technologies.</p>\n<p>*{product.launch.date}*</p>\n</main></section>\n<section><main>\n<p><span style=\"font-size: 20px;\">Example Text Section</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-size: 20px;\"> This is an example section where you can add your own content. Feel free to modify this text to suit your specific needs. </span></p>\n<p>&nbsp;</p>\n<p>You can include information about your team, testimonials, or any other content that would be valuable to your audience.</p>\n<p>&nbsp;</p>\n<p>Contact Information:</p>\n<p>Name: [Your Name] <br>Phone: [Your Phone Number] <br><a href=\"mailto:example@example.com\">example@example.com</a></p>\n<p>&nbsp;</p>\n<p>Additional Contact:</p>\n<p>Name: [Another Name] <br>Phone: [Another Phone Number] <br><a href=\"mailto:another@example.com\">another@example.com</a></p>\n</main></section>\n</div>', '(+84) 546-6789', '295 5th St Avenue, New York NY10000, United States', 'contact@furniro.com', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740921540/we2ry9xygolfx5xyavqr.png', 'https://res.cloudinary.com/dgwujcdba/image/upload/v1740921587/qrmbrnbsk3hopt7sixdi.png', '#ffffff');
 
 --
 -- Indexes for dumped tables
@@ -600,7 +620,8 @@ ALTER TABLE `blog_image`
 -- Indexes for table `category`
 --
 ALTER TABLE `category`
-  ADD PRIMARY KEY (`category_id`);
+  ADD PRIMARY KEY (`category_id`),
+  ADD KEY `idx_display_order` (`display_order`);
 
 --
 -- Indexes for table `contact`
@@ -658,7 +679,8 @@ ALTER TABLE `review`
 -- Indexes for table `room`
 --
 ALTER TABLE `room`
-  ADD PRIMARY KEY (`room_id`);
+  ADD PRIMARY KEY (`room_id`),
+  ADD KEY `idx_display_order` (`display_order`);
 
 --
 -- Indexes for table `social_media`
@@ -704,13 +726,13 @@ ALTER TABLE `advertisement`
 -- AUTO_INCREMENT for table `contact`
 --
 ALTER TABLE `contact`
-  MODIFY `contactId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `contactId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `nav_links`
 --
 ALTER TABLE `nav_links`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `order`
@@ -728,7 +750,7 @@ ALTER TABLE `review`
 -- AUTO_INCREMENT for table `subcriber`
 --
 ALTER TABLE `subcriber`
-  MODIFY `subcribe_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `subcribe_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user`
