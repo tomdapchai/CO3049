@@ -23,6 +23,8 @@ npm run start
 # Before commit:
 If you haven't created a branch: ```git checkout -b <your branch name>```
 ```
+Then:
+```
 git checkout <your branch name>
 git add .
 git commit -m "<commit message>"
